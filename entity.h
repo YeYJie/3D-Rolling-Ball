@@ -16,8 +16,8 @@ public:
 		: _model(model), _position(position), _rotation(rotation),
 			_scale(scale) {}
 
-	Entity(TexturedModel model, GLuint textureIndex, glm::vec3 position,
-			float rotX, float rotY, float rotZ, float scale)
+	Entity(TexturedModel model, glm::vec3 position,
+			float rotX, float rotY, float rotZ, float sscale)
 		: _model(model), _position(position),
 			_rotation(glm::vec3(rotX, rotY, rotZ)), _scale(scale) {}
 
