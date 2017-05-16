@@ -107,6 +107,12 @@ int main()
 								glm::vec3(0.0f), 1.0f);
 	entities.push_back(ball);
 
+	// TexturedModel temp(rawModelBall, Texture("box.png"));
+	Entity * shit = new Entity(&texturedBall,
+								glm::vec3(500.0f, 100.0f, 510.0f),
+								glm::vec3(0.0f), 1.0f);
+	entities.push_back(shit);
+
 	// terrain
 	vector<Terrain> terrains;
 	terrains.push_back(Terrain("heightmap.jpg"));
@@ -123,7 +129,11 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// do some update
+		ball->update(terrains[0]);
 		camera->update();
+
+		shit->setPosition(ball->getPosition()
+						+ 10.0f * ball->getOrientation());
 
 		glm::mat4 viewMatrix = camera->getViewMatrix();
 
@@ -141,7 +151,7 @@ int main()
 
 		static float rx = 0;
 		ball->setRotation(rx, 0.0f, 0.0f);
-		rx += 0.001f;
+		rx += 0.005f;
 
 		// some shit
 

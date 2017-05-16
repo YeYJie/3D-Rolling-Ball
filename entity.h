@@ -43,6 +43,14 @@ public:
 		_position.z = z;
 	}
 
+	float getPositionX() const { return _position.x; }
+	float getPositionY() const { return _position.y; }
+	float getPositionZ() const { return _position.z; }
+
+	void setPositionX(float x) { _position.x = x; }
+	void setPositionY(float y) { _position.y = y; }
+	void setPositionZ(float z) { _position.z = z; }
+
 	glm::vec3 getRotation() const { return _rotation; }
 	void setRotation(glm::vec3 rotation) { _rotation = rotation; }
 	void setRotation(float x, float y, float z) {
@@ -55,7 +63,7 @@ public:
 		_position += delta;
 	}
 	void move(float dx, float dy, float dz) {
-		_position.x += dz;
+		_position.x += dx;
 		_position.y += dy;
 		_position.z += dz;
 	}
