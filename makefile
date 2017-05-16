@@ -7,7 +7,7 @@ LDFLAGS += $(shell pkg-config --static --libs glfw3)
 LDFLAGS +=  -lSOIL
 LDFLAGS += -lGLEW -lGLU -lGL
 # CPPFILES = $(wildcard *.cpp)
-CPPFILES = main.cpp terrain.cpp loader.cpp
+CPPFILES = main.cpp terrain.cpp loader.cpp camera.cpp
 
 all :
 	g++ $(CFLAGS) -o rollingBall $(CPPFILES) $(LDFLAGS)

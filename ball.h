@@ -17,20 +17,42 @@ public:
 
 	Ball(TexturedModel * model, glm::vec3 position,
 			glm::vec3 rotation, float scale)
-		: Entity(model, position, rotation, scale) {}
+		: Entity(model, position, rotation, scale) 
+	{
+		calculateOrientation();
+	}
 
 	Ball(TexturedModel * model, glm::vec3 position,
 			float rotX, float rotY, float rotZ, float scale)
-		: Entity(model, position, rotX, rotY, rotZ, scale) {}
+		: Entity(model, position, rotX, rotY, rotZ, scale)
+	{
+		calculateOrientation();
+	}
+
 
 	Ball(TexturedModel * model, GLuint textureIndex, glm::vec3 position,
 			glm::vec3 rotation, float scale)
-		: Entity(model, textureIndex, position, rotation, scale) {}
+		: Entity(model, textureIndex, position, rotation, scale)
+	{
+		calculateOrientation();
+	}
+
 
 	Ball(TexturedModel * model, GLuint textureIndex, glm::vec3 position,
 			float rotX, float rotY, float rotZ, float scale)
-		: Entity(model, textureIndex, position, rotX, rotY, rotZ, scale) {}
+		: Entity(model, textureIndex, position, rotX, rotY, rotZ, scale)
+	{
+		calculateOrientation();
+	}
 
+	glm::vec3 getOrientation() const { return _orientation; }
+
+	void calculateOrientation()
+	{
+		glm::vec3 o = glm::vec3(-1.0f, 0.0f, -1.0f);
+		_orientation = glm::normalize(o);
+	}
+	
 	// keyboard function
 	void onKeyBoard(int key) {
 
@@ -63,6 +85,8 @@ public:
 	}
 
 private:
+
+	glm::vec3 _orientation;
 
 	float _currentSpeed = 0;
 	float _turnSpeed = 0;
