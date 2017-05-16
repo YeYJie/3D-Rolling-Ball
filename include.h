@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <cstdio>
 #include <algorithm>
 using namespace std;
@@ -30,5 +31,9 @@ GLuint LoadTexture(const char * textureFileName);
 
 GLuint LoadShaders(const char * vertex_file_path,
 					const char * fragment_file_path);
+
+class RawModel;
+
+RawModel LoadObjModel(const char * objFileName);
 
 #endif

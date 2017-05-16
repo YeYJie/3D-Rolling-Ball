@@ -59,6 +59,20 @@ int main()
 
 	glm::mat4 projectionMatrix = glm::perspective(45.0f, 1.0f, 0.1f, 10000.0f);
 
+	// entity
+	Shader entityShader("entity.vs", "entity.fs");
+	EntityRenderer entityRenderer(&entityShader, projectionMatrix);
+
+	vector<Entity*> entities;
+
+	RawModel rawModelBall = LoadObjModel("ball.obj");
+	TexturedModel texturedBall(rawModelBall, Texture("box.png"));
+	Ball * ball = new Ball(&texturedBall, 
+								glm::vec3(0.0f, 0.f, 0.0f),
+								glm::vec3(0.0f), 200.0f);
+	entities.push_back(ball);
+
+
 	// terrain
 	vector<Terrain> terrains;
 	terrains.push_back(Terrain("heightmap.jpg"));
@@ -71,18 +85,30 @@ int main()
 	do {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glm::mat4 viewMatrix = glm::lookAt(glm::vec3(1000.0f, 100.0f, 1000.0f),
+												glm::vec3(0.0f, 0.0f, 0.0f),
+												glm::vec3(0.0f, 1.0f, 0.0f));
+		// terrain
 		terrainShader.bindGL();
-		// terrainShader.setViewMatrix(glm::lookAt(glm::vec3(1000.0f, terrains[0].getHeight(1000.0f, 1000.0f), 1000.0f),
-		terrainShader.setViewMatrix(glm::lookAt(glm::vec3(1000.0f, 100.0f, 1000.0f),
-												glm::vec3(0.0f),
-												glm::vec3(0.0f, 1.0f, 0.0f)));
+		terrainShader.setViewMatrix(viewMatrix);
 		terrainRenderer.render(terrains);
 		terrainShader.unbindGL();
 
-		glfwSwapBuffers(window);
+		// entity
+		entityShader.bindGL();
+		entityShader.setViewMatrix(viewMatrix);
+		entityRenderer.render(entities);
+		entityShader.unbindGL();
 
+		static float rx = 0;
+		ball->setRotation(rx, 0.0f, 0.0f);
+		rx += 0.05f;
+
+		// some shit
+		glfwSwapBuffers(window);
 		glfwWaitEventsTimeout(1.0/60.0);
 	} while(true);
+
 	glfwTerminate();
 
 }

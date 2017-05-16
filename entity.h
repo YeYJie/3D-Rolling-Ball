@@ -2,7 +2,7 @@
 #define _ENTITY_H_
 
 #include "include.h"
-#include "texturedModel.h"
+#include "model.h"
 
 class Entity
 {
@@ -11,29 +11,29 @@ public:
 
 	Entity() = default;
 
-	Entity(TexturedModel model, glm::vec3 position,
+	Entity(TexturedModel * model, glm::vec3 position,
 			glm::vec3 rotation, float scale)
 		: _model(model), _position(position), _rotation(rotation),
 			_scale(scale) {}
 
-	Entity(TexturedModel model, glm::vec3 position,
+	Entity(TexturedModel * model, glm::vec3 position,
 			float rotX, float rotY, float rotZ, float scale)
 		: _model(model), _position(position),
 			_rotation(glm::vec3(rotX, rotY, rotZ)), _scale(scale) {}
 
-	Entity(TexturedModel model, GLuint textureIndex, glm::vec3 position,
+	Entity(TexturedModel * model, GLuint textureIndex, glm::vec3 position,
 			glm::vec3 rotation, float scale)
 		: _model(model), _position(position), _rotation(rotation),
 			_scale(scale), _textureIndex(textureIndex) {}
 
-	Entity(TexturedModel model, GLuint textureIndex, glm::vec3 position,
+	Entity(TexturedModel * model, GLuint textureIndex, glm::vec3 position,
 			float rotX, float rotY, float rotZ, float scale)
 		: _model(model), _position(position), _textureIndex(textureIndex),
 			_rotation(glm::vec3(rotX, rotY, rotZ)), _scale(scale) {}
 
 
-	TexturedModel getModel() const { return _model; }
-	void setModel(TexturedModel model) { _model = model; }
+	TexturedModel * getModel() const { return _model; }
+	void setModel(TexturedModel * model) { _model = model; }
 
 	glm::vec3 getPosition() const { return _position; }
 	void setPosition(glm::vec3 position) { _position = position; }
@@ -64,13 +64,13 @@ public:
 		_rotation += delta;
 	}
 	void rotate(float dx, float dy, float dz) {
-		_rotation.x += dz;
+		_rotation.x += dx;
 		_rotation.y += dy;
 		_rotation.z += dz;
 	}
 
 	glm::mat4 getModelMatrix() const {
-		glm::mat4 res = glm::mat4(0.0f);
+		glm::mat4 res = glm::mat4(1.0f);
 		res = glm::translate(res, _position);
 		res = glm::scale(res, glm::vec3(_scale));
 		
@@ -97,11 +97,11 @@ public:
 
 private:
 
-	TexturedModel _model;
+	TexturedModel * _model;
 
 	glm::vec3 _position = glm::vec3(0.0f);
 	glm::vec3 _rotation = glm::vec3(0.0f);
-	float _scale = 0.0f;
+	float _scale = 1.0f;
 
 	GLuint _textureIndex = 0;
 

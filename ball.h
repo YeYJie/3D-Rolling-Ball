@@ -15,19 +15,19 @@ public:
 	Ball & operator=(const Ball &) = delete;
 
 
-	Ball(TexturedModel model, glm::vec3 position,
+	Ball(TexturedModel * model, glm::vec3 position,
 			glm::vec3 rotation, float scale)
 		: Entity(model, position, rotation, scale) {}
 
-	Ball(TexturedModel model, glm::vec3 position,
+	Ball(TexturedModel * model, glm::vec3 position,
 			float rotX, float rotY, float rotZ, float scale)
 		: Entity(model, position, rotX, rotY, rotZ, scale) {}
 
-	Ball(TexturedModel model, GLuint textureIndex, glm::vec3 position,
+	Ball(TexturedModel * model, GLuint textureIndex, glm::vec3 position,
 			glm::vec3 rotation, float scale)
 		: Entity(model, textureIndex, position, rotation, scale) {}
 
-	Ball(TexturedModel model, GLuint textureIndex, glm::vec3 position,
+	Ball(TexturedModel * model, GLuint textureIndex, glm::vec3 position,
 			float rotX, float rotY, float rotZ, float scale)
 		: Entity(model, textureIndex, position, rotX, rotY, rotZ, scale) {}
 

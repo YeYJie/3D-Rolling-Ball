@@ -1,6 +1,8 @@
 #ifndef _TEXTURE_H_
 #define _TEXTURE_H_
 
+#include "include.h"
+
 class Texture
 {
 
@@ -8,7 +10,9 @@ public:
 
 	Texture(GLuint textureID) : _textureID(textureID) {}
 
-	Texture(const char * textureFileName);
+	Texture(const char * textureFileName) {
+		_textureID = LoadTexture(textureFileName);
+	}
 
 	void bindGL(int textureIndex = 0) const 
 	{
