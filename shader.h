@@ -3,9 +3,6 @@
 
 #include "include.h"
 
-GLuint LoadShaders(const char * vertex_file_path,
-					const char * fragment_file_path);
-
 class Shader
 {
 
@@ -16,12 +13,14 @@ public:
 	{
 		_programID = LoadShaders(vertexShaderFileName, fragmentShaderFileName);
 		
+		bindGL();
 		_modelMatrixLocation = glGetUniformLocation(_programID, 
 																"model");
 		_viewMatrixLocation = glGetUniformLocation(_programID, 
 																"view");
 		_projectionMatrixLocation = glGetUniformLocation(_programID, 
 																"projection");
+		unbindGL();
 	}
 
 	void bindGL() const {
@@ -36,25 +35,13 @@ public:
 		glUniformMatrix4fv(_modelMatrixLocation, 1, GL_FALSE,
 								glm::value_ptr(modelMatrix));
 	}
-	void setModelMatrix(const glm::mat4 modelMatrix) const {
-		glUniformMatrix4fv(_modelMatrixLocation, 1, GL_FALSE,
-								glm::value_ptr(modelMatrix));		
-	}
 
 	void setViewMatrix(const glm::mat4 & viewMatrix) const {
 		glUniformMatrix4fv(_viewMatrixLocation, 1, GL_FALSE,
 								glm::value_ptr(viewMatrix));
 	}
-	void setViewMatrix(const glm::mat4 viewMatrix) const {
-		glUniformMatrix4fv(_viewMatrixLocation, 1, GL_FALSE,
-								glm::value_ptr(viewMatrix));
-	}
 
 	void setProjectionMatrix(const glm::mat4 & projectionMatrix) const {
-		glUniformMatrix4fv(_projectionMatrixLocation, 1, GL_FALSE,
-								glm::value_ptr(projectionMatrix));
-	}
-	void setProjectionMatrix(const glm::mat4 projectionMatrix) const {
 		glUniformMatrix4fv(_projectionMatrixLocation, 1, GL_FALSE,
 								glm::value_ptr(projectionMatrix));
 	}

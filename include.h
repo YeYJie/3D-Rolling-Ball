@@ -7,6 +7,7 @@
 #include <map>
 #include <cmath>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <cstdio>
 #include <algorithm>
@@ -24,5 +25,10 @@ using namespace std;
 #include <assimp/postprocess.h>
 
 #include <SOIL/SOIL.h>
+
+GLuint LoadTexture(const char * textureFileName);
+
+GLuint LoadShaders(const char * vertex_file_path,
+					const char * fragment_file_path);
 
 #endif

@@ -1,5 +1,28 @@
 #include "include.h"
 
+GLuint LoadTexture(const char * textureFileName)
+{
+	cout << "Loading texture : " << textureFileName << endl;
+	int width = 0, height = 0;
+	unsigned char * imageData = SOIL_load_image(textureFileName,
+								&width, &height, 0, SOIL_LOAD_RGB);
+
+	GLuint textureID;
+
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+					0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
+	return textureID;
+}
+
 GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path){
 
 	// Create the shaders

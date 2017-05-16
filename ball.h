@@ -28,11 +28,15 @@ public:
 		: Entity(model, textureIndex, position, rotation, scale) {}
 
 	Ball(TexturedModel model, GLuint textureIndex, glm::vec3 position,
-			float rotX, float rotY, float rotZ, float scale);
+			float rotX, float rotY, float rotZ, float scale)
 		: Entity(model, textureIndex, position, rotX, rotY, rotZ, scale) {}
 
 	// keyboard function
 	void onKeyBoard(int key) {
+
+		static const float forwardSpeed = 50;
+		static const float turnSpeed = 50;
+		
 		switch(key) {
 			case GLFW_KEY_UP:
 			case GLFW_KEY_W:

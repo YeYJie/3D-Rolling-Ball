@@ -19,7 +19,7 @@ void Ball::onKeyBoard(int key)
 		case GLFW_KEY_RIGHT:
 		case GLFW_KEY_D:
 			_turnSpeed = -turnSpeed; break;
-		
+
 		default:
 			_currentSpeed = _turnSpeed = 0;
 	}

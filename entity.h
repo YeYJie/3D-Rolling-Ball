@@ -17,7 +17,7 @@ public:
 			_scale(scale) {}
 
 	Entity(TexturedModel model, glm::vec3 position,
-			float rotX, float rotY, float rotZ, float sscale)
+			float rotX, float rotY, float rotZ, float scale)
 		: _model(model), _position(position),
 			_rotation(glm::vec3(rotX, rotY, rotZ)), _scale(scale) {}
 
@@ -27,7 +27,7 @@ public:
 			_scale(scale), _textureIndex(textureIndex) {}
 
 	Entity(TexturedModel model, GLuint textureIndex, glm::vec3 position,
-			float rotX, float rotY, float rotZ, float scale);
+			float rotX, float rotY, float rotZ, float scale)
 		: _model(model), _position(position), _textureIndex(textureIndex),
 			_rotation(glm::vec3(rotX, rotY, rotZ)), _scale(scale) {}
 
@@ -71,8 +71,8 @@ public:
 
 	glm::mat4 getModelMatrix() const {
 		glm::mat4 res = glm::mat4(0.0f);
-		res = glm::translate(res, _position.x, _position.y, _position.z);
-		res = glm::scale(res, _scale, _scale, _scale);
+		res = glm::translate(res, _position);
+		res = glm::scale(res, glm::vec3(_scale));
 		
 		static glm::vec3 __xaxis = glm::vec3(1.0, 0.0, 0.0);
 		static glm::vec3 __yaxis = glm::vec3(0.0, 1.0, 0.0);

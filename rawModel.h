@@ -39,7 +39,7 @@ public:
 		if(_useEBO)
 			glDrawElements(GL_TRIANGLES, _vertexNum, GL_UNSIGNED_INT, 0);
 		else
-			glGrawArray(GL_TRIANGLES, 0, _vertexNum);
+			glDrawArrays(GL_TRIANGLES, 0, _vertexNum);
 	}
 
 	void unbindGL()
