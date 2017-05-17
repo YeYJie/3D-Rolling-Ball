@@ -36,4 +36,6 @@ class RawModel;
 
 RawModel LoadObjModel(const char * objFileName);
 
+GLuint LoadCubeMap(const vector<const char *> & cubeMapFileName);
+
 #endif

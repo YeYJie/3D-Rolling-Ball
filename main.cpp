@@ -4,6 +4,7 @@
 #include "entity.h"
 #include "entityRenderer.h"
 #include "shader.h"
+#include "skybox.h"
 #include "terrain.h"
 #include "terrainRenderer.h"
 #include "texture.h"
@@ -107,7 +108,6 @@ int main()
 								glm::vec3(0.0f), 1.0f);
 	entities.push_back(ball);
 
-	// TexturedModel temp(rawModelBall, Texture("box.png"));
 	Entity * shit = new Entity(&texturedBall,
 								glm::vec3(500.0f, 100.0f, 510.0f),
 								glm::vec3(0.0f), 1.0f);
@@ -119,6 +119,10 @@ int main()
 
 	Shader terrainShader("terrain.vs", "terrain.fs");
 	TerrainRenderer terrainRenderer(&terrainShader, projectionMatrix);
+
+	// skybox
+	Shader skyboxShader("skybox.vs", "skybox.fs");
+	SkyboxRenderer skyboxRenderer(&skyboxShader, projectionMatrix);
 
 	// camera
 	Camera * camera = new Camera(ball);
@@ -136,6 +140,12 @@ int main()
 						+ 10.0f * ball->getOrientation());
 
 		glm::mat4 viewMatrix = camera->getViewMatrix();
+
+		// skybox
+		skyboxShader.bindGL();
+		skyboxShader.setViewMatrix(viewMatrix);
+		skyboxRenderer.render();
+		skyboxShader.unbindGL();
 
 		// terrain
 		terrainShader.bindGL();
@@ -159,7 +169,7 @@ int main()
 		mouseScrollOffset = 0;
 
 		glfwSwapBuffers(window);
-		glfwWaitEventsTimeout(1.0/60.0);
+		glfwWaitEventsTimeout(1.0/60);
 	} while(true);
 
 	glfwTerminate();
