@@ -44,13 +44,22 @@ static vector<float> vertex = {
 		1000.0f, -1000.0f, 1000.0f
 };
 
-static vector<const char*> cubeMapFileName = {
+static vector<const char*> cubeMapDayFileName = {
 	"./skybox/right.png", 
 	"./skybox/left.png", 
 	"./skybox/top.png", 
 	"./skybox/bottom.png", 
 	"./skybox/back.png", 
 	"./skybox/front.png"
+};
+
+static vector<const char*> cubeMapNightFileName = {
+	"./skybox/nightRight.png", 
+	"./skybox/nightLeft.png", 
+	"./skybox/nightTop.png", 
+	"./skybox/nightBottom.png", 
+	"./skybox/nightBack.png", 
+	"./skybox/nightFront.png"	
 };
 
 void SkyboxRenderer::initGL()
@@ -68,7 +77,8 @@ void SkyboxRenderer::initGL()
 
 	glBindVertexArray(0);
 
-	_cubeMap = LoadCubeMap(cubeMapFileName);
+	_cubeMapDay = LoadCubeMap(cubeMapDayFileName);
+	_cubeMapNight = LoadCubeMap(cubeMapNightFileName);
 }
 
 void SkyboxRenderer::render() const
@@ -78,11 +88,24 @@ void SkyboxRenderer::render() const
 	glBindVertexArray(_cube);
 	glEnableVertexAttribArray(0);
 
+	// day cubemap
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _cubeMap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _cubeMapDay);
+	_shader->setUniform1i("cubeMapDay", 1);
 
-	// _shader->setUniform1i("cubeMap", 0);
+	// night cubemap
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _cubeMapNight);
+	_shader->setUniform1i("cubeMapNight", 0);
 
+	// blend day and night
+	static float blend = 0;
+	float blendFactor = cos(blend);
+	if(blendFactor < 0) blendFactor = -blendFactor;
+	_shader->setUniform1f("blendFactor", blendFactor);
+	blend += 0.0002f;
+
+	// rotate
 	static float rotate = 0.0f;
 	static glm::vec3 __yaxis = glm::vec3(0.0, 1.0, 0.0);
 	glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.0f), rotate, __yaxis);
@@ -91,7 +114,7 @@ void SkyboxRenderer::render() const
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    // glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	glBindVertexArray(0);
 
     glDepthFunc(GL_LESS);

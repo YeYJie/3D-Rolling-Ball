@@ -29,7 +29,8 @@ private:
 
 	GLuint _cube;
 
-	GLuint _cubeMap;
+	GLuint _cubeMapDay;
+	GLuint _cubeMapNight;
 
 private:
 
