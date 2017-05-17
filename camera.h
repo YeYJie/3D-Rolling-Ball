@@ -3,17 +3,16 @@
 
 #include "include.h"
 #include "ball.h"
+#include "terrain.h"
 
 class Camera
 {
 
 public:
 
-	Camera(const Ball * ball) : _ball(ball) {
-		update();
-	}
+	Camera(const Ball * ball);
 
-	void update();
+	void update(const Terrain & terrain);
 
 	glm::mat4 getViewMatrix() const {
 		return glm::lookAt(_position, _ball->getPosition(),

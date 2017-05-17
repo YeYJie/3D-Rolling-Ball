@@ -45,12 +45,18 @@ static vector<float> vertex = {
 };
 
 static vector<const char*> cubeMapDayFileName = {
-	"./skybox/right.png", 
-	"./skybox/left.png", 
-	"./skybox/top.png", 
-	"./skybox/bottom.png", 
-	"./skybox/back.png", 
-	"./skybox/front.png"
+	// "./skybox/right.png", 
+	// "./skybox/left.png", 
+	// "./skybox/top.png", 
+	// "./skybox/bottom.png", 
+	// "./skybox/back.png", 
+	// "./skybox/front.png"
+	"./skybox/sRight.png", 
+	"./skybox/sLeft.png", 
+	"./skybox/sUp.png", 
+	"./skybox/sDown.png", 
+	"./skybox/sBack.png", 
+	"./skybox/sFront.png"
 };
 
 static vector<const char*> cubeMapNightFileName = {

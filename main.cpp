@@ -134,7 +134,7 @@ int main()
 
 		// do some update
 		ball->update(terrains[0]);
-		camera->update();
+		camera->update(terrains[0]);
 
 		shit->setPosition(ball->getPosition()
 						+ 10.0f * ball->getOrientation());
