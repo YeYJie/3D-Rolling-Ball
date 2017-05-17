@@ -143,7 +143,7 @@ int main()
 
 		// skybox
 		skyboxShader.bindGL();
-		skyboxShader.setViewMatrix(viewMatrix);
+		skyboxShader.setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
 		skyboxRenderer.render();
 		skyboxShader.unbindGL();
 

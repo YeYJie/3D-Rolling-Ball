@@ -19,7 +19,7 @@ void Ball::update(const Terrain & terrain)
 
 	// keyboard
 	glm::vec3 orientation = getOrientation();
-	static const float speed = 1.0f;
+	static const float speed = 10.0f;
 	if(keyPressed == GLFW_KEY_UP || keyPressed == GLFW_KEY_W) {
 		move(orientation.x * speed, 0, orientation.z * speed);
 	}

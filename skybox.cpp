@@ -45,48 +45,13 @@ static vector<float> vertex = {
 };
 
 static vector<const char*> cubeMapFileName = {
-	// "./skybox/right.png", 
-	// "./skybox/left.png", 
-	// "./skybox/top.png", 
-	// "./skybox/bottom.png", 
-	// "./skybox/back.png", 
-	// "./skybox/front.png"
-	"./skybox/cloud9_ft.tga",
-    "./skybox/cloud9_bk.tga",
-    "./skybox/cloud9_dn.tga",
-    "./skybox/cloud9_up.tga",
-    "./skybox/cloud9_rt.tga",
-    "./skybox/cloud9_lf.tga",
+	"./skybox/right.png", 
+	"./skybox/left.png", 
+	"./skybox/top.png", 
+	"./skybox/bottom.png", 
+	"./skybox/back.png", 
+	"./skybox/front.png"
 };
-
-#include "tgaLoader.h"
-static GLuint loadCubemap(const vector<const char *> & faces)
-{
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-
-    for(int i = 0; i < 6; ++i) {
-        TgaFile tga;
-        loadTgaFile(faces[i], &tga);
-
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
-                    tga.colorMode == 3 ? GL_RGB : GL_RGBA,
-                    tga.imageWidth, tga.imageHeight,
-                    0,
-                    tga.colorMode == 3 ? GL_RGB : GL_RGBA,
-                    GL_UNSIGNED_BYTE, tga.imageData);
-    }
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-    return textureID;
-}
 
 void SkyboxRenderer::initGL()
 {
@@ -103,8 +68,7 @@ void SkyboxRenderer::initGL()
 
 	glBindVertexArray(0);
 
-	_cubeMap = loadCubemap(cubeMapFileName);
-	// _cubeMap = LoadCubeMap(cubeMapFileName);
+	_cubeMap = LoadCubeMap(cubeMapFileName);
 }
 
 void SkyboxRenderer::render() const
@@ -117,11 +81,17 @@ void SkyboxRenderer::render() const
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _cubeMap);
 
-	_shader->setUniform1i("cubeMap", 0);
+	// _shader->setUniform1i("cubeMap", 0);
+
+	static float rotate = 0.0f;
+	static glm::vec3 __yaxis = glm::vec3(0.0, 1.0, 0.0);
+	glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.0f), rotate, __yaxis);
+	_shader->setModelMatrix(modelMatrix);
+	rotate += 0.00005f;
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    // glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	glBindVertexArray(0);
 
     glDepthFunc(GL_LESS);

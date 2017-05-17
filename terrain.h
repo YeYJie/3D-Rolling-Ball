@@ -19,6 +19,7 @@ public:
 	void unbindGL() const;
 
 	float getHeight(const int x, const int z) const {
+		if(x < 0 || x >= _size || z < 0 || z >= _size) return 0;
 		return _heightMap[z][x];
 	}
 

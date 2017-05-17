@@ -19,7 +19,7 @@ void Camera::update()
 	if(mouseRightPressed) {
 		float deltay = (_lastY - mouseY) * 0.1;
 		_pitch += deltay;
-		if(_pitch < 5) _pitch = 5;
+		if(_pitch < 0) _pitch = 0;
 		else if(_pitch > 80) _pitch = 80;
 	}
 	_lastY = mouseY;
