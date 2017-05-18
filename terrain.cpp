@@ -197,3 +197,97 @@ void Terrain::loadTexture(const vector<const char*> & textureFiles)
 	for(auto i : textureFiles)
 		_texture.push_back(Texture(LoadTexture(i)));
 }
+
+glm::vec3 Terrain::getGradient(const int x, const int z) const 
+{
+	float tmin = getHeight(x, z);
+	int index = 0;
+	
+	float _1 = getHeight(x, z-1);
+	float _2 = getHeight(x+1, z-1);
+	float _3 = getHeight(x+1, z);
+	float _4 = getHeight(x+1, z+1);
+	float _5 = getHeight(x, z+1);
+	float _6 = getHeight(x-1, z+1);
+	float _7 = getHeight(x-1, z);
+	float _8 = getHeight(x-1, z-1);
+
+	if(tmin > _1)
+		tmin = _1, index = 1;
+	if(tmin > _2)
+		tmin = _2, index = 2;
+	if(tmin > _3)
+		tmin = _3, index = 3;
+	if(tmin > _4)
+		tmin = _4, index = 4;
+	if(tmin > _5)
+		tmin = _5, index = 5;
+	if(tmin > _6)
+		tmin = _6, index = 6;
+	if(tmin > _7)
+		tmin = _7, index = 7;
+	if(tmin > _8)
+		tmin = _8, index = 8;
+
+
+	static float gFactor = 0.3f;
+
+	switch(index) {
+		case 0 : 
+			return glm::vec3(0.0f);
+		case 1 : {
+			float deltaHeight = getHeight(x, z) - _1;
+			// cout << "deltaHeight : " << deltaHeight << endl;
+			if(deltaHeight < gFactor) return glm::vec3(0.0f);
+			return glm::normalize(glm::vec3(0.0f, 0.0f, -1.0f) + deltaHeight * glm::vec3(0.0f, -1.0f, 0.0f));
+		} 
+		case 2 : {
+			float deltaHeight = getHeight(x, z) - _2;
+			// cout << "deltaHeight : " << deltaHeight << endl;
+			if(deltaHeight < gFactor) return glm::vec3(0.0f);
+			return glm::normalize(glm::vec3(1.0f, 0.0f, -1.0f) + deltaHeight * glm::vec3(0.0f, -1.0f, 0.0f));
+		} 
+		case 3 : {
+			float deltaHeight = getHeight(x, z) - _3;
+			// cout << "deltaHeight : " << deltaHeight << endl;
+			if(deltaHeight < gFactor) return glm::vec3(0.0f);
+			return glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f) + deltaHeight * glm::vec3(0.0f, -1.0f, 0.0f));
+		} 
+		case 4 : {
+			float deltaHeight = getHeight(x, z) - _4;
+			// cout << "deltaHeight : " << deltaHeight << endl;
+			if(deltaHeight < gFactor) return glm::vec3(0.0f);
+			return glm::normalize(glm::vec3(1.0f, 0.0f, 1.0f) + deltaHeight * glm::vec3(0.0f, -1.0f, 0.0f));
+		} 
+		case 5 : {
+			float deltaHeight = getHeight(x, z) - _5;
+			// cout << "deltaHeight : " << deltaHeight << endl;
+			if(deltaHeight < gFactor) return glm::vec3(0.0f);
+			return glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f) + deltaHeight * glm::vec3(0.0f, -1.0f, 0.0f));
+		} 
+		case 6 : {
+			float deltaHeight = getHeight(x, z) - _6;
+			// cout << "deltaHeight : " << deltaHeight << endl;
+			if(deltaHeight < gFactor) return glm::vec3(0.0f);
+			return glm::normalize(glm::vec3(-1.0f, 0.0f, 1.0f) + deltaHeight * glm::vec3(0.0f, -1.0f, 0.0f));
+		} 
+		case 7 : {
+			float deltaHeight = getHeight(x, z) - _7;
+			// cout << "deltaHeight : " << deltaHeight << endl;
+			if(deltaHeight < gFactor) return glm::vec3(0.0f);
+			return glm::normalize(glm::vec3(-1.0f, 0.0f, 0.0f) + deltaHeight * glm::vec3(0.0f, -1.0f, 0.0f));
+		} 
+		case 8 : {
+			float deltaHeight = getHeight(x, z) - _8;
+			// cout << "deltaHeight : " << deltaHeight << endl;
+			if(deltaHeight < gFactor) return glm::vec3(0.0f);
+			return glm::normalize(glm::vec3(-1.0f, 0.0f, -1.0f) + deltaHeight * glm::vec3(0.0f, -1.0f, 0.0f));
+		} 
+	}
+}
+
+float Terrain::getHeight(const int x, const int z) const 
+{
+	if(x < 0 || x >= _size || z < 0 || z >= _size) return 0;
+	return _heightMap[z][x];
+}

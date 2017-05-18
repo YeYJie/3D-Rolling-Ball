@@ -72,13 +72,37 @@ public:
 	// 	setPosition(position.x, height, position.z);
 	// }
 
+	glm::vec3 getAccelerationTerrain() const {
+		return _accelerationTerrain;
+	}
+
+	glm::vec3 getAccelerationKeyboard() const {
+		return _accelerationKeyboard;
+	}
+
+	glm::vec3 getAcceleration() const {
+		return _acceleration;
+	}
+
+	glm::vec3 getSpeed() const {
+		return _speed;
+	}
+
 private:
 
 	// glm::vec3 _orientation;
 	float _angleWithX = 270.0f;
 
-	float _currentSpeed = 0;
-	float _turnSpeed = 0;
+	// float _currentSpeed = 0;
+	// float _turnSpeed = 0;
+
+	glm::vec3 _accelerationTerrain;
+
+	glm::vec3 _accelerationKeyboard;
+
+	glm::vec3 _acceleration;
+
+	glm::vec3 _speed = glm::vec3(0.0f);
 
 };
 

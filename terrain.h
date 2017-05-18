@@ -18,10 +18,9 @@ public:
 
 	void unbindGL() const;
 
-	float getHeight(const int x, const int z) const {
-		if(x < 0 || x >= _size || z < 0 || z >= _size) return 0;
-		return _heightMap[z][x];
-	}
+	// TODO : use float parameter
+	glm::vec3 getGradient(const int x, const int z) const;
+	float getHeight(const int x, const int z) const;
 
 	glm::mat4 getModelMatrix() const { return glm::mat4(1.0f); }
 

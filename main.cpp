@@ -108,10 +108,20 @@ int main()
 								glm::vec3(0.0f), 1.0f);
 	entities.push_back(ball);
 
-	Entity * shit = new Entity(&texturedBall,
-								glm::vec3(500.0f, 100.0f, 510.0f),
-								glm::vec3(0.0f), 1.0f);
-	entities.push_back(shit);
+	// Entity * akey = new Entity(&texturedBall,
+	// 							glm::vec3(500.0f, 100.0f, 510.0f),
+	// 							glm::vec3(0.0f), 1.0f);
+	// entities.push_back(akey);
+
+	// Entity * aTerrain = new Entity(&texturedBall,
+	// 							glm::vec3(500.0f, 100.0f, 510.0f),
+	// 							glm::vec3(0.0f), 1.0f);
+	// entities.push_back(aTerrain);
+
+	// Entity * aA = new Entity(&texturedBall,
+	// 							glm::vec3(500.0f, 100.0f, 510.0f),
+	// 							glm::vec3(0.0f), 1.0f);
+	// entities.push_back(aA);
 
 	// terrain
 	vector<Terrain> terrains;
@@ -136,8 +146,15 @@ int main()
 		ball->update(terrains[0]);
 		camera->update(terrains[0]);
 
-		shit->setPosition(ball->getPosition()
-						+ 10.0f * ball->getOrientation());
+		// akey->setPosition(ball->getPosition()
+		// 				+ 10.0f * ball->getAccelerationKeyboard());
+
+		// aTerrain->setPosition(ball->getPosition()
+		// 				+ 10.0f * ball->getAccelerationTerrain());
+
+		// aA->setPosition(ball->getPosition()
+		// 				+ 10.0f * ball->getAcceleration());
+		// aA->move(0.0f, 10.0f, 0.0f);	
 
 		glm::mat4 viewMatrix = camera->getViewMatrix();
 
