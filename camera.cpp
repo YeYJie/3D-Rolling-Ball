@@ -71,7 +71,7 @@ void Camera::update(const Terrain & terrain)
 
 	// cout << "camera : " << _pitch << " " << _distanceFromBall << " " << m << endl;
 	_position.y = max(_position.y, 
-		3 + terrain.getHeight(_position.x, _position.z));
+		3.0f + terrain.getHeight(_position.x, _position.z));
 	// if(_position.y < 10)
 	// 	_position.y = 10;
 }

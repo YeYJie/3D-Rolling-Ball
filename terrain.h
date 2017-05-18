@@ -19,8 +19,12 @@ public:
 	void unbindGL() const;
 
 	// TODO : use float parameter
-	glm::vec3 getGradient(const int x, const int z) const;
+	// glm::vec3 getGradient(const int x, const int z) const;
 	float getHeight(const int x, const int z) const;
+
+	glm::vec3 getGradient(const float x, const float z) const;
+	float getHeight(const float x, const float z) const;
+
 
 	glm::mat4 getModelMatrix() const { return glm::mat4(1.0f); }
 
