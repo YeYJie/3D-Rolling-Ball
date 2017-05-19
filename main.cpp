@@ -136,8 +136,11 @@ int main()
 	// water
 	WaterFrameBuffer * waterFrameBuffer = new WaterFrameBuffer();
 	Shader * waterShader = new Shader("water.vs", "water.fs");
+	Texture * dudvMap = new Texture("dudv2.png");
 	WaterRenderer * waterRenderer = new WaterRenderer(waterShader, 
-										projectionMatrix, waterFrameBuffer);
+										projectionMatrix, 
+										waterFrameBuffer,
+										dudvMap);
 	vector<Water> waters;
 	waters.push_back(Water(40.0f, WATERHEIGHT, 40.0f, 40.0f));
 
@@ -146,6 +149,10 @@ int main()
 	// gui
 	vector<GUI> guis;
 	GUIRenderer guiRenderer;
+
+	// GUI dudvGUI(Texture("dudv.jpg"));
+	// dudvGUI.setPositionAndSize(0, 0, 300, 300);
+	// guis.push_back(dudvGUI);
 
 	// GUI guiReflection(Texture(waterFrameBuffer->getReflectionTexture()));
 	// guiReflection.setPositionAndSize(0, 0, 1000, 1000);
@@ -157,7 +164,7 @@ int main()
 
 
 	glViewport(0, 0, WIDTH, HEIGHT);
-	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	do {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -212,10 +219,10 @@ int main()
 		waterFrameBuffer->bindRefractionBuffer();
 
 				// skybox
-				skyboxShader.bindGL();
-				skyboxShader.setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
-				skyboxRenderer.render();
-				skyboxShader.unbindGL();
+				// skyboxShader.bindGL();
+				// skyboxShader.setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
+				// skyboxRenderer.render();
+				// skyboxShader.unbindGL();
 
 				// terrain
 				terrainShader.bindGL();
@@ -225,11 +232,11 @@ int main()
 				terrainShader.unbindGL();
 
 				// entity
-				entityShader.bindGL();
-				entityShader.setUniform4f("clipPlane", 0, -1, 0, 20);
-				entityShader.setViewMatrix(viewMatrix);
-				entityRenderer.render(entities);
-				entityShader.unbindGL();
+				// entityShader.bindGL();
+				// entityShader.setUniform4f("clipPlane", 0, -1, 0, 20);
+				// entityShader.setViewMatrix(viewMatrix);
+				// entityRenderer.render(entities);
+				// entityShader.unbindGL();
 
 		glDisable(GL_CLIP_DISTANCE0);
 		// render to screen
@@ -262,7 +269,7 @@ int main()
 		waterRenderer->render(waters, camera);
 
 		// gui
-		// guiRenderer.render(guis);
+		guiRenderer.render(guis);
 
 
 		// some shit

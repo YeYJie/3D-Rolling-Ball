@@ -4,6 +4,7 @@
 #include "include.h"
 #include "shader.h"
 #include "camera.h"
+#include "texture.h"
 
 class Water
 {
@@ -82,8 +83,10 @@ class WaterRenderer
 
 public:
 
-	WaterRenderer(Shader * shader, glm::mat4 projectionMatrix,
-					WaterFrameBuffer * waterFrameBuffer);
+	WaterRenderer(Shader * shader, 
+					glm::mat4 projectionMatrix,
+					WaterFrameBuffer * waterFrameBuffer,
+					Texture * dudv);
 
 	void render(const vector<Water> & waters,
 				const Camera * camera) const;
@@ -96,6 +99,8 @@ private:
 
 	GLuint _VAO;
 	GLuint _VBO;
+
+	Texture * _dudv;
 
 private:
 

@@ -2,7 +2,7 @@
 
 layout(location=0)in vec3 position;
 
-// out vec2 textCoords;
+out vec2 textCoords;
 
 out vec4 clipSpace;
 // out vec2 textureCoords;
@@ -25,20 +25,7 @@ void main(void) {
 
 	gl_Position = temp;
 
-	
-	
-	// textCoords = vec2((temp.x + 1.0f) / 2.0f, 
-	// 					1.0f - (temp.z + 1.0f) / 2.0f);
-
-	// vec4 worldPosition = modelMatrix * vec4(position.x, 0.0, position.y, 1.0);
-	// clipSpace = projectionMatrix * viewMatrix * worldPosition;
-	// gl_Position = clipSpace;
- // 	textureCoords = vec2(position.x / 2.0 + 0.5, position.y / 2.0 + 0.5) * tiling;
- // 	toCameraVector = cameraPosition - worldPosition.xyz;
- // 	fromLightVector = worldPosition.xyz - lightPosition;
- 	
-
- 	// textCoords = vec2(position.x / 2000.0 + 0.5, position.z / 2000.0 + 0.5) * 4.0;
+ 	textCoords = vec2(position.x / 2.0f + 0.5f, position.z / 2.0f + 0.5f) * 2.0f;
 
  	clipSpace = temp;
 

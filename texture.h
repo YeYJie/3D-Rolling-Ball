@@ -8,6 +8,8 @@ class Texture
 
 public:
 
+	Texture() = default;
+
 	Texture(GLuint textureID) : _textureID(textureID) {}
 
 	Texture(const char * textureFileName) {

@@ -125,15 +125,21 @@ GLuint WaterFrameBuffer::getRefractionTexture() const
 ************************************************/
 
 WaterRenderer::WaterRenderer(Shader * shader, glm::mat4 projectionMatrix,
-								WaterFrameBuffer * waterFrameBuffer)
+								WaterFrameBuffer * waterFrameBuffer, 
+								Texture * dudv)
+	// : _dudv("dudv.png")
 {
 	_shader = shader;
 	_waterFrameBuffer = waterFrameBuffer;
+	// _dudv = new Texture("dudv.png");
+	_dudv = dudv;
+
 	_shader->bindGL();
 	_shader->setProjectionMatrix(projectionMatrix);
 
 	_shader->setUniform1i("reflectionTexture", 0);
 	_shader->setUniform1i("refractionTexture", 1);
+	_shader->setUniform1i("dudvTexture", 2);
 
 	_shader->unbindGL();
 	initGL();
@@ -171,20 +177,29 @@ void WaterRenderer::render(const vector<Water> & waters,
 	_shader->bindGL();
 	_shader->setViewMatrix(camera->getViewMatrix());
 
+	static float distortionOffset = 0.0f;
+	_shader->setUniform1f("distortionOffset", distortionOffset);
+	distortionOffset += 0.0001f;
+	// distortionOffset %= 1;
+	if(distortionOffset > 1.0f) distortionOffset -= 1.0f;
+
 	glBindVertexArray(_VAO);
 
 	glActiveTexture(GL_TEXTURE0);
-	// glBindTexture(GL_TEXTURE_2D, fbos.getReflectionTexture());
 	glBindTexture(GL_TEXTURE_2D, _waterFrameBuffer->getReflectionTexture());
+
 	glActiveTexture(GL_TEXTURE1);
-	// glBindTexture(GL_TEXTURE_2D, fbos.getRefractionTexture());
 	glBindTexture(GL_TEXTURE_2D, _waterFrameBuffer->getRefractionTexture());
+
 	// glActiveTexture(GL_TEXTURE2);
 	// glBindTexture(GL_TEXTURE_2D, dudvTexture);
+	_dudv->bindGL(2);
+
 	// glActiveTexture(GL_TEXTURE3);
 	// glBindTexture(GL_TEXTURE_2D, normalMap);
 	// glActiveTexture(GL_TEXTURE4);
 	// glBindTexture(GL_TEXTURE_2D, fbos.getRefractionDepthTexture());
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
