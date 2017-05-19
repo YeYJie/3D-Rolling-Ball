@@ -59,8 +59,8 @@ void Ball::update(const Terrain & terrain)
 	_accelerationTerrain = terrain.getGradient(getPositionX(), getPositionZ());
 	_accelerationTerrain *= 0.1f;
 
-	_acceleration = _accelerationTerrain + _accelerationKeyboard + friction;
-	// _acceleration = _accelerationKeyboard + friction;
+	// _acceleration = _accelerationTerrain + _accelerationKeyboard + friction;
+	_acceleration = _accelerationKeyboard + friction;
 
 	// cout << _speed.x << " " << _speed.y << " " <<  _speed.z << " "
 	// 	<< friction.x << " " << friction.y << " " << friction.z << endl;
@@ -72,4 +72,6 @@ void Ball::update(const Terrain & terrain)
 	move(_speed * t);
 
 	setPositionY(terrain.getHeight(getPositionX(), getPositionZ()));
+
+	// cout << "ball height : " << getPositionY() << " " <<  getPositionX() << " " << getPositionZ() << endl; 
 }

@@ -40,7 +40,7 @@ private:
 	GLuint _indicesNum;
 
 
-	int _size = 1024;
+	int _size = 100;
 
 	glm::vec3 _position = glm::vec3(0.0f);
 

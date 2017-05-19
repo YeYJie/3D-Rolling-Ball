@@ -65,6 +65,15 @@ public:
 		setUniform3f(name, v.x, v.y, v.z);
 	}
 
+	void setUniform4f(const char * name, float x, float y, float z, float w) {
+		GLint location = glGetUniformLocation(_programID, name);
+		glUniform4f(location, x, y, z, w);
+	}
+
+	void setUniform4f(const char * name, glm::vec4 v) {
+		setUniform4f(name, v.x, v.y, v.z, v.w);
+	}
+
 	void setUniformMatrix4fv(const char * name, const glm::mat4 & mat) {
 		GLint location = glGetUniformLocation(_programID, name);
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));

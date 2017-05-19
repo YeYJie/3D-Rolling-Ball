@@ -14,19 +14,19 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-uniform vec4 clippingPlane;
+uniform vec4 clipPlane;
 
 void main()
 {
 	gl_Position = projection * view * model * vec4(position, 1.0f);
 
-	gl_ClipDistance[0] = dot(vec4(position, 1.0f), clippingPlane);
+	gl_ClipDistance[0] = dot(model * vec4(position, 1), clipPlane);
 
 	FragPos = vec3(model * vec4(position, 1.0f));
 	Normal = mat3(transpose(inverse(model))) * normal;
 
 	TextCoords = textCoords;
 
-	frag = position.y / 200.0;
+	frag = position.y / 30.0;
 	// frag2 = 1 - frag1;
 }

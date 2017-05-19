@@ -13,9 +13,13 @@ out vec3 FragPos;
 
 out vec2 fs_textCoords;
 
+uniform vec4 clipPlane;
+
 void main()
 {
 	gl_Position =  projection * view * model * vec4(position, 1);
+
+	gl_ClipDistance[0] = dot(model * vec4(position, 1), clipPlane);
 
     FragPos = vec3(model * vec4(position, 1.0f));
     Normal = mat3(transpose(inverse(model))) * normal;

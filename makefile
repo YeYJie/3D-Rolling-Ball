@@ -1,5 +1,6 @@
-CFLAGS = -g -std=c++11
-CFLAGS += $(shell pkg-config --cflags glfw3)
+CXX = g++
+CXXFLAGS = -g -std=c++11
+CXXFLAGS += $(shell pkg-config --cflags glfw3)
 # CFLAGS += $(shell pkg-config --cflags assimp)
 # LDFLAGS = $(shell pkg-config --cflags --static --libs freetype2) -lharfbuzz
 LDFLAGS += $(shell pkg-config --static --libs glfw3)
@@ -7,11 +8,15 @@ LDFLAGS += $(shell pkg-config --static --libs glfw3)
 LDFLAGS +=  -lSOIL
 LDFLAGS += -lGLEW -lGLU -lGL
 # CPPFILES = $(wildcard *.cpp)
-CPPFILES = main.cpp terrain.cpp loader.cpp camera.cpp ball.cpp skybox.cpp \
-			gui.cpp
 
-all :
-	g++ $(CFLAGS) -o rollingBall $(CPPFILES) $(LDFLAGS)
+OBJS = main.o terrain.o loader.o camera.o ball.o skybox.o \
+			gui.o water.o
+
+.cpp.o:
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+all : $(OBJS)
+	$(CXX) -o rollingBall $(OBJS) $(CXXFLAGS) $(LDFLAGS)
 
 clean:
-	rm ./rollingBall
+	rm -f *.o ./rollingBall

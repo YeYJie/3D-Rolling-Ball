@@ -9,9 +9,12 @@
 #include "terrainRenderer.h"
 #include "texture.h"
 #include "gui.h"
+#include "water.h"
 
 extern const int WIDTH = 1000;
 extern const int HEIGHT = 1000;
+
+extern const float WATERHEIGHT = 20;
 
 // Keyboard and Mouse
 //
@@ -53,7 +56,6 @@ void onMouseButton(GLFWwindow* window, int button, int action, int mods)
 
 void onMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
 {
-	// cout << "scroll : " << yoffset << endl;
 	mouseScrollOffset = yoffset;
 }
 
@@ -90,8 +92,6 @@ int main()
 	InitCallbacks(window);
 
 	glEnable(GL_DEPTH_TEST);
-	// glEnable(GL_BLEND);
-	// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
 	glm::mat4 projectionMatrix = glm::perspective(45.0f, 1.0f, 0.1f, 10000.0f);
@@ -105,24 +105,18 @@ int main()
 	RawModel rawModelBall = LoadObjModel("ball.obj");
 	TexturedModel texturedBall(rawModelBall, Texture("box.png"));
 	Ball * ball = new Ball(&texturedBall, 
-								glm::vec3(500.0f, 100.f, 500.0f),
+								glm::vec3(3.0f, 0.0f, 3.0f),
+								// glm::vec3(82.0f, 100.f, 70.0f),
 								glm::vec3(0.0f), 1.0f);
 	entities.push_back(ball);
-
-	// Entity * akey = new Entity(&texturedBall,
-	// 							glm::vec3(500.0f, 100.0f, 510.0f),
-	// 							glm::vec3(0.0f), 1.0f);
-	// entities.push_back(akey);
-
-	// Entity * aTerrain = new Entity(&texturedBall,
-	// 							glm::vec3(500.0f, 100.0f, 510.0f),
-	// 							glm::vec3(0.0f), 1.0f);
-	// entities.push_back(aTerrain);
-
-	// Entity * aA = new Entity(&texturedBall,
-	// 							glm::vec3(500.0f, 100.0f, 510.0f),
-	// 							glm::vec3(0.0f), 1.0f);
-	// entities.push_back(aA);
+	TexturedModel * texturedTree = new TexturedModel(
+										LoadObjModel("tree.obj"),
+										Texture("tree.png")
+									);
+	Entity * tree = new Entity(texturedTree,
+								glm::vec3(15.0f, 25.0f, 15.0f),
+								glm::vec3(0.0f), 1.0f);
+	entities.push_back(tree);
 
 	// terrain
 	vector<Terrain> terrains;
@@ -135,15 +129,32 @@ int main()
 	Shader skyboxShader("skybox.vs", "skybox.fs");
 	SkyboxRenderer skyboxRenderer(&skyboxShader, projectionMatrix);
 
+
 	// camera
 	Camera * camera = new Camera(ball);
+
+	// water
+	WaterFrameBuffer * waterFrameBuffer = new WaterFrameBuffer();
+	Shader * waterShader = new Shader("water.vs", "water.fs");
+	WaterRenderer * waterRenderer = new WaterRenderer(waterShader, 
+										projectionMatrix, waterFrameBuffer);
+	vector<Water> waters;
+	waters.push_back(Water(40.0f, WATERHEIGHT, 40.0f, 40.0f));
+
+
 
 	// gui
 	vector<GUI> guis;
 	GUIRenderer guiRenderer;
-	GUI gui1(Texture("box.png"));
-	gui1.setPositionAndSize(100, 100, 100, 100);
-	guis.push_back(gui1);
+
+	// GUI guiReflection(Texture(waterFrameBuffer->getReflectionTexture()));
+	// guiReflection.setPositionAndSize(0, 0, 1000, 1000);
+	// guis.push_back(guiReflection);
+
+	// GUI guiRefraction(Texture(waterFrameBuffer->getRefractionTexture()));
+	// guiRefraction.setPositionAndSize(600, 0, 400, 400);
+	// guis.push_back(guiRefraction);
+
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
@@ -154,42 +165,105 @@ int main()
 		ball->update(terrains[0]);
 		camera->update(terrains[0]);
 
-		// akey->setPosition(ball->getPosition()
-		// 				+ 10.0f * ball->getAccelerationKeyboard());
 
-		// aTerrain->setPosition(ball->getPosition()
-		// 				+ 10.0f * ball->getAccelerationTerrain());
+		glm::vec3 cameraPostion = camera->getPosition();
+		glm::vec3 ballPosition = ball->getPosition();
 
-		// aA->setPosition(ball->getPosition()
-		// 				+ 10.0f * ball->getAcceleration());
-		// aA->move(0.0f, 10.0f, 0.0f);	
-
+		float ballDistanceFromWater = ballPosition.y - WATERHEIGHT;
+		ball->setPosition(ballPosition.x,
+							ballPosition.y - 2 * ballDistanceFromWater,
+							ballPosition.z);
+		float cameraDistanceFromWater = cameraPostion.y - WATERHEIGHT;
+		camera->setPosition(cameraPostion.x, 
+							cameraPostion.y - 2 * cameraDistanceFromWater,
+							cameraPostion.z);
 		glm::mat4 viewMatrix = camera->getViewMatrix();
 
-		// skybox
-		skyboxShader.bindGL();
-		skyboxShader.setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
-		skyboxRenderer.render();
-		skyboxShader.unbindGL();
 
-		// terrain
-		terrainShader.bindGL();
-		terrainShader.setViewMatrix(viewMatrix);
-		terrainRenderer.render(terrains);
-		terrainShader.unbindGL();
+		glEnable(GL_CLIP_DISTANCE0);
+		// water render to reflection buffer
+		waterFrameBuffer->bindReflectionBuffer();
 
-		// entity
-		entityShader.bindGL();
-		entityShader.setViewMatrix(viewMatrix);
-		entityRenderer.render(entities);
-		entityShader.unbindGL();
+				// skybox
+				skyboxShader.bindGL();
+				skyboxShader.setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
+				skyboxRenderer.render();
+				skyboxShader.unbindGL();
+
+				// terrain
+				terrainShader.bindGL();
+				terrainShader.setUniform4f("clipPlane", 0, 1, 0, -20);
+				terrainShader.setViewMatrix(viewMatrix);
+				terrainRenderer.render(terrains);
+				terrainShader.unbindGL();
+
+				// entity
+				entityShader.bindGL();
+				entityShader.setUniform4f("clipPlane", 0, 1, 0, 20);
+				entityShader.setViewMatrix(viewMatrix);
+				entityRenderer.render(entities);
+				entityShader.unbindGL();
+
+		ball->setPosition(ballPosition);
+		camera->setPosition(cameraPostion);
+		viewMatrix = camera->getViewMatrix();
+
+		// water render to refraction buffer
+		waterFrameBuffer->bindRefractionBuffer();
+
+				// skybox
+				skyboxShader.bindGL();
+				skyboxShader.setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
+				skyboxRenderer.render();
+				skyboxShader.unbindGL();
+
+				// terrain
+				terrainShader.bindGL();
+				terrainShader.setUniform4f("clipPlane", 0, -1, 0, 20);
+				terrainShader.setViewMatrix(viewMatrix);
+				terrainRenderer.render(terrains);
+				terrainShader.unbindGL();
+
+				// entity
+				entityShader.bindGL();
+				entityShader.setUniform4f("clipPlane", 0, -1, 0, 20);
+				entityShader.setViewMatrix(viewMatrix);
+				entityRenderer.render(entities);
+				entityShader.unbindGL();
+
+		glDisable(GL_CLIP_DISTANCE0);
+		// render to screen
+		waterFrameBuffer->unbindCurrentFrameBuffer();
+
+				// skybox
+				skyboxShader.bindGL();
+				skyboxShader.setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
+				skyboxRenderer.render();
+				skyboxShader.unbindGL();
+
+				// terrain
+				terrainShader.bindGL();
+				terrainShader.setViewMatrix(viewMatrix);
+				terrainRenderer.render(terrains);
+				terrainShader.unbindGL();
+
+				// entity
+				entityShader.bindGL();
+				entityShader.setViewMatrix(viewMatrix);
+				entityRenderer.render(entities);
+				entityShader.unbindGL();
+
+
 
 		static float rx = 0;
 		ball->setRotation(rx, 0.0f, 0.0f);
 		rx += 0.005f;
 
+		waterRenderer->render(waters, camera);
+
 		// gui
-		guiRenderer.render(guis);
+		// guiRenderer.render(guis);
+
 
 		// some shit
 

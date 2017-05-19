@@ -91,8 +91,10 @@ void Terrain::loadHeightMap(const char * heightMapFileName)
 								&width, &height, &channels, SOIL_LOAD_L);
 	int index = 0;
 	for(int i = 0; i < height; ++i) {
-		for(int j = 0; j < width; ++j)
-			_heightMap[i][j] = float(256 - imgData[index++]) / 255.0 * 200.0;
+		for(int j = 0; j < width; ++j) {
+			_heightMap[i][j] = float(256 - imgData[index++]) / 255.0 * 100.0;
+			// if(_heightMap[i][j] > 32) _heightMap[i][j] = 32;
+		}
 	}
 	SOIL_free_image_data(imgData);
 
@@ -124,9 +126,10 @@ void Terrain::loadHeightMap(const char * heightMapFileName)
 		}
 	}
 
-	for(int z = 0; z < _size - 1; ++z)
+	// I dont know why 5 works and any < 5 doesnt works
+	for(int z = 0; z < _size - 5; ++z)
 	{
-		for(int x = 0; x < _size - 1; ++x)
+		for(int x = 0; x < _size - 5; ++x)
 		{
 			int topLeft = z * _size + x;
 			int topRight = topLeft + 1;
