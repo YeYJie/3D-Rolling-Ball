@@ -8,6 +8,7 @@
 #include "terrain.h"
 #include "terrainRenderer.h"
 #include "texture.h"
+#include "gui.h"
 
 extern const int WIDTH = 1000;
 extern const int HEIGHT = 1000;
@@ -137,6 +138,13 @@ int main()
 	// camera
 	Camera * camera = new Camera(ball);
 
+	// gui
+	vector<GUI> guis;
+	GUIRenderer guiRenderer;
+	GUI gui1(Texture("box.png"));
+	gui1.setPositionAndSize(100, 100, 100, 100);
+	guis.push_back(gui1);
+
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 	do {
@@ -179,6 +187,9 @@ int main()
 		static float rx = 0;
 		ball->setRotation(rx, 0.0f, 0.0f);
 		rx += 0.005f;
+
+		// gui
+		guiRenderer.render(guis);
 
 		// some shit
 
