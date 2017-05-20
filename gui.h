@@ -24,6 +24,7 @@ public:
 	void bindGL() const;
 
 	void unbindGL() const;
+
 private:
 
 	Texture _texture;

@@ -10,6 +10,7 @@
 #include "texture.h"
 #include "gui.h"
 #include "water.h"
+#include "textRenderer.h"
 
 extern const int WIDTH = 1000;
 extern const int HEIGHT = 1000;
@@ -151,8 +152,8 @@ int main()
 	vector<GUI> guis;
 	GUIRenderer guiRenderer;
 
-	// GUI dudvGUI(Texture("dudv.jpg"));
-	// dudvGUI.setPositionAndSize(0, 0, 300, 300);
+	// GUI dudvGUI(Texture("tree.png"));
+	// dudvGUI.setPositionAndSize(100, 100, 300, 300);
 	// guis.push_back(dudvGUI);
 
 	// GUI guiReflection(Texture(waterFrameBuffer->getReflectionTexture()));
@@ -163,6 +164,13 @@ int main()
 	// guiRefraction.setPositionAndSize(600, 0, 400, 400);
 	// guis.push_back(guiRefraction);
 
+	// Text
+	TextRenderer * textRenderer = new TextRenderer("Ubuntu-B.ttf");
+	// Text * yeyongjie = new Text("yeyongjie");
+	vector<Text*> texts;
+	texts.push_back(new Text("ye yong jie", 100, 100, 1, 
+								glm::vec3(1.0f, 1.0f, 0.0f)));
+	texts.push_back(new Text("jie", 100, 300, 3));
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -270,15 +278,14 @@ int main()
 
 		waterShader->bindGL();
 		waterShader->setUniform3f("viewPosition", cameraPostion);
-		// waterShader->setUniform3f("shitC", 0.0246739, 0.794918, 0.606215);
-		// cameraPostion = glm::normalize(cameraPostion);
-		// cout << cameraPostion.x << " " << cameraPostion.y << " " << cameraPostion.z << endl;
 		waterRenderer->render(waters, camera);
 		waterShader->unbindGL();
 
 		// gui
 		guiRenderer.render(guis);
 
+		// text
+		textRenderer->render(texts);
 
 		// some shit
 
