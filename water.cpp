@@ -126,13 +126,12 @@ GLuint WaterFrameBuffer::getRefractionTexture() const
 
 WaterRenderer::WaterRenderer(Shader * shader, glm::mat4 projectionMatrix,
 								WaterFrameBuffer * waterFrameBuffer, 
-								Texture * dudv)
-	// : _dudv("dudv.png")
+								Texture * dudv, Texture * normal)
 {
 	_shader = shader;
 	_waterFrameBuffer = waterFrameBuffer;
-	// _dudv = new Texture("dudv.png");
 	_dudv = dudv;
+	_normal = normal;
 
 	_shader->bindGL();
 	_shader->setProjectionMatrix(projectionMatrix);
@@ -140,6 +139,7 @@ WaterRenderer::WaterRenderer(Shader * shader, glm::mat4 projectionMatrix,
 	_shader->setUniform1i("reflectionTexture", 0);
 	_shader->setUniform1i("refractionTexture", 1);
 	_shader->setUniform1i("dudvTexture", 2);
+	_shader->setUniform1i("normalMap", 3);
 
 	_shader->unbindGL();
 	initGL();
@@ -179,7 +179,7 @@ void WaterRenderer::render(const vector<Water> & waters,
 
 	static float distortionOffset = 0.0f;
 	_shader->setUniform1f("distortionOffset", distortionOffset);
-	distortionOffset += 0.0001f;
+	distortionOffset += 0.00005f;
 	// distortionOffset %= 1;
 	if(distortionOffset > 1.0f) distortionOffset -= 1.0f;
 
@@ -194,7 +194,7 @@ void WaterRenderer::render(const vector<Water> & waters,
 	// glActiveTexture(GL_TEXTURE2);
 	// glBindTexture(GL_TEXTURE_2D, dudvTexture);
 	_dudv->bindGL(2);
-
+	_normal->bindGL(3);
 	// glActiveTexture(GL_TEXTURE3);
 	// glBindTexture(GL_TEXTURE_2D, normalMap);
 	// glActiveTexture(GL_TEXTURE4);

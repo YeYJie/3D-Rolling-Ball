@@ -105,7 +105,7 @@ int main()
 	RawModel rawModelBall = LoadObjModel("ball.obj");
 	TexturedModel texturedBall(rawModelBall, Texture("box.png"));
 	Ball * ball = new Ball(&texturedBall, 
-								glm::vec3(3.0f, 0.0f, 3.0f),
+								glm::vec3(40.0f, 0.0f, 40.0f),
 								// glm::vec3(82.0f, 100.f, 70.0f),
 								glm::vec3(0.0f), 1.0f);
 	entities.push_back(ball);
@@ -137,10 +137,11 @@ int main()
 	WaterFrameBuffer * waterFrameBuffer = new WaterFrameBuffer();
 	Shader * waterShader = new Shader("water.vs", "water.fs");
 	Texture * dudvMap = new Texture("dudv2.png");
+	Texture * normalMap = new Texture("normal.png");
 	WaterRenderer * waterRenderer = new WaterRenderer(waterShader, 
 										projectionMatrix, 
 										waterFrameBuffer,
-										dudvMap);
+										dudvMap, normalMap);
 	vector<Water> waters;
 	waters.push_back(Water(40.0f, WATERHEIGHT, 40.0f, 40.0f));
 
@@ -257,6 +258,7 @@ int main()
 				// entity
 				entityShader.bindGL();
 				entityShader.setViewMatrix(viewMatrix);
+				entityShader.setUniform3f("viewPosition", cameraPostion);
 				entityRenderer.render(entities);
 				entityShader.unbindGL();
 
@@ -266,7 +268,13 @@ int main()
 		ball->setRotation(rx, 0.0f, 0.0f);
 		rx += 0.005f;
 
+		waterShader->bindGL();
+		waterShader->setUniform3f("viewPosition", cameraPostion);
+		// waterShader->setUniform3f("shitC", 0.0246739, 0.794918, 0.606215);
+		// cameraPostion = glm::normalize(cameraPostion);
+		// cout << cameraPostion.x << " " << cameraPostion.y << " " << cameraPostion.z << endl;
 		waterRenderer->render(waters, camera);
+		waterShader->unbindGL();
 
 		// gui
 		guiRenderer.render(guis);

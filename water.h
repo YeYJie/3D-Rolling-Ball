@@ -86,7 +86,8 @@ public:
 	WaterRenderer(Shader * shader, 
 					glm::mat4 projectionMatrix,
 					WaterFrameBuffer * waterFrameBuffer,
-					Texture * dudv);
+					Texture * dudv,
+					Texture * normal);
 
 	void render(const vector<Water> & waters,
 				const Camera * camera) const;
@@ -101,6 +102,7 @@ private:
 	GLuint _VBO;
 
 	Texture * _dudv;
+	Texture * _normal;
 
 private:
 
