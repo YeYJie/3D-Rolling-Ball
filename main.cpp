@@ -173,7 +173,8 @@ int main()
 	// 							glm::vec3(1.0f, 1.0f, 0.0f)));
 	// texts.push_back(new Text("Y", 100, 300, 10));
 	float scaleFactor = 10.0f;
-	texts.push_back(new Text(L"ye yongjie", 0, 0, scaleFactor, scaleFactor));
+	texts.push_back(new Text(L"ye yongjie", 0, 0, scaleFactor, scaleFactor,
+						glm::vec3(0.0f, 1.0f, 1.0f)));
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

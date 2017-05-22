@@ -16,7 +16,5 @@ void main(void)
 	float distance = 1.0 - texture(guiTexture, textCoords).a;
 	float alpha = 1.0 - smoothstep(width, width + edge, distance);
 
-	// color = vec4(textColor, texture(guiTexture, textCoords).r);
-	// color = texture(guiTexture, textCoords);
-	color = vec4(1.0f, 0.0f, 0.0f, alpha);
+	color = vec4(textColor, alpha);
 }
