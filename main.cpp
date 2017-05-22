@@ -166,14 +166,14 @@ int main()
 
 	// Text
 	// TextRenderer * textRenderer = new TextRenderer("Ubuntu-B.ttf", TEXT_TTF());
-	TextRenderer * textRenderer = new TextRenderer("text.fnt", "text.png", TEXT_SDF());
+	TextRenderer * textRenderer = new TextRenderer("arial.fnt", "arial.png", TEXT_SDF());
 	// Text * yeyongjie = new Text("yeyongjie");
 	vector<Text*> texts;
 	// texts.push_back(new Text("ye yong jie", 100, 100, 1, 
 	// 							glm::vec3(1.0f, 1.0f, 0.0f)));
 	// texts.push_back(new Text("Y", 100, 300, 10));
-	float scaleFactor = 1.0f;
-	texts.push_back(new Text(L"ye yongjie -  叶永杰", 100, 100, scaleFactor, scaleFactor));
+	float scaleFactor = 10.0f;
+	texts.push_back(new Text(L"ye yongjie", 0, 0, scaleFactor, scaleFactor));
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

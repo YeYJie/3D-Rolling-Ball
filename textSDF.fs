@@ -8,9 +8,15 @@ uniform vec3 textColor;
 
 uniform sampler2D guiTexture;
 
+const float width = 0.5;
+const float edge = 0.01;
+
 void main(void) 
 {
+	float distance = 1.0 - texture(guiTexture, textCoords).a;
+	float alpha = 1.0 - smoothstep(width, width + edge, distance);
+
 	// color = vec4(textColor, texture(guiTexture, textCoords).r);
-	color = texture(guiTexture, textCoords);
-	// color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	// color = texture(guiTexture, textCoords);
+	color = vec4(1.0f, 0.0f, 0.0f, alpha);
 }
