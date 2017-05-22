@@ -71,7 +71,7 @@ void Ball::update(const Terrain & terrain)
 
 	move(_speed * t);
 
-	setPositionY(terrain.getHeight(getPositionX(), getPositionZ()));
+	setPositionY(5 + terrain.getHeight(getPositionX(), getPositionZ()));
 
 	// cout << "ball height : " << getPositionY() << " " <<  getPositionX() << " " << getPositionZ() << endl; 
 }

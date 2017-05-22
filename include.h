@@ -38,4 +38,9 @@ RawModel LoadObjModel(const char * objFileName);
 
 GLuint LoadCubeMap(const vector<const char *> & cubeMapFileName);
 
+vector<string> &split(const string &s, char delim, 
+					vector<string> &elems);
+
+vector<string> split(const string &s, char delim);
+
 #endif

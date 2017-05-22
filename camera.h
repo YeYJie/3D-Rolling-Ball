@@ -35,7 +35,7 @@ private:
 	glm::vec3 _position;
 
 	float _pitch = 45.0f;
-	float _distanceFromBall = 100.0f;
+	float _distanceFromBall = 20.0f;
 	// float _angleWithX = 1.0f;
 
 };

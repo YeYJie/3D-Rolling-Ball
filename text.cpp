@@ -1,10 +1,65 @@
 #include "textRenderer.h"
 
-TextRenderer::TextRenderer(const char * ttf)
+static map<int, SDFChar> parsefnt(const char * fnt)
 {
-	_shader = new Shader("text.vs", "text.fs");
-	initGL();
+	cout << "loading fnt : " << fnt << endl;
 
+	map<int, SDFChar> charMap;
+
+	ifstream fntFile(fnt, ios::in);
+	if(fntFile.is_open())
+	{
+		string line = "";
+		// discard the first line
+		getline(fntFile, line);
+		// the second line, we can get texture image's width and height
+		getline(fntFile, line);
+		// discard the third and forth line
+		getline(fntFile, line);
+		getline(fntFile, line);
+
+		while(true) {
+			getline(fntFile, line);
+
+			if(line.empty())
+				break;
+
+			vector<string> currentLine = split(line, ' ');
+			if(currentLine.size() != 11)
+				break;
+
+			// string sid = currentLine[1];
+			int id = atoi(currentLine[1].c_str() + 3);
+			SDFChar currentChar(
+					id,
+					atoi(currentLine[2].c_str() + 2),
+					atoi(currentLine[3].c_str() + 2),
+					atoi(currentLine[4].c_str() + 6),
+					atoi(currentLine[5].c_str() + 7),
+					atoi(currentLine[6].c_str() + 8),
+					atoi(currentLine[7].c_str() + 8),
+					atoi(currentLine[8].c_str() + 9)
+				);
+
+			charMap.insert(pair<int, SDFChar>(id, currentChar));
+
+		}
+	}
+	return charMap;
+}
+
+TextRenderer::TextRenderer(const char * fnt, const char * png, TEXT_SDF)
+	: _textAtlas(png)
+{
+	_useSDF = true;
+	_shader = new Shader("textSDF.vs", "textSDF.fs");
+	initGL();
+	_SDFcharMap = parsefnt(fnt);
+}
+
+static map<char, TTFChar> parsettf(const char * ttf)
+{
+	map<char, TTFChar> TTFcharMap;
     FT_Library ft;
     if (FT_Init_FreeType(&ft))
         std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
@@ -39,15 +94,25 @@ TextRenderer::TextRenderer(const char * ttf)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        Char temp = {Texture(texture),
+        TTFChar temp = {Texture(texture),
             glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
             glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
             (GLuint)face->glyph->advance.x};
-        _charMap.insert(pair<char, Char>(c, temp));
+        TTFcharMap.insert(pair<char, TTFChar>(c, temp));
     }
 
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
+
+    return TTFcharMap;
+}
+
+TextRenderer::TextRenderer(const char * ttf, TEXT_TTF)
+{
+	_useSDF = false;
+	_shader = new Shader("textTTF.vs", "textTTF.fs");
+	initGL();
+	_TTFcharMap = parsettf(ttf);
 }
 
 void TextRenderer::initGL()
@@ -57,9 +122,9 @@ void TextRenderer::initGL()
 	glGenVertexArrays(1, &_VAO);
 	glBindVertexArray(_VAO);
 
-	GLuint VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// GLuint VBO;
+	glGenBuffers(1, &_positionVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _positionVBO);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), 
 									vertices.data(), GL_STATIC_DRAW);
 
@@ -70,6 +135,14 @@ void TextRenderer::initGL()
 }
 
 void TextRenderer::render(const vector<Text*> texts)
+{
+	if(_useSDF)
+		renderSDF(texts);
+	else
+		renderTTF(texts);
+}
+
+void TextRenderer::renderTTF(const vector<Text*> texts)
 {
 	_shader->bindGL();
 
@@ -94,15 +167,15 @@ void TextRenderer::render(const vector<Text*> texts)
 
 		// calculate offset
 		float totalAdvance = 0.0f;
-		if(_charMap[content[0]].bearing.x < 0)
-			totalAdvance += _charMap[content[0]].bearing.x * scale.x * (-1.0);
+		if(_TTFcharMap[content[0]].bearing.x < 0)
+			totalAdvance += _TTFcharMap[content[0]].bearing.x * scale.x * (-1.0);
 
-		float originY = position.y + _charMap[content[0]].bearing.y * scale.y;
+		float originY = position.y + _TTFcharMap[content[0]].bearing.y * scale.y;
 
 		for(int j = 0; j < content.size(); ++j) 
 		{
 			char c = content[j];
-			Char currentChar = _charMap[c];
+			TTFChar currentChar = _TTFcharMap[c];
 
 			GUI temp(currentChar.texture);
 
@@ -127,6 +200,92 @@ void TextRenderer::render(const vector<Text*> texts)
 	glDisable(GL_BLEND);
 
 	glDisableVertexAttribArray(0);
+	glBindVertexArray(0);
+
+	_shader->unbindGL();
+}
+
+void TextRenderer::renderSDF(const vector<Text*> texts)
+{
+	_shader->bindGL();
+
+	glBindVertexArray(_VAO);
+	glEnableVertexAttribArray(0);
+	// glEnableVertexAttribArray(1);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_DEPTH_TEST);
+
+	// glBindBuffer(GL_ARRAY_BUFFER, _textCoordsVBO);
+
+	for(auto i : texts) 
+	{
+		glm::vec2 position = i->getPosition();
+		glm::vec2 scale = i->getScale();
+		wstring content = i->getContentW();
+
+		if(content.empty()) continue;
+
+		// set color
+		_shader->setUniform3f("textColor", i->getColor());
+
+		// calculate offset
+		float totalAdvance = 0.0f;
+		// if(_TTFcharMap[content[0]].bearing.x < 0)
+		// 	totalAdvance += _TTFcharMap[content[0]].bearing.x * scale.x * (-1.0);
+
+		// float originY = position.y + _SDFcharMap[content[0]].bearing.y * scale.y;
+		float originY = position.y  - _SDFcharMap[(int)content[0]].yoffset;
+
+		for(int j = 0; j < content.size(); ++j) 
+		{
+			int c = content[j];
+			SDFChar currentChar = _SDFcharMap[c];
+
+			GUI temp(_textAtlas);
+
+
+			temp.setPositionAndSize(
+					position.x + totalAdvance + currentChar.xoffset * scale.x,
+					originY + currentChar.yoffset,
+					currentChar.width * scale.x,
+					currentChar.height * scale.y
+				);
+
+			temp.bindGL();
+			_shader->setModelMatrix(temp.getModelMatrix());
+
+			float sx = currentChar.width / 1024.0f;
+			float sy = currentChar.height / 1024.0f;
+			float mx = currentChar.x / 512.0f + sx;
+			float my = (512.0f - currentChar.y - currentChar.height) / 512.0f + sy;
+
+			// printf("x : %d y : %d width : %d height : %d sx : %f sy : %f mx : %f my : %f\n", 
+			// 	currentChar.x, currentChar.y, currentChar.width, currentChar.height,
+			// 	sx, sy, mx, my);
+
+			// fuck ! glm matrix is column-major :-)
+			glm::mat3 textTranslateMatrix = glm::mat3(
+					sx, 0, 0, 0, sy, 0, mx, my, 1
+				);
+			_shader->setUniformMatrix3fv("textTranslateMatrix", textTranslateMatrix);
+
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		
+			temp.unbindGL();
+
+			totalAdvance += currentChar.xadvance * scale.x;
+		}
+	}
+
+	// glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+
+	glDisableVertexAttribArray(0);
+	// glDisableVertexAttribArray(1);
 	glBindVertexArray(0);
 
 	_shader->unbindGL();

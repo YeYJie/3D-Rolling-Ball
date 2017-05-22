@@ -1,9 +1,56 @@
 #include "include.h"
 #include "model.h"
 
+static GLuint LoadTextureFromPNG(const char * textureFileName);
+static GLuint LoadTextureFromJPG(const char * textureFileName);
+
 GLuint LoadTexture(const char * textureFileName)
 {
-	cout << "Loading texture : " << textureFileName << endl;
+	if(!textureFileName)
+		return 0;
+	int len = strlen(textureFileName);
+	if(textureFileName[len-1] == 'g'
+		&& textureFileName[len-2] == 'p'
+		&& textureFileName[len-3] == 'j')
+	{
+		return LoadTextureFromJPG(textureFileName);
+	}
+	else if(textureFileName[len-1] == 'g'
+		&& textureFileName[len-2] == 'n'
+		&& textureFileName[len-3] == 'p')
+	{
+		return LoadTextureFromPNG(textureFileName);
+	}
+}
+
+static GLuint LoadTextureFromPNG(const char * textureFileName)
+{
+	cout << "Loading texture from png : " << textureFileName << endl;
+
+	int width = 0, height = 0;
+	unsigned char * imageData = SOIL_load_image(textureFileName,
+								&width, &height, 0, SOIL_LOAD_RGBA);
+
+	GLuint textureID;
+
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height,
+					0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
+	return textureID;
+}
+
+static GLuint LoadTextureFromJPG(const char * textureFileName)
+{
+	cout << "Loading texture from jpg : " << textureFileName << endl;
+
 	int width = 0, height = 0;
 	unsigned char * imageData = SOIL_load_image(textureFileName,
 								&width, &height, 0, SOIL_LOAD_RGB);
@@ -123,18 +170,19 @@ GLuint LoadShaders(const char * vertex_file_path,
 
 
 // string split
-static vector<string> &split(const string &s, char delim, 
+vector<string> &split(const string &s, char delim, 
 					vector<string> &elems) 
 {
     stringstream ss(s);
     string item;
     while(getline(ss, item, delim)) {
+    	if(item.empty()) continue;
         elems.push_back(item);
     }
     return elems;
 }
 
-static vector<string> split(const string &s, char delim) 
+vector<string> split(const string &s, char delim) 
 {
     vector<string> elems;
     return split(s, delim, elems);

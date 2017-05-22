@@ -106,7 +106,7 @@ int main()
 	RawModel rawModelBall = LoadObjModel("ball.obj");
 	TexturedModel texturedBall(rawModelBall, Texture("box.png"));
 	Ball * ball = new Ball(&texturedBall, 
-								glm::vec3(40.0f, 0.0f, 40.0f),
+								glm::vec3(22.0f, 0.0f, 87.0f),
 								// glm::vec3(82.0f, 100.f, 70.0f),
 								glm::vec3(0.0f), 1.0f);
 	entities.push_back(ball);
@@ -152,8 +152,8 @@ int main()
 	vector<GUI> guis;
 	GUIRenderer guiRenderer;
 
-	// GUI dudvGUI(Texture("tree.png"));
-	// dudvGUI.setPositionAndSize(100, 100, 300, 300);
+	// GUI dudvGUI(Texture("text.png"));
+	// dudvGUI.setPositionAndSize(100, 100, 500, 500);
 	// guis.push_back(dudvGUI);
 
 	// GUI guiReflection(Texture(waterFrameBuffer->getReflectionTexture()));
@@ -165,12 +165,15 @@ int main()
 	// guis.push_back(guiRefraction);
 
 	// Text
-	TextRenderer * textRenderer = new TextRenderer("Ubuntu-B.ttf");
+	// TextRenderer * textRenderer = new TextRenderer("Ubuntu-B.ttf", TEXT_TTF());
+	TextRenderer * textRenderer = new TextRenderer("text.fnt", "text.png", TEXT_SDF());
 	// Text * yeyongjie = new Text("yeyongjie");
 	vector<Text*> texts;
-	texts.push_back(new Text("ye yong jie", 100, 100, 1, 
-								glm::vec3(1.0f, 1.0f, 0.0f)));
-	texts.push_back(new Text("jie", 100, 300, 3));
+	// texts.push_back(new Text("ye yong jie", 100, 100, 1, 
+	// 							glm::vec3(1.0f, 1.0f, 0.0f)));
+	// texts.push_back(new Text("Y", 100, 300, 10));
+	float scaleFactor = 1.0f;
+	texts.push_back(new Text(L"ye yongjie -  叶永杰", 100, 100, scaleFactor, scaleFactor));
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

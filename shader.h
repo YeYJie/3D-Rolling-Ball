@@ -79,9 +79,14 @@ public:
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
 	}
 
-	void setUniformMatrix4fv(const char * name, const glm::mat4 mat) {
+	// void setUniformMatrix4fv(const char * name, const glm::mat4 mat) {
+	// 	GLint location = glGetUniformLocation(_programID, name);
+	// 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
+	// }
+
+	void setUniformMatrix3fv(const char * name, const glm::mat3 & mat) {
 		GLint location = glGetUniformLocation(_programID, name);
-		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
+		glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(mat));		
 	}
 
 private:
