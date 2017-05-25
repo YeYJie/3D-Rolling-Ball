@@ -9,6 +9,8 @@ class GUI
 {
 public:
 
+	GUI() = default;
+
 	GUI(Texture texture) : _texture(texture) {}
 
 	GUI(Texture texture, float x, float y, float scale)
@@ -16,6 +18,11 @@ public:
 
 	GUI(Texture texture, float x, float y, float scaleX, float scaleY)
 		: _texture(texture), _x(x), _y(y), _scaleX(scaleX), _scaleY(scaleY) {}
+
+
+	void setTexture(Texture texture) {
+		_texture = texture;
+	}
 
 	void setPositionAndSize(int x, int y, int width, int height);
 
@@ -49,7 +56,14 @@ public:
 		initGL();
 	}
 
+	GUIRenderer(const char * vs, const char * fs) {
+		_shader = new Shader(vs, fs);
+		initGL();
+	}
+
 	void render(const vector<GUI> & guis);
+
+	void render(const GUI & gui);
 
 private:
 

@@ -74,4 +74,29 @@ void GUIRenderer::render(const vector<GUI> & guis)
 	glBindVertexArray(0);
 
 	_shader->unbindGL();
-} 
+}
+
+void GUIRenderer::render(const GUI & gui)
+{
+	_shader->bindGL();
+
+	glBindVertexArray(_VAO);
+	glEnableVertexAttribArray(0);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_DEPTH_TEST);
+
+	gui.bindGL();
+	_shader->setModelMatrix(gui.getModelMatrix());
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	gui.unbindGL();
+
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+
+	glDisableVertexAttribArray(0);
+	glBindVertexArray(0);
+
+	_shader->unbindGL();	
+}

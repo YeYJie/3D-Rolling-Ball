@@ -10,7 +10,8 @@
 #include "texture.h"
 #include "gui.h"
 #include "water.h"
-#include "textRenderer.h"
+#include "text.h"
+#include "menu.h"
 
 extern const int WIDTH = 1000;
 extern const int HEIGHT = 1000;
@@ -28,11 +29,17 @@ bool mouseLeftPressed = false;
 bool mouseRightPressed = false;
 int mouseScrollOffset = 0;
 
+int displayMenu = 0;
+
 void onKeyBoard(GLFWwindow * window, int key,
 				int scancode, int action, int mods)
 {
-	if(key == GLFW_KEY_Q || key == GLFW_KEY_ESCAPE)
+	// if(key == GLFW_KEY_Q || key == GLFW_KEY_ESCAPE)
+	// 	exit(0);
+	if(key == GLFW_KEY_Q)
 		exit(0);
+	else if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		displayMenu = (displayMenu + 1) % 2;
 	else
 		keyPressed = key;
 }
@@ -172,9 +179,13 @@ int main()
 	// texts.push_back(new Text("ye yong jie", 100, 100, 1, 
 	// 							glm::vec3(1.0f, 1.0f, 0.0f)));
 	// texts.push_back(new Text("Y", 100, 300, 10));
-	float scaleFactor = 10.0f;
+	float scaleFactor = 1.0f;
 	texts.push_back(new Text(L"ye yongjie", 0, 0, scaleFactor, scaleFactor,
 						glm::vec3(0.0f, 1.0f, 1.0f)));
+
+	// menu
+	Menu *  menuFrameBuffer = new Menu();
+
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -255,12 +266,17 @@ int main()
 		// render to screen
 		waterFrameBuffer->unbindCurrentFrameBuffer();
 
+		if(displayMenu) {
+			menuFrameBuffer->bindMenuFrameBuffer();
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		}
+
 				// skybox
 				skyboxShader.bindGL();
 				skyboxShader.setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
 				skyboxRenderer.render();
 				skyboxShader.unbindGL();
-
+			
 				// terrain
 				terrainShader.bindGL();
 				terrainShader.setViewMatrix(viewMatrix);
@@ -274,22 +290,24 @@ int main()
 				entityRenderer.render(entities);
 				entityShader.unbindGL();
 
+				static float rx = 0;
+				ball->setRotation(rx, 0.0f, 0.0f);
+				rx += 0.005f;
 
+				// water
+				waterShader->bindGL();
+				waterShader->setUniform3f("viewPosition", cameraPostion);
+				waterRenderer->render(waters, camera);
+				waterShader->unbindGL();
 
-		static float rx = 0;
-		ball->setRotation(rx, 0.0f, 0.0f);
-		rx += 0.005f;
+				guiRenderer.render(guis);
+				textRenderer->render(texts);
 
-		waterShader->bindGL();
-		waterShader->setUniform3f("viewPosition", cameraPostion);
-		waterRenderer->render(waters, camera);
-		waterShader->unbindGL();
+		if(displayMenu) {
+			menuFrameBuffer->unbindMenuFrameBuffer();
+			menuFrameBuffer->render();
+		}
 
-		// gui
-		guiRenderer.render(guis);
-
-		// text
-		textRenderer->render(texts);
 
 		// some shit
 
