@@ -38,8 +38,13 @@ void onKeyBoard(GLFWwindow * window, int key,
 	// 	exit(0);
 	if(key == GLFW_KEY_Q)
 		exit(0);
-	else if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	else if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		displayMenu = (displayMenu + 1) % 2;
+		if(displayMenu)
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		else
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
 	else
 		keyPressed = key;
 }

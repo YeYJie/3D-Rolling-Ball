@@ -64,6 +64,12 @@ public:
 
 	glm::vec2 getPosition() const { return glm::vec2(_x, _y); }
 
+	glm::vec2 setScale(float scaleX, float scaleY) {
+		glm::vec2 old = glm::vec2(_scaleX, _scaleY);
+		_scaleX = scaleX;
+		_scaleY = scaleY;
+		return old;
+	}
 	glm::vec2 getScale() const { return glm::vec2(_scaleX, _scaleY); }
 
 	glm::vec3 getColor() const { return _color; }

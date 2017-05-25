@@ -1,4 +1,4 @@
-#include "textRenderer.h"
+#include "text.h"
 
 static map<int, SDFChar> parsefnt(const char * fnt)
 {
@@ -275,7 +275,7 @@ void TextRenderer::renderSDF(const vector<Text*> texts)
 		
 			temp.unbindGL();
 
-			totalAdvance += currentChar.xadvance * scale.x;
+			totalAdvance += currentChar.xadvance * scale.x * 0.7;
 		}
 	}
 

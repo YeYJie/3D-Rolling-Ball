@@ -3,6 +3,27 @@
 extern const int WIDTH;
 extern const int HEIGHT;
 
+GUI & GUI::setTopLeftConnerPos(int x, int y)
+{
+	_x = (float)x / (float)WIDTH * 2.0f + _scaleX - 1.0f;
+	_y = 1.0f - (float)y / (float)HEIGHT * 2.0f - _scaleY;
+	return *this;
+}
+
+GUI & GUI::setCenterPos(int x, int y)
+{
+	_x = 2.0 * (float)x / (float)WIDTH - 1.0f;
+	_y = 1.0f - (float)y / (float)HEIGHT;
+	return *this;
+}
+
+GUI & GUI::setSize(int width, int height)
+{
+	_scaleX = (float)width / (float)WIDTH;
+	_scaleY = (float)height / (float)HEIGHT;
+	return *this;
+}
+
 void GUI::setPositionAndSize(int x, int y, int width, int height)
 {
 	_scaleX = (float)width / (float)WIDTH;

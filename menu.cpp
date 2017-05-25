@@ -72,8 +72,22 @@ GLuint Menu::getBgTexture() const
 	return _bgColor;
 }
 
+extern int mouseX;
+extern int mouseY;
+
 void Menu::render()
 {
+	_menuTexts[1]->setScale(1, 1);
+	_menuTexts[2]->setScale(1, 1);
+	_menuTexts[3]->setScale(1, 1);
+	if(mouseX >= 200 && mouseX <= 800) {
+		if(mouseY >= 300 && mouseY < 400)
+			_menuTexts[1]->setScale(1.05, 1.05);
+		else if(mouseY >= 400 && mouseY < 500)
+			_menuTexts[2]->setScale(1.05, 1.05);
+		else if(mouseY >= 500 && mouseY < 600)
+			_menuTexts[3]->setScale(1.05, 1.05);
+	}
 	_bgRenderer.render(_bg);
 	_menuTextRenderer.render(_menuTexts);
 }

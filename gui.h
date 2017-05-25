@@ -26,6 +26,13 @@ public:
 
 	void setPositionAndSize(int x, int y, int width, int height);
 
+ 	// you should always set size before setting top-left conner position
+	GUI & setTopLeftConnerPos(int x, int y);
+
+	GUI & setCenterPos(int x, int y);
+	
+	GUI & setSize(int width, int height);
+
 	glm::mat4 getModelMatrix() const;
 
 	void bindGL() const;
