@@ -4,6 +4,7 @@
 #include "include.h"
 #include "texture.h"
 #include "camera.h"
+#include "shader.h"
 
 
 class Sun
@@ -62,9 +63,7 @@ public:
 	{
 		static const float SUN_DISTANCE = 5.0f;
 		glm::vec3 position = camera->getPosition() - SUN_DISTANCE * _lightDirection;
-		// cout << position.x << " " << position.y << " " << position.z << endl;
 		return position;
-		// return camera->getPosition() - SUN_DISTANCE * _lightDirection;
 	}
 
 
@@ -94,85 +93,41 @@ class SunRenderer
 
 public:
 
-	SunRenderer(Shader * shader, const glm::mat4 & projectionMatrix) {
-		_shader = shader;
-		_shader->bindGL();
-		_shader->setProjectionMatrix(projectionMatrix);
-		_shader->unbindGL();
-		initGL();
-	}
+	SunRenderer(Shader * shader, const glm::mat4 & projectionMatrix);
 
-	void render(const Sun & sun, const Camera * camera) {
-		_shader->bindGL();
-
-		glBindVertexArray(_VAO);
-		glEnableVertexAttribArray(0);
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_DEPTH_TEST);
-
-		// draw
-		sun.bindGL();
-
-		glm::mat4 modelViewMatrix = calculateModelViewMatrix(sun, camera);
-
-		_shader->setUniformMatrix4fv("modelViewMatrix", modelViewMatrix);
-
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-		sun.unbindGL();
-
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
-
-		glDisableVertexAttribArray(0);
-		glBindVertexArray(0);
-
-		_shader->unbindGL();
-	}
+	void render(const Sun & sun, const Camera * camera);
 
 private:
 
-	glm::mat4 calculateModelViewMatrix(const Sun & sun, const Camera * camera)
-	{
-		glm::mat4 viewMatrix = camera->getViewMatrix();
-		glm::mat4 res = glm::mat4(0.0f);
-		// res[0][0] = res[1][1] = res[2][2] = 1.0f;
-		res[0] = glm::vec4(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0], 0.0f); // first column
-		res[1] = glm::vec4(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1], 0.0f); // second column
-		res[2] = glm::vec4(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2], 0.0f); // third column
-		res[3] = glm::vec4(sun.getPosition(camera), 1.0f);
-		// glm::mat4 res = glm::translate(glm::mat4(1.0f), sun.getPosition());
-		// res = glm::scale(res, glm::vec3(100.0f, 100.0f, 1.0f));
-		res = viewMatrix * res;
-		float scale = 2.0f;
-		res[0][0] = res[1][1] = res[2][2] = scale;
-		return res;
-	}
+	glm::mat4 calculateModelViewMatrix(const Sun & sun, const Camera * camera);
 
-	void initGL()
-	{
-		static vector<float> vertices = {-1, 1, -1, -1, 1, 1, 1, -1};
+	glm::vec2 getScreenCoords(const glm::vec3 & position, const Camera * camera);
 
-		glGenVertexArrays(1, &_VAO);
-		glBindVertexArray(_VAO);
+	glm::vec2 getScreenCoords(const glm::vec3 & position, const glm::mat4 & viewMatrix);
 
-		GLuint VBO;
-		glGenBuffers(1, &VBO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float),
-							vertices.data(), GL_STATIC_DRAW);
+	void renderFlare(const Sun & sun, const Camera * camera);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	void initGL();
 
-		glBindVertexArray(0);
-	}
+	void initFlare();
 
 private:
 
 	Shader * _shader;
+
+	// glm::mat4 _projectionMatrix;
+
+	struct FlareTexture{
+		Texture texture;
+		float scale;
+		glm::vec2 screenCoords;
+
+		FlareTexture() {}
+		FlareTexture(Texture t, float s, glm::vec2 v)
+			: texture(t), scale(s), screenCoords(v) {}
+	};
+
+	FlareTexture * _flares;
 
 	GLuint _VAO;
 

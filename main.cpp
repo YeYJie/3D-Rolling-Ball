@@ -14,8 +14,8 @@
 #include "menu.h"
 #include "sun.h"
 
-extern const int WIDTH = 1024;
-extern const int HEIGHT = 1024;
+extern const int WIDTH = 1422;
+extern const int HEIGHT = 800;
 
 extern const float WATERHEIGHT = 20;
 
@@ -108,7 +108,7 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 
-	glm::mat4 projectionMatrix = glm::perspective(45.0f, 1.0f, 0.1f, 10000.0f);
+	glm::mat4 projectionMatrix = glm::perspective(45.0f, float(WIDTH) / float(HEIGHT), 0.1f, 10000.0f);
 
 	// entity
 	Shader entityShader("entity.vs", "entity.fs");
@@ -204,7 +204,7 @@ int main()
 	SunRenderer * sunRenderer = new SunRenderer(sunShader, projectionMatrix);
 
 	glViewport(0, 0, WIDTH, HEIGHT);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	do {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

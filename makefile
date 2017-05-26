@@ -11,13 +11,15 @@ LDFLAGS += -lGLEW -lGLU -lGL
 # CPPFILES = $(wildcard *.cpp)
 
 OBJS = main.o terrain.o loader.o camera.o ball.o skybox.o \
-			gui.o water.o text.o menu.o
+			gui.o water.o text.o menu.o sun.o
+
+EXE = fyyj
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 all : $(OBJS)
-	$(CXX) -o rollingBall $(OBJS) $(CXXFLAGS) $(LDFLAGS)
+	$(CXX) -o $(EXE) $(OBJS) $(CXXFLAGS) $(LDFLAGS)
 
 clean:
-	rm -f *.o ./rollingBall
+	rm -f *.o $(EXE)

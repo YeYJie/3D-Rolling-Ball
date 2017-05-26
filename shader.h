@@ -62,6 +62,15 @@ public:
 		glUniform1f(location, value);		
 	}
 
+	void setUniform2f(const char * name, float x, float y) {
+		GLint location = glGetUniformLocation(_programID, name);
+		glUniform2f(location, x, y);
+	}
+
+	void setUniform2f(const char * name, const glm::vec2 v) {
+		setUniform2f(name, v.x, v.y);
+	}
+
 	void setUniform3f(const char * name, float x, float y, float z) {
 		GLint location = glGetUniformLocation(_programID, name);
 		glUniform3f(location, x, y, z);
