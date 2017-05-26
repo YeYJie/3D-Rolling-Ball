@@ -25,10 +25,14 @@ GLuint LoadTexture(const char * textureFileName)
 
 static GLuint LoadTextureFromPNG(const char * textureFileName)
 {
-	cout << "Loading texture from png : " << textureFileName << endl;
+	string temp(textureFileName);
+	temp = "./res/" + temp;
+	const char * _textureFileName = temp.c_str();
+
+	cout << "Loading texture from png : " << _textureFileName << endl;
 
 	int width = 0, height = 0;
-	unsigned char * imageData = SOIL_load_image(textureFileName,
+	unsigned char * imageData = SOIL_load_image(_textureFileName,
 								&width, &height, 0, SOIL_LOAD_RGBA);
 
 	GLuint textureID;
@@ -49,10 +53,14 @@ static GLuint LoadTextureFromPNG(const char * textureFileName)
 
 static GLuint LoadTextureFromJPG(const char * textureFileName)
 {
-	cout << "Loading texture from jpg : " << textureFileName << endl;
+	string temp(textureFileName);
+	temp = "./res/" + temp;
+	const char * _textureFileName = temp.c_str();
+
+	cout << "Loading texture from jpg : " << _textureFileName << endl;
 
 	int width = 0, height = 0;
-	unsigned char * imageData = SOIL_load_image(textureFileName,
+	unsigned char * imageData = SOIL_load_image(_textureFileName,
 								&width, &height, 0, SOIL_LOAD_RGB);
 
 	GLuint textureID;
@@ -215,11 +223,15 @@ static void processVertex(vector<string> & vertexData,
 
 RawModel LoadObjModel(const char * objFileName)
 {
-	cout << "Loading obj : " << objFileName << endl;
+	string temp(objFileName);
+	temp = "./res/" + temp;
+	const char * _objFileName = temp.c_str();
+
+	cout << "Loading obj : " << _objFileName << endl;
 
 	RawModel res;
 
-	ifstream objFile(objFileName, ios::in);
+	ifstream objFile(_objFileName, ios::in);
 	if(objFile.is_open())
 	{
 		string line = "";
@@ -314,7 +326,7 @@ RawModel LoadObjModel(const char * objFileName)
 
 
 	}else{
-		cout << "fail to open : " << objFileName << endl;
+		cout << "fail to open : " << _objFileName << endl;
 		return res;
 	}
 }

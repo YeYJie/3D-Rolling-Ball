@@ -12,9 +12,10 @@
 #include "water.h"
 #include "text.h"
 #include "menu.h"
+#include "sun.h"
 
-extern const int WIDTH = 1000;
-extern const int HEIGHT = 1000;
+extern const int WIDTH = 1024;
+extern const int HEIGHT = 1024;
 
 extern const float WATERHEIGHT = 20;
 
@@ -164,6 +165,10 @@ int main()
 	vector<GUI> guis;
 	GUIRenderer guiRenderer;
 
+	// GUI sunGUI(Texture("sun.png"));
+	// sunGUI.setPositionAndSize(0, 0, 500, 500);
+	// guis.push_back(sunGUI);
+
 	// GUI dudvGUI(Texture("text.png"));
 	// dudvGUI.setPositionAndSize(100, 100, 500, 500);
 	// guis.push_back(dudvGUI);
@@ -178,7 +183,8 @@ int main()
 
 	// Text
 	// TextRenderer * textRenderer = new TextRenderer("Ubuntu-B.ttf", TEXT_TTF());
-	TextRenderer * textRenderer = new TextRenderer("arial.fnt", "arial.png", TEXT_SDF());
+	TextRenderer * textRenderer = new TextRenderer(
+							"arial.fnt", "arial.png", TEXT_SDF());
 	// Text * yeyongjie = new Text("yeyongjie");
 	vector<Text*> texts;
 	// texts.push_back(new Text("ye yong jie", 100, 100, 1, 
@@ -191,6 +197,11 @@ int main()
 	// menu
 	Menu *  menuFrameBuffer = new Menu();
 
+	// sun
+	Sun sun("sun.png", glm::vec3(0.0f, -1.0f, 1.0f), 1.0f);
+	sun.setPosition(glm::vec3(50.0f));
+	Shader * sunShader = new Shader("sun.vs", "sun.fs");
+	SunRenderer * sunRenderer = new SunRenderer(sunShader, projectionMatrix);
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -307,6 +318,8 @@ int main()
 
 				guiRenderer.render(guis);
 				textRenderer->render(texts);
+
+				sunRenderer->render(sun, camera);
 
 		if(displayMenu) {
 			menuFrameBuffer->unbindMenuFrameBuffer();

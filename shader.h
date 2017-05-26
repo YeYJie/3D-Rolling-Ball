@@ -11,7 +11,13 @@ public:
 	Shader(const char * vertexShaderFileName,
 			const char * fragmentShaderFileName) 
 	{
-		_programID = LoadShaders(vertexShaderFileName, fragmentShaderFileName);
+		string vs(vertexShaderFileName);
+		vs = "./shader/" + vs;
+
+		string fs(fragmentShaderFileName);
+		fs = "./shader/" + fs;
+
+		_programID = LoadShaders(vs.c_str(), fs.c_str());
 		
 		bindGL();
 		_modelMatrixLocation = glGetUniformLocation(_programID, 

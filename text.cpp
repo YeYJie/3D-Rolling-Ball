@@ -2,11 +2,15 @@
 
 static map<int, SDFChar> parsefnt(const char * fnt)
 {
-	cout << "loading fnt : " << fnt << endl;
+	string temp(fnt);
+	temp = "./res/" + temp;
+	const char * _fnt = temp.c_str();
+
+	cout << "loading fnt : " << _fnt << endl;
 
 	map<int, SDFChar> charMap;
 
-	ifstream fntFile(fnt, ios::in);
+	ifstream fntFile(_fnt, ios::in);
 	if(fntFile.is_open())
 	{
 		string line = "";

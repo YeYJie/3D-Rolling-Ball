@@ -86,8 +86,12 @@ void Terrain::loadHeightMap(const char * heightMapFileName)
 {
 	_heightMap = vector<vector<float>>(_size, vector<float>(_size, 0));
 
+	string temp(heightMapFileName);
+	temp = "./res/" + temp;
+	const char * _heightMapFileName = temp.c_str();
+
 	int width = 0, height = 0, channels = 0;
-	unsigned char * imgData = SOIL_load_image(heightMapFileName,
+	unsigned char * imgData = SOIL_load_image(_heightMapFileName,
 								&width, &height, &channels, SOIL_LOAD_L);
 	int index = 0;
 	for(int i = 0; i < height; ++i) {
