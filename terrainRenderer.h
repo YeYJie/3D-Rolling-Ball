@@ -22,28 +22,37 @@ public:
 	{
 		_shader->bindGL();
 		for(auto & terrain : terrains)
-		{
-			_shader->setModelMatrix(terrain.getModelMatrix());
-			
-			terrain.bindGL();
-			const vector<Texture> & textures = terrain.getTexture();
-			for(int i = 0; i < textures.size(); ++i) {
-				textures[i].bindGL(i);
-				char name[6];
-				snprintf(name, sizeof(name), "text%d", i + 1);
-				// cout << "binding texture : " << name << endl;
-				_shader->setUniform1i(name, i);
-			}
-			terrain.draw();
-			terrain.unbindGL();
-		}
+			renderSingleTerrain(terrain);
 		_shader->unbindGL();
+	}
+
+	void render(const Terrain & terrain) const
+	{
+		_shader->bindGL();
+		renderSingleTerrain(terrain);
+		_shader->unbindGL();	
+	}
+
+private:
+
+	void renderSingleTerrain(const Terrain & terrain) const
+	{
+		_shader->setModelMatrix(terrain.getModelMatrix());
+		terrain.bindGL();
+		const vector<Texture> & textures = terrain.getTexture();
+		for(int i = 0; i < textures.size(); ++i) {
+			textures[i].bindGL(i);
+			char name[6];
+			snprintf(name, sizeof(name), "text%d", i + 1);
+			_shader->setUniform1i(name, i);
+		}
+		terrain.draw();
+		terrain.unbindGL();
 	}
 
 private:
 
 	Shader * _shader;
-	// glm::mat4 _projectionMatrix = glm::mat4(0.0f);
 
 };
 

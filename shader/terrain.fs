@@ -16,6 +16,8 @@ in float frag;
 
 out vec4 color;
 
+in vec2 worldxz;
+
 uniform vec3 viewPos;
 uniform sampler2D text1;
 uniform sampler2D text2;
@@ -45,4 +47,7 @@ void main()
 	vec3 viewDir = normalize(viewPos - FragPos);
 
 	color = vec4(CalcDirLight(dirLight, norm, viewDir), 1.0f);
+
+	// float fade = smoothstep(150, 200, distance(vec2(0.0f), worldxz));
+	// color = mix(color, vec4(1.0), fade);
 }

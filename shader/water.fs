@@ -13,7 +13,7 @@ uniform sampler2D refractionTexture;
 uniform sampler2D dudvTexture;
 uniform sampler2D normalMap;
 
-const float wave = 0.005f;
+const float wave = 0.05f;
 
 uniform float distortionOffset;
 
@@ -60,7 +60,7 @@ void main()
 
 	vec4 normalColor = texture(normalMap, distortedTexCoords * 0.5f);
 	vec3 normal = vec3(normalColor.r * 2.0f - 1.0f,
-						normalColor.b * 3.0f,
+						normalColor.b * 5.0f,
 						normalColor.g  * 2.0f - 1.0f);
 	normal = normalize(normal);
 

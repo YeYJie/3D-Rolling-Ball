@@ -10,7 +10,7 @@ class Terrain
 
 public:
 
-	Terrain(const char * heightMapFileName);
+	Terrain(const char * heightMapFileName, float scale);
 
 	void bindGL() const;
 
@@ -18,17 +18,21 @@ public:
 
 	void unbindGL() const;
 
-	// TODO : use float parameter
-	// glm::vec3 getGradient(const int x, const int z) const;
-	float getHeight(const int x, const int z) const;
+	glm::vec3 getGradient(float x, float z) const;
 
-	glm::vec3 getGradient(const float x, const float z) const;
-	float getHeight(const float x, const float z) const;
+	float getHeight(float x, float z) const;
 
+	glm::mat4 getModelMatrix() const;
 
-	glm::mat4 getModelMatrix() const { return glm::mat4(1.0f); }
+	float getScale() const { return _scale; }
 
 	const vector<Texture> & getTexture() const { return _texture; }
+
+	void correctPosition(float & x, float & z) const;
+
+private:
+
+	float getHeightRaw(const int x, const int z) const;
 
 private:
 
@@ -40,9 +44,10 @@ private:
 	GLuint _indicesNum;
 
 
-	int _size = 100;
+	int _size;
+	int _half_size;
 
-	glm::vec3 _position = glm::vec3(0.0f);
+	float _scale = 1.0f;
 
 	vector<Texture> _texture;
 

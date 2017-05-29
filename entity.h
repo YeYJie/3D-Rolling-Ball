@@ -47,6 +47,10 @@ public:
 	float getPositionY() const { return _position.y; }
 	float getPositionZ() const { return _position.z; }
 
+	float & getPositionXinRefence() { return _position.x; }
+	float & getPositionYinRefence() { return _position.y; }
+	float & getPositionZinRefence() { return _position.z; }
+
 	void setPositionX(float x) { _position.x = x; }
 	void setPositionY(float y) { _position.y = y; }
 	void setPositionZ(float z) { _position.z = z; }
@@ -58,6 +62,9 @@ public:
 		_rotation.y = y;
 		_rotation.z = z;
 	}
+
+	float getScale() const { return _scale; }
+	void setScale(float scale) { _scale = scale; }
 
 	void move(glm::vec3 delta) {
 		_position += delta;
@@ -77,7 +84,7 @@ public:
 		_rotation.z += dz;
 	}
 
-	glm::mat4 getModelMatrix() const {
+	virtual glm::mat4 getModelMatrix() const {
 		glm::mat4 res = glm::mat4(1.0f);
 		res = glm::translate(res, _position);
 		res = glm::scale(res, glm::vec3(_scale));
@@ -92,16 +99,6 @@ public:
 
 		return res;
 	}
-
-	// public float getTextureXOffset() {
-	// 	int column = textureIndex % model.getTexture().getNumberOfRows();
-	// 	return (float) column / (float) model.getTexture().getNumberOfRows();
-	// }
-
-	// public float getTextureYOffset() {
-	// 	int row = textureIndex / model.getTexture().getNumberOfRows();
-	// 	return (float) row / (float) model.getTexture().getNumberOfRows();
-	// }
 
 private:
 

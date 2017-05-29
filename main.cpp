@@ -107,6 +107,8 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 
+	// glEnable(GL_CULL_FACE);
+	// glCullFace(GL_BACK);
 
 	glm::mat4 projectionMatrix = glm::perspective(45.0f, float(WIDTH) / float(HEIGHT), 0.1f, 10000.0f);
 
@@ -117,9 +119,9 @@ int main()
 	vector<Entity*> entities;
 
 	RawModel rawModelBall = LoadObjModel("ball.obj");
-	TexturedModel texturedBall(rawModelBall, Texture("box.png"));
+	TexturedModel texturedBall(rawModelBall, Texture("ball.png"));
 	Ball * ball = new Ball(&texturedBall, 
-								glm::vec3(22.0f, 0.0f, 87.0f),
+								glm::vec3(10.0f, 0.0f, 10.0f),
 								// glm::vec3(82.0f, 100.f, 70.0f),
 								glm::vec3(0.0f), 1.0f);
 	entities.push_back(ball);
@@ -127,17 +129,19 @@ int main()
 										LoadObjModel("tree.obj"),
 										Texture("tree.png")
 									);
-	Entity * tree = new Entity(texturedTree,
-								glm::vec3(15.0f, 25.0f, 15.0f),
-								glm::vec3(0.0f), 1.0f);
-	entities.push_back(tree);
+	// Entity * speedBall = new Entity(&texturedBall,
+	// 							ball->getPosition() + ball->getSpeed() * 20.0f,
+	// 							glm::vec3(0.0f), 1.0f);
+	// entities.push_back(speedBall);
+	// Entity * tree = new Entity(texturedTree,
+	// 							glm::vec3(15.0f, 25.0f, 15.0f),
+	// 							glm::vec3(0.0f), 1.0f);
+	// entities.push_back(tree);
 
 	// terrain
-	vector<Terrain> terrains;
-	terrains.push_back(Terrain("heightmap.jpg"));
-
-	Shader terrainShader("terrain.vs", "terrain.fs");
-	TerrainRenderer terrainRenderer(&terrainShader, projectionMatrix);
+	Terrain terrain("h1.png", 5.0f);
+	Shader * terrainShader = new Shader("terrain.vs", "terrain.fs");
+	TerrainRenderer terrainRenderer(terrainShader, projectionMatrix);
 
 	// skybox
 	Shader skyboxShader("skybox.vs", "skybox.fs");
@@ -157,7 +161,7 @@ int main()
 										waterFrameBuffer,
 										dudvMap, normalMap);
 	vector<Water> waters;
-	waters.push_back(Water(40.0f, WATERHEIGHT, 40.0f, 40.0f));
+	waters.push_back(Water(0.0f, -10, 0.0f, 1024.0f));
 
 
 
@@ -199,19 +203,22 @@ int main()
 
 	// sun
 	Sun sun("sun.png", glm::vec3(0.0f, -1.0f, 1.0f), 1.0f);
-	sun.setPosition(glm::vec3(50.0f));
+	sun.setPosition(glm::vec3(10.0f));
 	Shader * sunShader = new Shader("sun.vs", "sun.fs");
 	SunRenderer * sunRenderer = new SunRenderer(sunShader, projectionMatrix);
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 	do {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// do some update
-		ball->update(terrains[0]);
-		camera->update(terrains[0]);
-
+		ball->update(terrain);
+		camera->update(terrain);
+		// speedBall->setPosition(ball->getPosition() + ball->getSpeed() * 20.0f);
 
 		glm::vec3 cameraPostion = camera->getPosition();
 		glm::vec3 ballPosition = ball->getPosition();
@@ -238,11 +245,11 @@ int main()
 				skyboxShader.unbindGL();
 
 				// terrain
-				terrainShader.bindGL();
-				terrainShader.setUniform4f("clipPlane", 0, 1, 0, -20);
-				terrainShader.setViewMatrix(viewMatrix);
-				terrainRenderer.render(terrains);
-				terrainShader.unbindGL();
+				terrainShader->bindGL();
+				terrainShader->setUniform4f("clipPlane", 0, 1, 0, -20);
+				terrainShader->setViewMatrix(viewMatrix);
+				terrainRenderer.render(terrain);
+				terrainShader->unbindGL();
 
 				// entity
 				entityShader.bindGL();
@@ -265,11 +272,11 @@ int main()
 				// skyboxShader.unbindGL();
 
 				// terrain
-				terrainShader.bindGL();
-				terrainShader.setUniform4f("clipPlane", 0, -1, 0, 20);
-				terrainShader.setViewMatrix(viewMatrix);
-				terrainRenderer.render(terrains);
-				terrainShader.unbindGL();
+				terrainShader->bindGL();
+				terrainShader->setUniform4f("clipPlane", 0, -1, 0, 20);
+				terrainShader->setViewMatrix(viewMatrix);
+				terrainRenderer.render(terrain);
+				terrainShader->unbindGL();
 
 				// entity
 				// entityShader.bindGL();
@@ -294,10 +301,10 @@ int main()
 				skyboxShader.unbindGL();
 			
 				// terrain
-				terrainShader.bindGL();
-				terrainShader.setViewMatrix(viewMatrix);
-				terrainRenderer.render(terrains);
-				terrainShader.unbindGL();
+				terrainShader->bindGL();
+				terrainShader->setViewMatrix(viewMatrix);
+				terrainRenderer.render(terrain);
+				terrainShader->unbindGL();
 
 				// entity
 				entityShader.bindGL();
@@ -306,15 +313,15 @@ int main()
 				entityRenderer.render(entities);
 				entityShader.unbindGL();
 
-				static float rx = 0;
-				ball->setRotation(rx, 0.0f, 0.0f);
-				rx += 0.005f;
+				// static float rx = 0;
+				// ball->setRotation(rx, 0.0f, 0.0f);
+				// rx += 0.005f;
 
-				// water
-				waterShader->bindGL();
-				waterShader->setUniform3f("viewPosition", cameraPostion);
-				waterRenderer->render(waters, camera);
-				waterShader->unbindGL();
+				// // // water
+				// waterShader->bindGL();
+				// waterShader->setUniform3f("viewPosition", cameraPostion);
+				// waterRenderer->render(waters, camera);
+				// waterShader->unbindGL();
 
 				guiRenderer.render(guis);
 				textRenderer->render(texts);

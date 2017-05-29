@@ -1,7 +1,8 @@
 #include "terrain.h"
 
-Terrain::Terrain(const char * heightMapFileName)
+Terrain::Terrain(const char * heightMapFileName, float scale)
 {
+	_scale = scale;
 	loadHeightMap(heightMapFileName);
 
 	vector<const char*> textureFiles = { "grass.png", "mud.png" };
@@ -84,7 +85,6 @@ static void smooth(Image & image)
 
 void Terrain::loadHeightMap(const char * heightMapFileName)
 {
-	_heightMap = vector<vector<float>>(_size, vector<float>(_size, 0));
 
 	string temp(heightMapFileName);
 	temp = "./res/" + temp;
@@ -93,10 +93,19 @@ void Terrain::loadHeightMap(const char * heightMapFileName)
 	int width = 0, height = 0, channels = 0;
 	unsigned char * imgData = SOIL_load_image(_heightMapFileName,
 								&width, &height, &channels, SOIL_LOAD_L);
+
+	assert(width == height);
+
+	_size = width;
+	_half_size = _scale * _size / 2;
+
+	_heightMap = vector<vector<float>>(_size, vector<float>(_size, 0));
+
 	int index = 0;
 	for(int i = 0; i < height; ++i) {
 		for(int j = 0; j < width; ++j) {
-			_heightMap[i][j] = float(256 - imgData[index++]) / 255.0 * 100.0;
+			// _heightMap[i][j] = 1;
+			_heightMap[i][j] = float(imgData[index++]) / 255.0 * 100.0 - 50;
 			// if(_heightMap[i][j] > 32) _heightMap[i][j] = 32;
 		}
 	}
@@ -205,7 +214,7 @@ void Terrain::loadTexture(const vector<const char*> & textureFiles)
 		_texture.push_back(Texture(LoadTexture(i)));
 }
 
-glm::vec3 Terrain::getGradient(const float x, const float z) const 
+glm::vec3 Terrain::getGradient(float x, float z) const 
 {
 	float _0 = getHeight(x, z);
 	float tmin = _0;
@@ -294,29 +303,30 @@ glm::vec3 Terrain::getGradient(const float x, const float z) const
 	}
 }
 
-float Terrain::getHeight(const int x, const int z) const 
+float Terrain::getHeightRaw(const int x, const int z) const 
 {
 	if(x < 0 || x >= _size || z < 0 || z >= _size) return 0;
 	return _heightMap[z][x];
 }
 
-// glm::vec3 Terrain::getGradient(const float x, const float z) const
-// {
 
-// }
-
-
-float Terrain::getHeight(const float x, const float z) const
+float Terrain::getHeight(float x, float z) const
 {
+	// translate back to model world
+	x += _half_size;
+	z += _half_size;
+	x /= _scale;
+	z /= _scale;
+
 	int x1 = int(x);
 	int x2 = int(x + 0.5f);
 	int z1 = int(z);
 	int z2 = int(z + 0.5f);
 
-	float y1 = getHeight(x1, z1);
-	float y2 = getHeight(x2, z1);
-	float y3 = getHeight(x1, z2);
-	float y4 = getHeight(x2, z2);
+	float y1 = getHeightRaw(x1, z1);
+	float y2 = getHeightRaw(x2, z1);
+	float y3 = getHeightRaw(x1, z2);
+	float y4 = getHeightRaw(x2, z2);
 
 	float y5 = min(y1, y2);
 	float y6 = max(y1, y2);
@@ -331,4 +341,23 @@ float Terrain::getHeight(const float x, const float z) const
 	float y13 = y11 + (y12 - y11) * ((z - float(z1)) / 1.0f);
 
 	return y13;
+}
+
+// the terrain will be centered to origin point
+glm::mat4 Terrain::getModelMatrix() const
+{
+	return glm::mat4(
+			_scale, 0.0f, 0.0f, 0.0f, 	// first column
+			0.0f, 1.0f, 0.0f, 0.0f, 	// second column
+			0.0f, 0.0f, _scale, 0.0f, 	// third column
+			-1.0f * _half_size, 0.0f, -1.0 * _half_size, 1.0f
+		);
+}
+
+void Terrain::correctPosition(float & x, float & z) const
+{
+	x = max(x, -1.0f * _half_size);
+	x = min(x, (float)_half_size);
+	z = max(z, -1.0f * _half_size);
+	z = min(z, (float)_half_size);
 }

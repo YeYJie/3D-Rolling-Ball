@@ -55,22 +55,7 @@ public:
 						);
 	}
 
-	// void calculateOrientation()
-	// {
-	// 	glm::vec3 o = glm::vec3(-1.0f, 0.0f, -1.0f);
-	// 	_orientation = glm::normalize(o);
-	// }
-	
-	// keyboard function
-	// void onKeyBoard(int key);
-
 	void update(const Terrain & terrain);
-
-	// void update(const Terrain & terrain) {
-	// 	glm::vec3 position = getPosition();
-	// 	float height = terrain.getHeight(position.x, position.z);
-	// 	setPosition(position.x, height, position.z);
-	// }
 
 	glm::vec3 getAccelerationTerrain() const {
 		return _accelerationTerrain;
@@ -88,13 +73,11 @@ public:
 		return _speed;
 	}
 
+	glm::mat4 getModelMatrix() const;
+
 private:
 
-	// glm::vec3 _orientation;
 	float _angleWithX = 270.0f;
-
-	// float _currentSpeed = 0;
-	// float _turnSpeed = 0;
 
 	glm::vec3 _accelerationTerrain;
 

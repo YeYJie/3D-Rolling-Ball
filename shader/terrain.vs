@@ -10,6 +10,8 @@ out vec2 TextCoords;
 
 out float frag;
 
+out vec2 worldxz;
+
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
@@ -18,7 +20,9 @@ uniform vec4 clipPlane;
 
 void main()
 {
-	gl_Position = projection * view * model * vec4(position, 1.0f);
+	vec4 temp = model * vec4(position, 1.0f);
+
+	gl_Position = projection * view * temp;
 
 	gl_ClipDistance[0] = dot(model * vec4(position, 1), clipPlane);
 
@@ -29,4 +33,5 @@ void main()
 
 	frag = position.y / 30.0;
 	// frag2 = 1 - frag1;
+	worldxz = temp.xz;
 }

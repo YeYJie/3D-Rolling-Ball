@@ -125,7 +125,7 @@ glm::vec2 SunRenderer::getScreenCoords(const glm::vec3 & position,
 	glm::vec4 temp = glm::vec4(position, 1.0f);
 	temp = projectionMatrix * viewMatrix * temp;
 	if(temp.w <= 0)
-		return glm::vec2(0.0f);
+		return glm::vec2(-1.0f);
 	else
 		return glm::vec2(
 							(temp.x / temp.w + 1) / 2.0f,

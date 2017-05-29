@@ -179,7 +179,7 @@ void WaterRenderer::render(const vector<Water> & waters,
 
 	static float distortionOffset = 0.0f;
 	_shader->setUniform1f("distortionOffset", distortionOffset);
-	distortionOffset += 0.00005f;
+	distortionOffset += 0.0001f;
 	// distortionOffset %= 1;
 	if(distortionOffset > 1.0f) distortionOffset -= 1.0f;
 

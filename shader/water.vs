@@ -29,7 +29,7 @@ void main(void) {
 
 	gl_Position = temp;
 
- 	textCoords = vec2(position.x / 2.0f + 0.5f, position.z / 2.0f + 0.5f) * 2.0f;
+ 	textCoords = vec2(position.x / 2.0f + 0.5f, position.z / 2.0f + 0.5f) * 4.0f;
 
  	clipSpace = temp;
 

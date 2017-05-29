@@ -34,10 +34,10 @@ Camera::Camera(const Ball * ball)
 void Camera::update(const Terrain & terrain)
 {
 	_distanceFromBall -= 10 * mouseScrollOffset;
-	// if(_distanceFromBall < 10) 
-	// 	_distanceFromBall = 10;
-	// else if(_distanceFromBall > 100) 
-	// 	_distanceFromBall = 100;
+	if(_distanceFromBall < 10) 
+		_distanceFromBall = 10;
+	else if(_distanceFromBall > 100) 
+		_distanceFromBall = 100;
 
 	static int _lastY;
 	if(mouseRightPressed) {
@@ -47,14 +47,6 @@ void Camera::update(const Terrain & terrain)
 		else if(_pitch > 80) _pitch = 80;
 	}
 	_lastY = mouseY;
-
-	// static int _lastX;
-	// if(mouseLeftPressed) {
-	// 	float deltax = (_lastX - mouseX) * 0.1;
-	// 	_angleWithX += deltax;		
-	// }
-	// _lastX = mouseX;
-
 
 	// glm::vec3 o = _ball->getOrientation();
 	float angleWithX = _ball->getAngleWithX();
@@ -77,9 +69,7 @@ void Camera::update(const Terrain & terrain)
 	// cout << "camera : " << _pitch << " " << _distanceFromBall << " " << m << endl;
 	_position.y = max(_position.y, 
 		3.0f + terrain.getHeight(_position.x, _position.z));
-	// _position.y = max(_position.y, WATERHEIGHT);
-	// if(_position.y < 10)
-	// 	_position.y = 10;
-	// _position.y = 300;
+	// _position.y = max(_position.y, WATERHEIGHT + 2);
+	terrain.correctPosition(_position.x, _position.z);
 	// cout << "camera : " << _position.y << " " << angleWithX << endl;
 }
