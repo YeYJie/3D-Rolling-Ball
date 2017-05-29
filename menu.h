@@ -34,10 +34,10 @@ private:
 	GLuint _bgColor;
 	GLuint _bgDepth;
 
-	GUI _bg;
+	GUIPtr _bg;
 	GUIRenderer _bgRenderer;
 
-	vector<Text *> _menuTexts;
+	vector<TextPtr> _menuTexts;
 	TextRenderer _menuTextRenderer;
 
 }; // class Menu

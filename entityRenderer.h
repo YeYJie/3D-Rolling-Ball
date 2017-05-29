@@ -17,12 +17,21 @@ public:
 		_shader->unbindGL();
 	}
 
-
-	// void render(cost map<TexturedModel, vector<Entity*>> & entities) const
-	void render(const vector<Entity*> & entities) const
+	void render(const EntityPtr & entity) const
 	{
 		_shader->bindGL();
-		for(const auto & entity : entities)
+		TexturedModel * t = entity->getModel();
+		t->bindGL();
+		_shader->setModelMatrix(entity->getModelMatrix());
+		t->draw();
+		t->unbindGL();
+		_shader->unbindGL();
+	}
+
+	void render(const vector<EntityPtr> & entities) const
+	{
+		_shader->bindGL();
+		for(auto entity : entities)
 		{
 			TexturedModel * t = entity->getModel();
 			t->bindGL();
@@ -30,20 +39,6 @@ public:
 			t->draw();
 			t->unbindGL();			
 		}
-		// for(auto i : entities)
-		// {
-		// 	auto texturedModel = i.first;
-		// 	texturedModel.bindGL();
-
-		// 	auto entityVector = i.second;
-		// 	for(auto entity : entityVector)
-		// 	{
-		// 		_shader->setModelMatrix(entity->getModelMatrix());
-		// 		texturedModel.draw();
-		// 	}
-
-		// 	texturedModel.unbindGL();
-		// }
 		_shader->unbindGL();
 	}
 

@@ -112,4 +112,6 @@ private:
 
 };
 
+typedef shared_ptr<Entity> EntityPtr;
+
 #endif

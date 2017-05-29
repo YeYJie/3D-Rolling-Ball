@@ -138,7 +138,7 @@ void TextRenderer::initGL()
 	glBindVertexArray(0);
 }
 
-void TextRenderer::render(const vector<Text*> texts)
+void TextRenderer::render(const vector<TextPtr> & texts)
 {
 	if(_useSDF)
 		renderSDF(texts);
@@ -146,7 +146,7 @@ void TextRenderer::render(const vector<Text*> texts)
 		renderTTF(texts);
 }
 
-void TextRenderer::renderTTF(const vector<Text*> texts)
+void TextRenderer::renderTTF(const vector<TextPtr> & texts)
 {
 	_shader->bindGL();
 
@@ -209,7 +209,7 @@ void TextRenderer::renderTTF(const vector<Text*> texts)
 	_shader->unbindGL();
 }
 
-void TextRenderer::renderSDF(const vector<Text*> texts)
+void TextRenderer::renderSDF(const vector<TextPtr> & texts)
 {
 	_shader->bindGL();
 

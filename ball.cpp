@@ -7,7 +7,7 @@ extern bool mouseLeftPressed;
 extern bool mouseRightPressed;
 extern int mouseScrollOffset;
 
-void Ball::update(const Terrain & terrain)
+void Ball::update(const TerrainPtr & terrain)
 {
 	// mouse
 	static int _lastX;
@@ -56,7 +56,7 @@ void Ball::update(const Terrain & terrain)
 	else
 		friction = glm::vec3(0.0f);
 
-	_accelerationTerrain = terrain.getGradient(getPositionX(), getPositionZ());
+	_accelerationTerrain = terrain->getGradient(getPositionX(), getPositionZ());
 	_accelerationTerrain *= 0.1f;
 
 	_acceleration = _accelerationTerrain + _accelerationKeyboard + friction;
@@ -74,9 +74,9 @@ void Ball::update(const Terrain & terrain)
 
 	move(_speed * t);
 
-	setPositionY(4 + terrain.getHeight(getPositionX(), getPositionZ()));
+	setPositionY(4 + terrain->getHeight(getPositionX(), getPositionZ()));
 
-	terrain.correctPosition(getPositionXinRefence(), getPositionZinRefence());
+	terrain->correctPosition(getPositionXinRefence(), getPositionZinRefence());
 }
 
 void printVec(const glm::vec3 & v, const char * s = "vec3")

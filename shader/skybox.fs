@@ -15,6 +15,6 @@ void main(void){
     vec4 night = texture(cubeMapNight, textureCoords);
     out_Color = mix(day, night, blendFactor);
 
-    float fade = 1.0 - smoothstep(0.0, 100.0, height);
+    float fade = 1.0 - smoothstep(-50.0, 50.0, height);
     out_Color = mix(out_Color, vec4(1.0), fade);
 }

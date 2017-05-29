@@ -2,6 +2,7 @@
 #define _CAMERA_H_
 
 #include "include.h"
+#include "entity.h"
 #include "ball.h"
 #include "terrain.h"
 
@@ -10,9 +11,9 @@ class Camera
 
 public:
 
-	Camera(const Ball * ball);
+	Camera(EntityPtr ball);
 
-	void update(const Terrain & terrain);
+	void update(const TerrainPtr & terrain);
 
 	glm::vec3 getPosition() const { return _position; }
 
@@ -30,7 +31,7 @@ public:
 
 private:
 
-	const Ball * _ball;
+	BallPtr _ball;
 
 	glm::vec3 _position;
 
@@ -39,5 +40,7 @@ private:
 	// float _angleWithX = 1.0f;
 
 };
+
+typedef shared_ptr<Camera> CameraPtr;
 
 #endif

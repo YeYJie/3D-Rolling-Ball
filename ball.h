@@ -55,7 +55,7 @@ public:
 						);
 	}
 
-	void update(const Terrain & terrain);
+	void update(const TerrainPtr & terrain);
 
 	glm::vec3 getAccelerationTerrain() const {
 		return _accelerationTerrain;
@@ -88,5 +88,7 @@ private:
 	glm::vec3 _speed = glm::vec3(0.0f);
 
 };
+
+typedef shared_ptr<Ball> BallPtr;
 
 #endif

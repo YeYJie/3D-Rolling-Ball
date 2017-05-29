@@ -51,6 +51,8 @@ private:
 
 }; // class Water
 
+typedef shared_ptr<Water> WaterPtr;
+
 class WaterFrameBuffer
 {
 
@@ -96,7 +98,7 @@ public:
 					Texture * dudv,
 					Texture * normal);
 
-	void render(const vector<Water> & waters,
+	void render(const vector<WaterPtr> & waters,
 				const Camera * camera) const;
 
 private:

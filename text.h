@@ -95,6 +95,8 @@ private:
 
 }; // class Text
 
+typedef shared_ptr<Text> TextPtr;
+
 
 struct SDFChar {
 	int id;
@@ -135,7 +137,7 @@ public:
 
 	TextRenderer(const char * fnt, const char * png, TEXT_SDF);
 
-	void render(const vector<Text*> texts);
+	void render(const vector<TextPtr> & texts);
 
 private:
 
@@ -156,8 +158,8 @@ private:
 
 	void initGL();
 
-	void renderTTF(const vector<Text*> texts);
-	void renderSDF(const vector<Text*> texts);
+	void renderTTF(const vector<TextPtr> & texts);
+	void renderSDF(const vector<TextPtr> & texts);
 
 
 }; // class TextRenderer

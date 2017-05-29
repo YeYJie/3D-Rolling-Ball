@@ -51,7 +51,7 @@ private:
 
 }; // calss GUI
 
-
+typedef shared_ptr<GUI> GUIPtr;
 
 class GUIRenderer
 {
@@ -68,9 +68,9 @@ public:
 		initGL();
 	}
 
-	void render(const vector<GUI> & guis);
+	void render(const vector<GUIPtr> & guis);
 
-	void render(const GUI & gui);
+	void render(const GUIPtr & gui);
 
 private:
 

@@ -66,4 +66,6 @@ private:
 
 };
 
+typedef shared_ptr<Terrain> TerrainPtr;
+
 #endif

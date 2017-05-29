@@ -33,7 +33,7 @@ void SunRenderer::initFlare()
 	};
 }
 
-void SunRenderer::render(const Sun & sun, const Camera * camera) {
+void SunRenderer::render(const SunPtr & sun, const Camera * camera) {
 	_shader->bindGL();
 
 	glBindVertexArray(_VAO);
@@ -44,7 +44,7 @@ void SunRenderer::render(const Sun & sun, const Camera * camera) {
 	glDisable(GL_DEPTH_TEST);
 
 	// sun
-	sun.bindGL();
+	sun->bindGL();
 
 	glm::mat4 modelViewMatrix = calculateModelViewMatrix(sun, camera);
 
@@ -53,7 +53,7 @@ void SunRenderer::render(const Sun & sun, const Camera * camera) {
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-	sun.unbindGL();
+	sun->unbindGL();
 
 	_shader->setUniform1i("renderSun", 0);
 	renderFlare(sun, camera);
@@ -68,9 +68,9 @@ void SunRenderer::render(const Sun & sun, const Camera * camera) {
 }
 
 // void SunRenderer::renderFlare(float bright)
-void SunRenderer::renderFlare(const Sun & sun, const Camera * camera)
+void SunRenderer::renderFlare(const SunPtr & sun, const Camera * camera)
 {
-	glm::vec2 sunScreenCoords = getScreenCoords(sun.getPosition(camera), camera);
+	glm::vec2 sunScreenCoords = getScreenCoords(sun->getPosition(camera), camera);
 	float sunDistanceToCenter = sqrt((0.5f - sunScreenCoords.x) * (0.5f - sunScreenCoords.x) 
 									+ (0.5f - sunScreenCoords.y) * (0.5f - sunScreenCoords.y));
 	float bright = 1.0 - (sunDistanceToCenter / 0.8f);
@@ -133,7 +133,7 @@ glm::vec2 SunRenderer::getScreenCoords(const glm::vec3 & position,
 						);
 }
 
-glm::mat4 SunRenderer::calculateModelViewMatrix(const Sun & sun, const Camera * camera)
+glm::mat4 SunRenderer::calculateModelViewMatrix(const SunPtr & sun, const Camera * camera)
 {
 	glm::mat4 viewMatrix = camera->getViewMatrix();
 	glm::mat4 res = glm::mat4(0.0f);
@@ -141,9 +141,8 @@ glm::mat4 SunRenderer::calculateModelViewMatrix(const Sun & sun, const Camera * 
 	res[0] = glm::vec4(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0], 0.0f); // first column
 	res[1] = glm::vec4(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1], 0.0f); // second column
 	res[2] = glm::vec4(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2], 0.0f); // third column
-	res[3] = glm::vec4(sun.getPosition(camera), 1.0f);
-	// glm::mat4 res = glm::translate(glm::mat4(1.0f), sun.getPosition());
-	// res = glm::scale(res, glm::vec3(100.0f, 100.0f, 1.0f));
+	res[3] = glm::vec4(sun->getPosition(camera), 1.0f);
+	
 	res = viewMatrix * res;
 	float scale = 3.0f;
 	res[0][0] = res[1][1] = res[2][2] = scale;

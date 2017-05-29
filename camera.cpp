@@ -9,9 +9,10 @@ extern bool mouseLeftPressed;
 extern bool mouseRightPressed;
 extern int mouseScrollOffset;
 
-Camera::Camera(const Ball * ball)
+Camera::Camera(EntityPtr ball)
+	// : _ball(dynamic_pointer_cast<BallPtr>(ball))
 {
-	_ball = ball;
+	_ball = dynamic_pointer_cast<Ball>(ball);
 
 	float angleWithX = _ball->getAngleWithX();
 	glm::vec3 p = _ball->getPosition();
@@ -31,7 +32,7 @@ Camera::Camera(const Ball * ball)
 	// _position.y = max(_position.y, terrain.getHeight(_position.x, _position.z));
 }
 
-void Camera::update(const Terrain & terrain)
+void Camera::update(const TerrainPtr & terrain)
 {
 	_distanceFromBall -= 10 * mouseScrollOffset;
 	if(_distanceFromBall < 10) 
@@ -68,8 +69,8 @@ void Camera::update(const Terrain & terrain)
 
 	// cout << "camera : " << _pitch << " " << _distanceFromBall << " " << m << endl;
 	_position.y = max(_position.y, 
-		3.0f + terrain.getHeight(_position.x, _position.z));
+		3.0f + terrain->getHeight(_position.x, _position.z));
 	// _position.y = max(_position.y, WATERHEIGHT + 2);
-	terrain.correctPosition(_position.x, _position.z);
+	terrain->correctPosition(_position.x, _position.z);
 	// cout << "camera : " << _position.y << " " << angleWithX << endl;
 }

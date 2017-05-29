@@ -18,7 +18,7 @@ public:
 	}
 
 
-	void render(const vector<Terrain> & terrains) const 
+	void render(const vector<TerrainPtr> & terrains) const 
 	{
 		_shader->bindGL();
 		for(auto & terrain : terrains)
@@ -26,7 +26,7 @@ public:
 		_shader->unbindGL();
 	}
 
-	void render(const Terrain & terrain) const
+	void render(const TerrainPtr & terrain) const
 	{
 		_shader->bindGL();
 		renderSingleTerrain(terrain);
@@ -35,19 +35,19 @@ public:
 
 private:
 
-	void renderSingleTerrain(const Terrain & terrain) const
+	void renderSingleTerrain(const TerrainPtr & terrain) const
 	{
-		_shader->setModelMatrix(terrain.getModelMatrix());
-		terrain.bindGL();
-		const vector<Texture> & textures = terrain.getTexture();
+		_shader->setModelMatrix(terrain->getModelMatrix());
+		terrain->bindGL();
+		const vector<Texture> & textures = terrain->getTexture();
 		for(int i = 0; i < textures.size(); ++i) {
 			textures[i].bindGL(i);
 			char name[6];
 			snprintf(name, sizeof(name), "text%d", i + 1);
 			_shader->setUniform1i(name, i);
 		}
-		terrain.draw();
-		terrain.unbindGL();
+		terrain->draw();
+		terrain->unbindGL();
 	}
 
 private:

@@ -12,6 +12,7 @@
 #include <sstream>
 #include <cstdio>
 #include <algorithm>
+#include <memory>
 using namespace std;
 
 #include <GL/glew.h>

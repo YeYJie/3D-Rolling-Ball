@@ -171,7 +171,7 @@ void WaterRenderer::initGL()
 	glBindVertexArray(0);
 }
 
-void WaterRenderer::render(const vector<Water> & waters,
+void WaterRenderer::render(const vector<WaterPtr> & waters,
 							const Camera * camera) const
 {
 	_shader->bindGL();
@@ -204,7 +204,7 @@ void WaterRenderer::render(const vector<Water> & waters,
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	for(auto i : waters) {
-		_shader->setModelMatrix(i.getModelMatrix());
+		_shader->setModelMatrix(i->getModelMatrix());
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 

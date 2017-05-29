@@ -70,7 +70,7 @@ void GUIRenderer::initGL()
 	glBindVertexArray(0);
 }
 
-void GUIRenderer::render(const vector<GUI> & guis) 
+void GUIRenderer::render(const vector<GUIPtr> & guis) 
 {
 	_shader->bindGL();
 
@@ -82,10 +82,10 @@ void GUIRenderer::render(const vector<GUI> & guis)
 	glDisable(GL_DEPTH_TEST);
 
 	for(auto i : guis) {
-		i.bindGL();
-		_shader->setModelMatrix(i.getModelMatrix());
+		i->bindGL();
+		_shader->setModelMatrix(i->getModelMatrix());
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		i.unbindGL();
+		i->unbindGL();
 	}
 
 	glEnable(GL_DEPTH_TEST);
@@ -97,7 +97,7 @@ void GUIRenderer::render(const vector<GUI> & guis)
 	_shader->unbindGL();
 }
 
-void GUIRenderer::render(const GUI & gui)
+void GUIRenderer::render(const GUIPtr & gui)
 {
 	_shader->bindGL();
 
@@ -108,10 +108,10 @@ void GUIRenderer::render(const GUI & gui)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_DEPTH_TEST);
 
-	gui.bindGL();
-	_shader->setModelMatrix(gui.getModelMatrix());
+	gui->bindGL();
+	_shader->setModelMatrix(gui->getModelMatrix());
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	gui.unbindGL();
+	gui->unbindGL();
 
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);

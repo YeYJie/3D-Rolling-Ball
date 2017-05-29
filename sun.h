@@ -87,6 +87,7 @@ private:
 
 }; // class Sun
 
+typedef shared_ptr<Sun> SunPtr;
 
 class SunRenderer
 {
@@ -95,17 +96,17 @@ public:
 
 	SunRenderer(Shader * shader, const glm::mat4 & projectionMatrix);
 
-	void render(const Sun & sun, const Camera * camera);
+	void render(const SunPtr & sun, const Camera * camera);
 
 private:
 
-	glm::mat4 calculateModelViewMatrix(const Sun & sun, const Camera * camera);
+	glm::mat4 calculateModelViewMatrix(const SunPtr & sun, const Camera * camera);
 
 	glm::vec2 getScreenCoords(const glm::vec3 & position, const Camera * camera);
 
 	glm::vec2 getScreenCoords(const glm::vec3 & position, const glm::mat4 & viewMatrix);
 
-	void renderFlare(const Sun & sun, const Camera * camera);
+	void renderFlare(const SunPtr & sun, const Camera * camera);
 
 	void initGL();
 
