@@ -146,16 +146,12 @@ int main()
 						= new EntityRenderer(entityShader, projectionMatrix);
 	// vector<Entity*> entities;
 
-	RawModel rawModelBall = LoadObjModel("ball.obj");
-	TexturedModel * texturedBall 
-						= new TexturedModel(rawModelBall, Texture("ball.png"));
+	RawModelPtr rawModelBall(new RawModel(LoadObjModel("ball.obj")));
+	TexturePtr ballTexture(new Texture(LoadTexture("ball.png")));
+	TexturedModelPtr texturedBall(new TexturedModel(rawModelBall, ballTexture));
 	BallPtr ball(new Ball(texturedBall,
 							glm::vec3(10.0f, 0.0f, 10.0f),
 							glm::vec3(0.0f), 1.0f));
-	// Ball * ball = new Ball(texturedBall, 
-	// 							glm::vec3(10.0f, 0.0f, 10.0f),
-	// 							glm::vec3(0.0f), 1.0f);
-	// entities.push_back(ball);
 
 	// terrain
 	Shader * terrainShader = new Shader("terrain.vs", "terrain.fs");
@@ -198,7 +194,8 @@ int main()
 
 
 	while(true) {
-		if(level == 1)
+		if(level == 1) {
+			cout << "\nswitching to level1\n\n";
 			level1(window, projectionMatrix,	
 					entityShader, entityRenderer, ball,
 					terrainShader, terrainRenderer,
@@ -209,7 +206,9 @@ int main()
 					textRenderer,
 					menuFrameBuffer,
 					sunShader, sunRenderer);
-		if(level == 2)
+		}
+		if(level == 2) {
+			cout << "\nswitching to level2\n\n";
 			level2(window, projectionMatrix,	
 					entityShader, entityRenderer, ball, 
 					terrainShader, terrainRenderer,
@@ -220,6 +219,7 @@ int main()
 					textRenderer,
 					menuFrameBuffer,
 					sunShader, sunRenderer);
+		}
 	}
 
 	glfwTerminate();

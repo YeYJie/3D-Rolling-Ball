@@ -16,6 +16,10 @@ public:
 		_textureID = LoadTexture(textureFileName);
 	}
 
+	~Texture() {
+		glDeleteTextures(1, &_textureID);
+	}
+
 	void bindGL(int textureIndex = 0) const 
 	{
 		glActiveTexture(GL_TEXTURE0 + textureIndex);
@@ -31,5 +35,7 @@ private:
 	GLuint _textureID;
 
 };
+
+typedef shared_ptr<Texture> TexturePtr;
 
 #endif

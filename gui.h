@@ -11,16 +11,16 @@ public:
 
 	GUI() = default;
 
-	GUI(Texture texture) : _texture(texture) {}
+	GUI(TexturePtr texture) : _texture(texture) {}
 
-	GUI(Texture texture, float x, float y, float scale)
+	GUI(TexturePtr texture, float x, float y, float scale)
 		: _texture(texture), _x(x), _y(y), _scaleX(scale), _scaleY(scale) {}
 
-	GUI(Texture texture, float x, float y, float scaleX, float scaleY)
+	GUI(TexturePtr texture, float x, float y, float scaleX, float scaleY)
 		: _texture(texture), _x(x), _y(y), _scaleX(scaleX), _scaleY(scaleY) {}
 
 
-	void setTexture(Texture texture) {
+	void setTexture(TexturePtr texture) {
 		_texture = texture;
 	}
 
@@ -41,7 +41,7 @@ public:
 
 private:
 
-	Texture _texture;
+	TexturePtr _texture;
 
 	float _x = 0.0f;
 	float _y = 0.0f;
@@ -52,6 +52,8 @@ private:
 }; // calss GUI
 
 typedef shared_ptr<GUI> GUIPtr;
+
+
 
 class GUIRenderer
 {
@@ -68,6 +70,8 @@ public:
 		initGL();
 	}
 
+	~GUIRenderer();
+
 	void render(const vector<GUIPtr> & guis);
 
 	void render(const GUIPtr & gui);
@@ -77,6 +81,7 @@ private:
 	Shader * _shader;
 
 	GLuint _VAO;
+	GLuint _VBO;
 
 private:
 

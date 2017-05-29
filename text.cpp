@@ -53,7 +53,7 @@ static map<int, SDFChar> parsefnt(const char * fnt)
 }
 
 TextRenderer::TextRenderer(const char * fnt, const char * png, TEXT_SDF)
-	: _textAtlas(png)
+	: _textAtlas(new Texture(png))
 {
 	_useSDF = true;
 	_shader = new Shader("textSDF.vs", "textSDF.fs");
@@ -98,7 +98,7 @@ static map<char, TTFChar> parsettf(const char * ttf)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        TTFChar temp = {Texture(texture),
+        TTFChar temp = {TexturePtr(new Texture(texture)),
             glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
             glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
             (GLuint)face->glyph->advance.x};

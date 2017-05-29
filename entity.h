@@ -11,29 +11,29 @@ public:
 
 	Entity() = default;
 
-	Entity(TexturedModel * model, glm::vec3 position,
+	Entity(TexturedModelPtr model, glm::vec3 position,
 			glm::vec3 rotation, float scale)
 		: _model(model), _position(position), _rotation(rotation),
 			_scale(scale) {}
 
-	Entity(TexturedModel * model, glm::vec3 position,
+	Entity(TexturedModelPtr model, glm::vec3 position,
 			float rotX, float rotY, float rotZ, float scale)
 		: _model(model), _position(position),
 			_rotation(glm::vec3(rotX, rotY, rotZ)), _scale(scale) {}
 
-	Entity(TexturedModel * model, GLuint textureIndex, glm::vec3 position,
+	Entity(TexturedModelPtr model, GLuint textureIndex, glm::vec3 position,
 			glm::vec3 rotation, float scale)
 		: _model(model), _position(position), _rotation(rotation),
 			_scale(scale), _textureIndex(textureIndex) {}
 
-	Entity(TexturedModel * model, GLuint textureIndex, glm::vec3 position,
+	Entity(TexturedModelPtr model, GLuint textureIndex, glm::vec3 position,
 			float rotX, float rotY, float rotZ, float scale)
 		: _model(model), _position(position), _textureIndex(textureIndex),
 			_rotation(glm::vec3(rotX, rotY, rotZ)), _scale(scale) {}
 
 
-	TexturedModel * getModel() const { return _model; }
-	void setModel(TexturedModel * model) { _model = model; }
+	TexturedModelPtr getModel() const { return _model; }
+	void setModel(TexturedModelPtr model) { _model = model; }
 
 	glm::vec3 getPosition() const { return _position; }
 	void setPosition(glm::vec3 position) { _position = position; }
@@ -102,7 +102,7 @@ public:
 
 private:
 
-	TexturedModel * _model;
+	TexturedModelPtr _model;
 
 	glm::vec3 _position = glm::vec3(0.0f);
 	glm::vec3 _rotation = glm::vec3(0.0f);

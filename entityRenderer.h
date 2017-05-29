@@ -20,7 +20,7 @@ public:
 	void render(const EntityPtr & entity) const
 	{
 		_shader->bindGL();
-		TexturedModel * t = entity->getModel();
+		TexturedModelPtr t = entity->getModel();
 		t->bindGL();
 		_shader->setModelMatrix(entity->getModelMatrix());
 		t->draw();
@@ -33,7 +33,7 @@ public:
 		_shader->bindGL();
 		for(auto entity : entities)
 		{
-			TexturedModel * t = entity->getModel();
+			TexturedModelPtr t = entity->getModel();
 			t->bindGL();
 			_shader->setModelMatrix(entity->getModelMatrix());
 			t->draw();

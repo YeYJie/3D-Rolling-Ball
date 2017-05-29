@@ -12,6 +12,8 @@ public:
 
 	Terrain(const char * heightMapFileName, float scale);
 
+	~Terrain();
+
 	void bindGL() const;
 
 	void draw() const;
@@ -26,7 +28,7 @@ public:
 
 	float getScale() const { return _scale; }
 
-	const vector<Texture> & getTexture() const { return _texture; }
+	const vector<TexturePtr> & getTexture() const { return _texture; }
 
 	void correctPosition(float & x, float & z) const;
 
@@ -41,6 +43,7 @@ private:
 	GLuint _textCoordsVBO = 0;
 	GLuint _normalVBO = 0;
 	GLuint _EBO = 0;
+	
 	GLuint _indicesNum;
 
 
@@ -49,7 +52,7 @@ private:
 
 	float _scale = 1.0f;
 
-	vector<Texture> _texture;
+	vector<TexturePtr> _texture;
 
 	vector<vector<float>> _heightMap;
 

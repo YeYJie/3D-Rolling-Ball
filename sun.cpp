@@ -16,20 +16,20 @@ SunRenderer::SunRenderer(Shader * shader, const glm::mat4 & projectionMatrix)
 void SunRenderer::initFlare()
 {
 	_flares = new FlareTexture[14] {
-		FlareTexture(Texture("sun6.png"), 0.5, glm::vec2(0.0f)),
-		FlareTexture(Texture("sun4.png"), 0.23, glm::vec2(0.0f)),
-		FlareTexture(Texture("sun2.png"), 0.1, glm::vec2(0.0f)),
-		FlareTexture(Texture("sun7.png"), 0.05, glm::vec2(0.0f)),
-		FlareTexture(Texture("sun1.png"), 0.02, glm::vec2(0.0f)),
-		FlareTexture(Texture("sun3.png"), 0.06, glm::vec2(0.0f)),
-		FlareTexture(Texture("sun9.png"), 0.12, glm::vec2(0.0f)),
-		FlareTexture(Texture("sun5.png"), 0.07, glm::vec2(0.0f)),
-		FlareTexture(Texture("sun1.png"), 0.12, glm::vec2(0.0f)),
-		FlareTexture(Texture("sun9.png"), 0.1, glm::vec2(0.0f)),
-		FlareTexture(Texture("sun3.png"), 0.07, glm::vec2(0.0f)),
-		FlareTexture(Texture("sun5.png"), 0.3, glm::vec2(0.0f)),
-		FlareTexture(Texture("sun4.png"), 0.4, glm::vec2(0.0f)),
-		FlareTexture(Texture("sun8.png"), 0.6, glm::vec2(0.0f))
+		FlareTexture(new Texture("sun6.png"), 0.5, glm::vec2(0.0f)),
+		FlareTexture(new Texture("sun4.png"), 0.23, glm::vec2(0.0f)),
+		FlareTexture(new Texture("sun2.png"), 0.1, glm::vec2(0.0f)),
+		FlareTexture(new Texture("sun7.png"), 0.05, glm::vec2(0.0f)),
+		FlareTexture(new Texture("sun1.png"), 0.02, glm::vec2(0.0f)),
+		FlareTexture(new Texture("sun3.png"), 0.06, glm::vec2(0.0f)),
+		FlareTexture(new Texture("sun9.png"), 0.12, glm::vec2(0.0f)),
+		FlareTexture(new Texture("sun5.png"), 0.07, glm::vec2(0.0f)),
+		FlareTexture(new Texture("sun1.png"), 0.12, glm::vec2(0.0f)),
+		FlareTexture(new Texture("sun9.png"), 0.1, glm::vec2(0.0f)),
+		FlareTexture(new Texture("sun3.png"), 0.07, glm::vec2(0.0f)),
+		FlareTexture(new Texture("sun5.png"), 0.3, glm::vec2(0.0f)),
+		FlareTexture(new Texture("sun4.png"), 0.4, glm::vec2(0.0f)),
+		FlareTexture(new Texture("sun8.png"), 0.6, glm::vec2(0.0f))
 	};
 }
 
@@ -93,7 +93,7 @@ void SunRenderer::renderFlare(const SunPtr & sun, const Camera * camera)
 		// cout << "render flare " << i << " at " << _flares[i].screenCoords.x
 		// 		<< " " << _flares[i].screenCoords.y << endl;
 
-		_flares[i].texture.bindGL();
+		_flares[i].texture->bindGL();
 		// _shader->setUniform2f("flarePosition", _flares[i].screenCoords);
 
 		glm::mat4 flareMatrix(0.0f);
@@ -104,7 +104,7 @@ void SunRenderer::renderFlare(const SunPtr & sun, const Camera * camera)
 		_shader->setUniformMatrix4fv("flareMatrix", flareMatrix);
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		_flares[i].texture.unbindGL();
+		_flares[i].texture->unbindGL();
 	}
 
 }
@@ -157,9 +157,8 @@ void SunRenderer::initGL()
 	glGenVertexArrays(1, &_VAO);
 	glBindVertexArray(_VAO);
 
-	GLuint VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glGenBuffers(1, &_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float),
 						vertices.data(), GL_STATIC_DRAW);
 
@@ -167,4 +166,10 @@ void SunRenderer::initGL()
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	glBindVertexArray(0);
+}
+
+SunRenderer::~SunRenderer()
+{
+	glDeleteVertexArrays(1, &_VAO);
+	glDeleteBuffers(1, &_VBO);
 }

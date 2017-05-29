@@ -39,14 +39,18 @@ private:
 	{
 		_shader->setModelMatrix(terrain->getModelMatrix());
 		terrain->bindGL();
-		const vector<Texture> & textures = terrain->getTexture();
+		const vector<TexturePtr> & textures = terrain->getTexture();
 		for(int i = 0; i < textures.size(); ++i) {
-			textures[i].bindGL(i);
+			textures[i]->bindGL(i);
 			char name[6];
 			snprintf(name, sizeof(name), "text%d", i + 1);
 			_shader->setUniform1i(name, i);
 		}
 		terrain->draw();
+
+		for(int i = 0; i < textures.size(); ++i) {
+			textures[i]->unbindGL();
+		}
 		terrain->unbindGL();
 	}
 

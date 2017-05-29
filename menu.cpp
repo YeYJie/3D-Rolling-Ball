@@ -3,7 +3,7 @@
 extern const int WIDTH;
 extern const int HEIGHT;
 
-extern int level;
+
 
 Menu::Menu()
 	: _menuTextRenderer("arial.fnt", "arial.png", TEXT_SDF()),
@@ -42,7 +42,7 @@ Menu::Menu()
 
 	// others
 	_bg = GUIPtr(new GUI());
-	_bg->setTexture(Texture(_bgColor));
+	_bg->setTexture(TexturePtr(new Texture(_bgColor)));
 	_bg->setPositionAndSize(0, 0, WIDTH, HEIGHT);
 
 	initMenuList();
@@ -80,6 +80,9 @@ extern int mouseY;
 
 extern bool mouseLeftPressed;
 
+extern int displayMenu;
+extern int level;
+
 void Menu::render()
 {
 	_menuTexts[1]->setScale(1, 1);
@@ -88,21 +91,27 @@ void Menu::render()
 	if(mouseX >= 200 && mouseX <= 800) {
 		if(mouseY >= 300 && mouseY < 400) {
 			_menuTexts[1]->setScale(1.05, 1.05);
-			if(mouseLeftPressed)
+			if(mouseLeftPressed) {
+				displayMenu = 0;
 				level = 1;
+			}
 		}
 		else if(mouseY >= 400 && mouseY < 500) {
 			_menuTexts[2]->setScale(1.05, 1.05);
-			if(mouseLeftPressed)
+			if(mouseLeftPressed) {
+				displayMenu = 0;
 				level = 2;
+			}
 		}
-		else if(mouseY >= 500 && mouseY < 600) {
-			_menuTexts[3]->setScale(1.05, 1.05);
-			if(mouseLeftPressed)
-				level = 3;
-		}
+		// else if(mouseY >= 500 && mouseY < 600) {
+		// 	_menuTexts[3]->setScale(1.05, 1.05);
+		// 	if(mouseLeftPressed) {
+		// 		displayMenu = 0;
+		// 		level = 3;
+		// 	}
+		// }
 	}
 	_bgRenderer.render(_bg);
 	_menuTextRenderer.render(_menuTexts);
-	cout << level << endl;
+	// cout << level << endl;
 }

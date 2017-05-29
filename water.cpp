@@ -78,6 +78,14 @@ WaterFrameBuffer::WaterFrameBuffer()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+WaterFrameBuffer::~WaterFrameBuffer()
+{
+	glDeleteFramebuffers(1, &_reflectionFBO);
+	glDeleteTextures(1, &_reflectionColor);
+	glDeleteFramebuffers(1, &_refractionFBO);
+	glDeleteTextures(1, &_refractionColor);	
+}
+
 void WaterFrameBuffer::bindReflectionBuffer() const
 {
 	bindFrameBuffer(_reflectionFBO, FRAMEBUFFERWIDTH, FRAMEBUFFERHEIGHT);

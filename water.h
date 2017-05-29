@@ -60,6 +60,8 @@ public:
 
 	WaterFrameBuffer();
 
+	~WaterFrameBuffer();
+
 	void bindReflectionBuffer() const;
 	void bindRefractionBuffer() const;
 	void unbindCurrentFrameBuffer() const;

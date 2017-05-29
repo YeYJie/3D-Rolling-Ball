@@ -16,7 +16,8 @@ public:
 	Sun(const Sun &) = delete;
 	Sun & operator=(const Sun &) = delete;
 
-	Sun(const Texture & texture, const glm::vec3 & lightDirection, float scale) {
+	Sun(TexturePtr texture, const glm::vec3 & lightDirection, float scale) 
+	{
 		_texture = texture;
 		_lightDirection = glm::normalize(lightDirection);
 		_scale = scale;
@@ -24,17 +25,17 @@ public:
 
 	Sun(const char * textureFileName, const glm::vec3 & lightDirection,
 			float scale)
+		: _texture(new Texture(textureFileName))
 	{
-		_texture = Texture(textureFileName);
 		_lightDirection = glm::normalize(lightDirection);
 		_scale = scale;
 	}
 
-	Texture getTexture() const { 
+	TexturePtr getTexture() const { 
 		return _texture; 
 	}
 
-	void setTexture(const Texture & texture) {
+	void setTexture(TexturePtr texture) {
 		_texture = texture;
 	}
 
@@ -68,18 +69,18 @@ public:
 
 
 	void bindGL() const {
-		_texture.bindGL();
+		_texture->bindGL();
 	}
 
 	void unbindGL() const {
-		_texture.unbindGL();
+		_texture->unbindGL();
 	}
 
 private:
 
 	glm::vec3 _position;
 
-	Texture _texture;
+	TexturePtr _texture;
 
 	glm::vec3 _lightDirection;
 
@@ -89,12 +90,16 @@ private:
 
 typedef shared_ptr<Sun> SunPtr;
 
+
+
 class SunRenderer
 {
 
 public:
 
 	SunRenderer(Shader * shader, const glm::mat4 & projectionMatrix);
+
+	~SunRenderer();
 
 	void render(const SunPtr & sun, const Camera * camera);
 
@@ -119,18 +124,23 @@ private:
 	// glm::mat4 _projectionMatrix;
 
 	struct FlareTexture{
-		Texture texture;
+		TexturePtr texture;
 		float scale;
 		glm::vec2 screenCoords;
 
 		FlareTexture() {}
-		FlareTexture(Texture t, float s, glm::vec2 v)
+
+		FlareTexture(TexturePtr t, float s, glm::vec2 v)
 			: texture(t), scale(s), screenCoords(v) {}
+
+		FlareTexture(Texture * t, float s, glm::vec2 v)
+			: texture(TexturePtr(t)), scale(s), screenCoords(v) {}
 	};
 
 	FlareTexture * _flares;
 
 	GLuint _VAO;
+	GLuint _VBO;
 
 }; // class SunRenderer
 

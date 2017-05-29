@@ -116,7 +116,7 @@ struct SDFChar {
 };
 
 struct TTFChar {
-    Texture texture;
+    TexturePtr texture;
     glm::ivec2 size;
     glm::ivec2 bearing;
     GLuint advance;
@@ -151,7 +151,7 @@ private:
 
 	map<char, TTFChar> _TTFcharMap;
 
-	Texture _textAtlas;
+	TexturePtr _textAtlas;
 	map<int, SDFChar> _SDFcharMap;
 
 private:

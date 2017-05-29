@@ -4,6 +4,7 @@
 static GLuint LoadTextureFromPNG(const char * textureFileName);
 static GLuint LoadTextureFromJPG(const char * textureFileName);
 
+
 GLuint LoadTexture(const char * textureFileName)
 {
 	if(!textureFileName)

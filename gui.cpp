@@ -43,12 +43,18 @@ glm::mat4 GUI::getModelMatrix() const
 
 void GUI::bindGL() const 
 {
-	_texture.bindGL();
+	_texture->bindGL();
 }
 
 void GUI::unbindGL() const 
 {
-	_texture.unbindGL();
+	_texture->unbindGL();
+}
+
+GUIRenderer::~GUIRenderer()
+{
+	glDeleteBuffers(1, &_VBO);
+	glDeleteVertexArrays(1, &_VAO);
 }
 
 void GUIRenderer::initGL()
@@ -58,9 +64,8 @@ void GUIRenderer::initGL()
 	glGenVertexArrays(1, &_VAO);
 	glBindVertexArray(_VAO);
 
-	GLuint VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glGenBuffers(1, &_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), 
 									vertices.data(), GL_STATIC_DRAW);
 

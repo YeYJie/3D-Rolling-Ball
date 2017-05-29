@@ -186,10 +186,6 @@ void level1(GLFWwindow * window,
 				entityRenderer->render(entities);
 				entityShader->unbindGL();
 
-				// static float rx = 0;
-				// ball->setRotation(rx, 0.0f, 0.0f);
-				// rx += 0.005f;
-
 				// // // water
 				// waterShader->bindGL();
 				// waterShader->setUniform3f("viewPosition", cameraPostion);
@@ -215,8 +211,8 @@ void level1(GLFWwindow * window,
 		glfwSwapBuffers(window);
 		glfwWaitEventsTimeout(1.0/60);
 
-		// if(level != 1)
-		// 	break;
+		if(level != 1)
+			break;
 
 	} while(true);
 }

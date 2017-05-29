@@ -9,6 +9,15 @@ Terrain::Terrain(const char * heightMapFileName, float scale)
 	loadTexture(textureFiles);
 }
 
+Terrain::~Terrain()
+{
+	glDeleteBuffers(1, &_EBO);
+	glDeleteBuffers(1, &_normalVBO);
+	glDeleteBuffers(1, &_textCoordsVBO);
+	glDeleteBuffers(1, &_positionVBO);
+	glDeleteVertexArrays(1, &_VAO);
+}
+
 void Terrain::bindGL() const
 {
 	glBindVertexArray(_VAO);
@@ -211,7 +220,7 @@ glm::vec3 Terrain::calculateNormal(int x, int z)
 void Terrain::loadTexture(const vector<const char*> & textureFiles)
 {
 	for(auto i : textureFiles)
-		_texture.push_back(Texture(LoadTexture(i)));
+		_texture.push_back(TexturePtr(new Texture(LoadTexture(i))));
 }
 
 glm::vec3 Terrain::getGradient(float x, float z) const 
