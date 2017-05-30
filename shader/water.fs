@@ -13,7 +13,7 @@ uniform sampler2D refractionTexture;
 uniform sampler2D dudvTexture;
 uniform sampler2D normalMap;
 
-const float wave = 0.05f;
+const float wave = 0.005f;
 
 uniform float distortionOffset;
 
@@ -56,7 +56,7 @@ void main()
 	vec4 refraction = texture(refractionTexture, refractionCoords);
 
 	color = mix(reflection, refraction, 0.5);
-	
+	// color = reflection;
 
 	vec4 normalColor = texture(normalMap, distortedTexCoords * 0.5f);
 	vec3 normal = vec3(normalColor.r * 2.0f - 1.0f,
@@ -77,7 +77,7 @@ void main()
 	vec3 reflectedLight = reflect(normalize(fromLightVector), normal);
 	float specular = max(dot(normalize(reflectedLight), normalize(toCameraVector)), 0.0);
 	specular = pow(specular, 2.0f);
-	vec3 specularHighlights = vec3(1.5f, 1.5f, 1.5f) * specular * 0.5;
+	vec3 specularHighlights = vec3(1.5f, 1.5f, 1.5f) * specular * 0.1;
 	// vec3 specularHighlights = vec3(specular, specular, specular);
 
 	// color = vec4(normalize(toCameraVector), 1.0f);

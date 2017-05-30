@@ -66,9 +66,11 @@ public:
 	void bindRefractionBuffer() const;
 	void unbindCurrentFrameBuffer() const;
 
-	GLuint getReflectionTexture() const;
-	GLuint getRefractionTexture() const;
-	// GLuint getRefractionDepthTexture() const;
+	TexturePtr getReflectionTexture() const;
+	TexturePtr getRefractionTexture() const;
+
+	GLuint getReflectionTextureRaw() const;
+	GLuint getRefractionTextureRaw() const;
 
 private:
 	void bindFrameBuffer(GLuint framebuffer,

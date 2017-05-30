@@ -54,7 +54,7 @@ void Menu::initMenuList()
 								200, 200, 1.0, 1.0)));
 	_menuTexts.push_back(TextPtr(new Text(L"Level 1", 250, 300, 1.0, 1.0)));
 	_menuTexts.push_back(TextPtr(new Text(L"Level 2", 250, 400, 1.0, 1.0)));
-	_menuTexts.push_back(TextPtr(new Text(L"Level 3", 250, 500, 1.0, 1.0)));
+	// _menuTexts.push_back(TextPtr(new Text(L"Level 3", 250, 500, 1.0, 1.0)));
 }
 
 void Menu::bindMenuFrameBuffer() const
@@ -87,7 +87,6 @@ void Menu::render()
 {
 	_menuTexts[1]->setScale(1, 1);
 	_menuTexts[2]->setScale(1, 1);
-	_menuTexts[3]->setScale(1, 1);
 	if(mouseX >= 200 && mouseX <= 800) {
 		if(mouseY >= 300 && mouseY < 400) {
 			_menuTexts[1]->setScale(1.05, 1.05);
@@ -103,13 +102,6 @@ void Menu::render()
 				level = 2;
 			}
 		}
-		// else if(mouseY >= 500 && mouseY < 600) {
-		// 	_menuTexts[3]->setScale(1.05, 1.05);
-		// 	if(mouseLeftPressed) {
-		// 		displayMenu = 0;
-		// 		level = 3;
-		// 	}
-		// }
 	}
 	_bgRenderer.render(_bg);
 	_menuTextRenderer.render(_menuTexts);

@@ -29,13 +29,14 @@ extern int mouseScrollOffset;
 extern int displayMenu;
 extern int level;
 
-void level1(GLFWwindow * window, 
+void level1(GLFWwindow * window,
 			const glm::mat4 & projectionMatrix,
-			
+
 			Shader * entityShader,
 			EntityRenderer * entityRenderer,
+
 			BallPtr ball,
-			
+
 			Shader * terrainShader,
 			TerrainRenderer * terrainRenderer,
 
@@ -49,153 +50,164 @@ void level1(GLFWwindow * window,
 			WaterRenderer * waterRenderer,
 
 			GUIRenderer * guiRenderer,
-
 			TextRenderer * textRenderer,
-
 			Menu * menuFrameBuffer,
 
 			Shader * sunShader,
 			SunRenderer * sunRenderer
 			)
 {
+	int numStar = 10;
+	int collectedStar = 0;
+	int frameEpoch = 0; // detect collision every 10 frames
+
+	// terrain
+	TerrainPtr terrain(new Terrain("h1.jpg", 2.0f));
+
+	// entity
 	vector<EntityPtr> entities;
 	entities.push_back(static_pointer_cast<Entity>(ball));
 
-	// terrain
-	TerrainPtr terrain(new Terrain("h1.png", 5.0f));
+	RawModelPtr starRawModel(new RawModel(LoadObjModel("star.obj")));
+	TexturePtr starTexture(new Texture(LoadTexture("star.png")));
+	TexturedModelPtr starTexturedModel(new TexturedModel(starRawModel, starTexture));
 
-	// water
-	// vector<WaterPtr> waters
-	// waters.push_back(Water(0.0f, -10, 0.0f, 1024.0f));
+	for(int i = 0; i < numStar; ++i) {
+		float x = rand() % 800 - 400;
+		float z = rand() % 800 - 400;
+		entities.push_back(EntityPtr(
+				new Entity(starTexturedModel,
+				glm::vec3(x, terrain->getHeight(x, z) + 5, z),
+				glm::vec3(0.0f), 8.0f)
+			));
+	}
 
+	RawModelPtr treeRawModel(new RawModel(LoadObjModel("tree.obj")));
+	TexturePtr treeTexture(new Texture(LoadTexture("tree.png")));
+	TexturedModelPtr treeTextureModel(new TexturedModel(treeRawModel, treeTexture));
+	static int numTree = 10;
+	for(int i = 0; i < numTree; ++i) {
+		float x = rand() % 800 - 400;
+		float z = rand() % 800 - 400;
+		entities.push_back(EntityPtr(
+				new Entity(treeTextureModel,
+				glm::vec3(x, terrain->getHeight(x, z), z) - 0.5f,
+				glm::vec3(0.0f), 2.0f + float(rand() % 10000) / 10000.0f)
+			));
+	}
+
+	// gui
 	vector<GUIPtr> guis;
 
+	// text
 	vector<TextPtr> texts;
 	float scaleFactor = 1.0f;
-	TextPtr text1(new Text(L"ye yongjie", 0, 0, scaleFactor, scaleFactor,
+	TextPtr text1(new Text(L"0 / 10", 0, 0, scaleFactor, scaleFactor,
 						glm::vec3(0.0f, 1.0f, 1.0f)));
 	texts.push_back(text1);
 
-	// sun
-	SunPtr sun(new Sun("sun.png", glm::vec3(0.0f, -1.0f, 1.0f), 1.0f));
-	sun->setPosition(glm::vec3(10.0f));
+	// direction light
+	glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, 0.0f);
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	double frameBegin = 0.0;
+	double frameEnd = 0.0;
+	double lastFrameTime = 0.0;
+
 	do {
+
+		frameBegin = glfwGetTime();
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// do some update
 		ball->update(terrain);
 		camera->update(terrain);
-		// speedBall->setPosition(ball->getPosition() + ball->getSpeed() * 20.0f);
 
 		glm::vec3 cameraPostion = camera->getPosition();
-		glm::vec3 ballPosition = ball->getPosition();
-
-		float ballDistanceFromWater = ballPosition.y - WATERHEIGHT;
-		ball->setPosition(ballPosition.x,
-							ballPosition.y - 2 * ballDistanceFromWater,
-							ballPosition.z);
-		float cameraDistanceFromWater = cameraPostion.y - WATERHEIGHT;
-		camera->setPosition(cameraPostion.x, 
-							cameraPostion.y - 2 * cameraDistanceFromWater,
-							cameraPostion.z);
 		glm::mat4 viewMatrix = camera->getViewMatrix();
 
-
-		glEnable(GL_CLIP_DISTANCE0);
-		// water render to reflection buffer
-		waterFrameBuffer->bindReflectionBuffer();
-
-				// skybox
-				skyboxShader->bindGL();
-				skyboxShader->setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
-				skyboxRenderer->render();
-				skyboxShader->unbindGL();
-
-				// terrain
-				terrainShader->bindGL();
-				terrainShader->setUniform4f("clipPlane", 0, 1, 0, -20);
-				terrainShader->setViewMatrix(viewMatrix);
-				terrainRenderer->render(terrain);
-				terrainShader->unbindGL();
-
-				// entity
-				entityShader->bindGL();
-				entityShader->setUniform4f("clipPlane", 0, 1, 0, 20);
-				entityShader->setViewMatrix(viewMatrix);
-				entityRenderer->render(entities);
-				entityShader->unbindGL();
-
-		ball->setPosition(ballPosition);
-		camera->setPosition(cameraPostion);
-		viewMatrix = camera->getViewMatrix();
-
-		// water render to refraction buffer
-		waterFrameBuffer->bindRefractionBuffer();
-
-				// skybox
-				// skyboxShader->bindGL();
-				// skyboxShader->setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
-				// skyboxRenderer->render();
-				// skyboxShader->unbindGL();
-
-				// terrain
-				terrainShader->bindGL();
-				terrainShader->setUniform4f("clipPlane", 0, -1, 0, 20);
-				terrainShader->setViewMatrix(viewMatrix);
-				terrainRenderer->render(terrain);
-				terrainShader->unbindGL();
-
-				// entity
-				// entityShader->bindGL();
-				// entityShader->setUniform4f("clipPlane", 0, -1, 0, 20);
-				// entityShader->setViewMatrix(viewMatrix);
-				// entityRenderer->render(entities);
-				// entityShader->unbindGL();
-
-		glDisable(GL_CLIP_DISTANCE0);
-		// render to screen
-		waterFrameBuffer->unbindCurrentFrameBuffer();
+		glm::vec3 ballPosition = ball->getPosition();
+		// cout << "bal : " << ballPosition.x
+		// 		<< " " << ballPosition.y
+		// 		<< " " << ballPosition.z << endl;
 
 		if(displayMenu) {
 			menuFrameBuffer->bindMenuFrameBuffer();
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 
-				// skybox
-				skyboxShader->bindGL();
-				skyboxShader->setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
-				skyboxRenderer->render();
-				skyboxShader->unbindGL();
-			
-				// terrain
-				terrainShader->bindGL();
-				terrainShader->setViewMatrix(viewMatrix);
-				terrainRenderer->render(terrain);
-				terrainShader->unbindGL();
 
-				// entity
-				entityShader->bindGL();
-				entityShader->setViewMatrix(viewMatrix);
-				entityShader->setUniform3f("viewPosition", cameraPostion);
-				entityRenderer->render(entities);
-				entityShader->unbindGL();
+		// skybox
+		skyboxShader->bindGL();
+		skyboxShader->setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
+		skyboxRenderer->render();
+		skyboxShader->unbindGL();
 
-				// // // water
-				// waterShader->bindGL();
-				// waterShader->setUniform3f("viewPosition", cameraPostion);
-				// waterRenderer->render(waters, camera);
-				// waterShader->unbindGL();
+		// terrain
+		terrainShader->bindGL();
+		terrainShader->setViewMatrix(viewMatrix);
+		terrainShader->setUniform3f("dirLight", lightDirection);
+		terrainShader->setUniform1i("numLights", numStar - collectedStar);
+		for(int i = 0; i < numStar - collectedStar; ++i) {
+			string pointLight = "pointLight[" + to_string(i) + "]";
+			terrainShader->setUniform3f(pointLight.c_str(), entities[i+1]->getPosition());
+		}
+		terrainRenderer->render(terrain);
+		terrainShader->unbindGL();
 
-				guiRenderer->render(guis);
-				textRenderer->render(texts);
 
-				sunRenderer->render(sun, camera);
+		++frameEpoch;
+		if(frameEpoch % 10 == 0)
+		{
+			int minIndex = 0;
+			float minDistance = 10000.0f;
+			for(int i = 1; i < entities.size(); ++i) {
+				float tempDistance = (ballPosition.x - entities[i]->getPositionX())
+								* (ballPosition.x - entities[i]->getPositionX())
+								+ (ballPosition.z - entities[i]->getPositionZ())
+								* (ballPosition.z - entities[i]->getPositionZ());
+				if(tempDistance < minDistance) {
+					minDistance = tempDistance;
+					minIndex = i;
+				}
+			}
+			// cout << minDistance << endl;
+			if(minIndex != 0
+				&& minIndex <= numStar - collectedStar
+				&& minDistance < 400)
+			{
+				++collectedStar;
+				entities.erase(entities.begin() + minIndex);
+				text1->setContentW(
+							to_wstring(collectedStar)
+							+ L" / "
+							+ to_wstring(numStar)
+							);
+			}
+		}
+
+		// entity
+		entityShader->bindGL();
+		entityShader->setViewMatrix(viewMatrix);
+		entityShader->setUniform3f("dirLight", lightDirection);
+		entityShader->setUniform1i("numLights", numStar - collectedStar);
+		for(int i = 0; i < numStar - collectedStar; ++i) {
+			string pointLight = "pointLight[" + to_string(i) + "]";
+			entityShader->setUniform3f(pointLight.c_str(), entities[i+1]->getPosition());
+		}
+		entityShader->setUniform3f("viewPosition", cameraPostion);
+		entityRenderer->render(entities);
+		entityShader->unbindGL();
+
+		guiRenderer->render(guis);
+		textRenderer->render(texts);
+
+		// sunRenderer->render(sun, camera);
 
 		if(displayMenu) {
 			menuFrameBuffer->unbindMenuFrameBuffer();
@@ -213,6 +225,10 @@ void level1(GLFWwindow * window,
 
 		if(level != 1)
 			break;
+
+		frameEnd = glfwGetTime();
+
+		printf("%lf ms\n", (frameEnd - frameBegin) * 1000);
 
 	} while(true);
 }

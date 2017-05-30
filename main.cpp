@@ -17,7 +17,7 @@
 extern const int WIDTH = 1422;
 extern const int HEIGHT = 800;
 
-extern const float WATERHEIGHT = 20;
+extern const float WATERHEIGHT = -10;
 
 // Keyboard and Mouse
 //
@@ -83,9 +83,9 @@ void InitCallbacks(GLFWwindow * window)
 	glfwSetScrollCallback(window, onMouseScroll);
 }
 
-void level1(GLFWwindow * window, 
+void level1(GLFWwindow * window,
 			const glm::mat4 & projectionMatrix,
-			Shader * entityShader, EntityRenderer * entityRenderer, BallPtr ball, 
+			Shader * entityShader, EntityRenderer * entityRenderer, BallPtr ball,
 			Shader * terrainShader, TerrainRenderer * terrainRenderer,
 			Shader * skyboxShader, SkyboxRenderer * skyboxRenderer,
 			Camera * camera,
@@ -95,9 +95,9 @@ void level1(GLFWwindow * window,
 			Menu * menuFrameBuffer,
 			Shader * sunShader,SunRenderer * sunRenderer );
 
-void level2(GLFWwindow * window, 
+void level2(GLFWwindow * window,
 			const glm::mat4 & projectionMatrix,
-			Shader * entityShader, EntityRenderer * entityRenderer, BallPtr ball, 
+			Shader * entityShader, EntityRenderer * entityRenderer, BallPtr ball,
 			Shader * terrainShader, TerrainRenderer * terrainRenderer,
 			Shader * skyboxShader, SkyboxRenderer * skyboxRenderer,
 			Camera * camera,
@@ -135,14 +135,14 @@ int main()
 	glCullFace(GL_BACK);
 
 	glm::mat4 projectionMatrix = glm::perspective(
-										45.0f, 
-										float(WIDTH) / float(HEIGHT), 
-										0.1f, 
+										45.0f,
+										float(WIDTH) / float(HEIGHT),
+										0.1f,
 										10000.0f);
 
 	// entity
 	Shader * entityShader = new Shader("entity.vs", "entity.fs");
-	EntityRenderer * entityRenderer 
+	EntityRenderer * entityRenderer
 						= new EntityRenderer(entityShader, projectionMatrix);
 	// vector<Entity*> entities;
 
@@ -155,7 +155,7 @@ int main()
 
 	// terrain
 	Shader * terrainShader = new Shader("terrain.vs", "terrain.fs");
-	TerrainRenderer * terrainRenderer 
+	TerrainRenderer * terrainRenderer
 						= new TerrainRenderer(terrainShader, projectionMatrix);
 
 	// skybox
@@ -169,8 +169,8 @@ int main()
 	// water
 	WaterFrameBuffer * waterFrameBuffer = new WaterFrameBuffer();
 	Shader * waterShader = new Shader("water.vs", "water.fs");
-	WaterRenderer * waterRenderer = new WaterRenderer(waterShader, 
-										projectionMatrix, 
+	WaterRenderer * waterRenderer = new WaterRenderer(waterShader,
+										projectionMatrix,
 										waterFrameBuffer,
 										new Texture("dudv2.png"),
 										new Texture("normal.png"));
@@ -196,7 +196,8 @@ int main()
 	while(true) {
 		if(level == 1) {
 			cout << "\nswitching to level1\n\n";
-			level1(window, projectionMatrix,	
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			level1(window, projectionMatrix,
 					entityShader, entityRenderer, ball,
 					terrainShader, terrainRenderer,
 					skyboxShader, skyboxRenderer,
@@ -209,8 +210,9 @@ int main()
 		}
 		if(level == 2) {
 			cout << "\nswitching to level2\n\n";
-			level2(window, projectionMatrix,	
-					entityShader, entityRenderer, ball, 
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			level2(window, projectionMatrix,
+					entityShader, entityRenderer, ball,
 					terrainShader, terrainRenderer,
 					skyboxShader, skyboxRenderer,
 					camera,

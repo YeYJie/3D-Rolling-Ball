@@ -1,51 +1,70 @@
 #version 330 core
-struct Material {
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-    float shininess;
-};
 
 in vec3 FragPos;
 in vec3 Normal;
-
 in vec2 fs_textCoords;
 
 out vec4 color;
 
 uniform sampler2D text;
 
-
-uniform Material material = Material(vec3(0.5f), 
-                                    vec3(1.0f), 
-                                    vec3(0.5f), 
-                                    32.0f);
-uniform vec3 lightPosition = vec3(100.0f, 100.0f, 100.0f);
-
-// uniform vec3 viewPosition = vec3(100.0f, 100.0f, 100.0f);
 uniform vec3 viewPosition;
+
+#define MAX_POINT_LIGHTS 10
+
+uniform vec3 dirLight;
+uniform vec3 pointLight[MAX_POINT_LIGHTS];
+uniform int numLights = 0;
+
+vec3 calculateDirLight(vec3 fromLight, vec3 normal, vec3 toViewer, vec3 textureColor);
+vec3 calculatePointLight(vec3 lightPosition, vec3 fragmentPosition, vec3 normal, vec3 toViewer, vec3 textureColor);
 
 void main()
 {
-    // // Ambient
-    vec3 ambient = material.ambient;
+    vec3 normal = normalize(Normal);
+    vec3 toViewer = normalize(viewPosition - FragPos);
 
-    // // Diffuse
-    vec3 norm = normalize(Normal);
-    vec3 lightDir = normalize(lightPosition - FragPos);
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * material.diffuse;
+    vec4 textureColor = texture(text, fs_textCoords);
 
-    // // Specular
-    vec3 viewDir = normalize(viewPosition - FragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = 0.01 * material.specular;
+    vec3 res = calculateDirLight(dirLight, normal, toViewer, vec3(textureColor));
 
-    vec4 lightColor = vec4(ambient + diffuse + specular, 1.0f);
+    for(int i = 0; i < numLights; ++i)
+        res += calculatePointLight(pointLight[i], FragPos, normal, toViewer, vec3(textureColor));
 
-    // color = vec4(result, 1.0f);
-    // color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-    color = texture(text, fs_textCoords) * lightColor;
-    // color = texture(text, fs_textCoords);
+    color = vec4(res, 1.0f);
+}
+
+vec3 calculateDirLight(vec3 fromLight, vec3 normal, vec3 toViewer, vec3 textureColor)
+{
+    vec3 ambient = vec3(0.3) * textureColor;
+
+    vec3 toLight = normalize(-fromLight);
+
+    float diffuseFactor = max(dot(toLight, normal), 0.0);
+    vec3 diffuse = vec3(1.0) * diffuseFactor * textureColor;
+
+    float specularFactor = pow(max(dot(reflect(fromLight, normal), toViewer), 0.0), 1.0);
+    vec3 specular = vec3(0.3) * specularFactor * textureColor;
+
+    return ambient + diffuse + specular;
+}
+
+vec3 calculatePointLight(vec3 lightPosition, vec3 fragmentPosition, vec3 normal, vec3 toViewer, vec3 textureColor)
+{
+    vec3 fromLight = normalize(fragmentPosition - lightPosition);
+    vec3 toLight = normalize(-fromLight);
+
+    float distanceToViewer = length(lightPosition - fragmentPosition);
+    float attenuation = 1.0 / (1.0 + 0.007 * distanceToViewer + 0.0002 * (distanceToViewer * distanceToViewer));
+    // float attenuation = 1.0;
+
+    vec3 ambient = vec3(0.1) * textureColor * attenuation;
+
+    float diffuseFactor = max(dot(toLight, normal), 0.0);
+    vec3 diffuse = vec3(0.5) * diffuseFactor * textureColor * attenuation;
+
+    float specularFactor = pow(max(dot(reflect(fromLight, normal), toViewer), 0.0), 1.0);
+    vec3 specular = vec3(0.3) * specularFactor * textureColor * attenuation;
+
+    return ambient + diffuse + specular;
 }

@@ -59,8 +59,10 @@ public:
 	}
 
 	string getContent() const { return _content; }
+	void setContent(const string & s) { _content = s; }
 
 	wstring getContentW() const { return _wcontent; }
+	void setContentW(const wstring & s) { _wcontent = s; }
 
 	glm::vec2 getPosition() const { return glm::vec2(_x, _y); }
 

@@ -34,10 +34,8 @@ void level2(GLFWwindow * window,
 			
 			Shader * entityShader,
 			EntityRenderer * entityRenderer,
-			// vector<Entity*> & entities,
-			
 			BallPtr ball,
-
+			
 			Shader * terrainShader,
 			TerrainRenderer * terrainRenderer,
 
@@ -49,13 +47,10 @@ void level2(GLFWwindow * window,
 			Shader * waterShader,
 			WaterFrameBuffer * waterFrameBuffer,
 			WaterRenderer * waterRenderer,
-			// vector<Water> & waters,
 
 			GUIRenderer * guiRenderer,
-			// vector<GUI> & guis,
 
 			TextRenderer * textRenderer,
-			// vector<Text*> & texts,
 
 			Menu * menuFrameBuffer,
 
@@ -67,13 +62,21 @@ void level2(GLFWwindow * window,
 	entities.push_back(static_pointer_cast<Entity>(ball));
 
 	// terrain
-	TerrainPtr terrain(new Terrain("h1.png", 5.0f));
+	TerrainPtr terrain(new Terrain("h2.png", 2.0f));
+
+	// water
+	vector<WaterPtr> waters;
+	WaterPtr water(new Water(0.0f, WATERHEIGHT, 0.0f, 1024.0f));
+	waters.push_back(water);
 
 	vector<GUIPtr> guis;
+	// GUIPtr reflectionGUI(new GUI(waterFrameBuffer->getReflectionTexture()));
+	// reflectionGUI->setPositionAndSize(0, 0, 300, 300);
+	// guis.push_back(reflectionGUI);
 
 	vector<TextPtr> texts;
 	float scaleFactor = 1.0f;
-	TextPtr text1(new Text(L"level2", 0, 0, scaleFactor, scaleFactor,
+	TextPtr text1(new Text(L"ye yongjie", 0, 0, scaleFactor, scaleFactor,
 						glm::vec3(0.0f, 1.0f, 1.0f)));
 	texts.push_back(text1);
 
@@ -96,8 +99,61 @@ void level2(GLFWwindow * window,
 		glm::vec3 cameraPostion = camera->getPosition();
 		glm::vec3 ballPosition = ball->getPosition();
 
+		// cout << ballPosition.y << endl;
+
+		float ballDistanceFromWater = ballPosition.y - WATERHEIGHT;
+		ball->setPosition(ballPosition.x,
+							ballPosition.y - 2 * ballDistanceFromWater,
+							ballPosition.z);
+		float cameraDistanceFromWater = cameraPostion.y - WATERHEIGHT;
+		camera->setPosition(cameraPostion.x, 
+							cameraPostion.y - 2 * cameraDistanceFromWater,
+							cameraPostion.z);
 		glm::mat4 viewMatrix = camera->getViewMatrix();
 
+
+		glEnable(GL_CLIP_DISTANCE0);
+		// water render to reflection buffer
+		waterFrameBuffer->bindReflectionBuffer();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				// skybox
+				skyboxShader->bindGL();
+				skyboxShader->setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
+				skyboxRenderer->render();
+				skyboxShader->unbindGL();
+
+				// terrain
+				terrainShader->bindGL();
+				terrainShader->setUniform4f("clipPlane", 0, 1, 0, -WATERHEIGHT);
+				terrainShader->setViewMatrix(viewMatrix);
+				terrainRenderer->render(terrain);
+				terrainShader->unbindGL();
+
+				// entity
+				entityShader->bindGL();
+				entityShader->setUniform4f("clipPlane", 0, 1, 0, -WATERHEIGHT);
+				entityShader->setViewMatrix(viewMatrix);
+				entityRenderer->render(entities);
+				entityShader->unbindGL();
+
+		ball->setPosition(ballPosition);
+		camera->setPosition(cameraPostion);
+		viewMatrix = camera->getViewMatrix();
+
+		// water render to refraction buffer
+		waterFrameBuffer->bindRefractionBuffer();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				// terrain
+				terrainShader->bindGL();
+				terrainShader->setUniform4f("clipPlane", 0, -1, 0, 20);
+				terrainShader->setViewMatrix(viewMatrix);
+				terrainRenderer->render(terrain);
+				terrainShader->unbindGL();
+
+		glDisable(GL_CLIP_DISTANCE0);
+		// render to screen
+		waterFrameBuffer->unbindCurrentFrameBuffer();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		if(displayMenu) {
 			menuFrameBuffer->bindMenuFrameBuffer();
@@ -111,10 +167,10 @@ void level2(GLFWwindow * window,
 				skyboxShader->unbindGL();
 			
 				// terrain
-				// terrainShader->bindGL();
-				// terrainShader->setViewMatrix(viewMatrix);
-				// terrainRenderer->render(terrain);
-				// terrainShader->unbindGL();
+				terrainShader->bindGL();
+				terrainShader->setViewMatrix(viewMatrix);
+				terrainRenderer->render(terrain);
+				terrainShader->unbindGL();
 
 				// entity
 				entityShader->bindGL();
@@ -123,17 +179,16 @@ void level2(GLFWwindow * window,
 				entityRenderer->render(entities);
 				entityShader->unbindGL();
 
-
-				// // water
-				// waterShader->bindGL();
-				// waterShader->setUniform3f("viewPosition", cameraPostion);
-				// waterRenderer->render(waters, camera);
-				// waterShader->unbindGL();
+				// water
+				waterShader->bindGL();
+				waterShader->setUniform3f("viewPosition", cameraPostion);
+				waterRenderer->render(waters, camera);
+				waterShader->unbindGL();
 
 				guiRenderer->render(guis);
 				textRenderer->render(texts);
 
-				// sunRenderer->render(sun, camera);
+				sunRenderer->render(sun, camera);
 
 		if(displayMenu) {
 			menuFrameBuffer->unbindMenuFrameBuffer();

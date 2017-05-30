@@ -45,12 +45,12 @@ static vector<float> vertex = {
 };
 
 static vector<const char*> cubeMapDayFileName = {
-	"./skybox/sRight.png", 
-	"./skybox/sLeft.png", 
-	"./skybox/sUp.png", 
-	"./skybox/sDown.png", 
-	"./skybox/sBack.png", 
-	"./skybox/sFront.png"
+	"./skybox/dayRight.png",
+	"./skybox/dayLeft.png",
+	"./skybox/dayTop.png",
+	"./skybox/dayBottom.png",
+	"./skybox/dayBack.png",
+	"./skybox/dayFront.png"	
 };
 
 static vector<const char*> cubeMapNightFileName = {
@@ -78,7 +78,7 @@ void SkyboxRenderer::initGL()
 	glBindVertexArray(0);
 
 	_cubeMapDay = LoadCubeMap(cubeMapDayFileName);
-	_cubeMapNight = LoadCubeMap(cubeMapNightFileName);
+	// _cubeMapNight = LoadCubeMap(cubeMapNightFileName);
 }
 
 void SkyboxRenderer::render() const

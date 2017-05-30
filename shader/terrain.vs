@@ -31,7 +31,7 @@ void main()
 
 	TextCoords = textCoords;
 
-	frag = position.y / 30.0;
+	frag = (position.y + 50) / 100.0;
 	// frag2 = 1 - frag1;
 	worldxz = temp.xz;
 }

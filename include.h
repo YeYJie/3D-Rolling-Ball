@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <algorithm>
 #include <memory>
+#include <thread>
 using namespace std;
 
 #include <GL/glew.h>

@@ -110,12 +110,22 @@ void WaterFrameBuffer::bindFrameBuffer(GLuint framebuffer,
 	glViewport(0, 0, width, height);	
 }
 
-GLuint WaterFrameBuffer::getReflectionTexture() const
+TexturePtr WaterFrameBuffer::getReflectionTexture() const
+{
+	return TexturePtr(new Texture(_reflectionColor));
+}
+
+TexturePtr WaterFrameBuffer::getRefractionTexture() const
+{
+	return TexturePtr(new Texture(_refractionColor));
+}
+
+GLuint WaterFrameBuffer::getReflectionTextureRaw() const
 {
 	return _reflectionColor;
 }
 
-GLuint WaterFrameBuffer::getRefractionTexture() const
+GLuint WaterFrameBuffer::getRefractionTextureRaw() const
 {
 	return _refractionColor;
 }
@@ -194,10 +204,10 @@ void WaterRenderer::render(const vector<WaterPtr> & waters,
 	glBindVertexArray(_VAO);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _waterFrameBuffer->getReflectionTexture());
+	glBindTexture(GL_TEXTURE_2D, _waterFrameBuffer->getReflectionTextureRaw());
 
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, _waterFrameBuffer->getRefractionTexture());
+	glBindTexture(GL_TEXTURE_2D, _waterFrameBuffer->getRefractionTextureRaw());
 
 	// glActiveTexture(GL_TEXTURE2);
 	// glBindTexture(GL_TEXTURE_2D, dudvTexture);
