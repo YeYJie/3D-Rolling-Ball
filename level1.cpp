@@ -62,7 +62,11 @@ void level1(GLFWwindow * window,
 	int frameEpoch = 0; // detect collision every 10 frames
 
 	// terrain
-	TerrainPtr terrain(new Terrain("h1.jpg", 2.0f));
+	TerrainPtr terrain(new Terrain("h1.jpg", 2.0f,
+				[](float h)->float {
+					return h / 255.0 * 200.0 - 50;
+				}
+		));
 
 	// entity
 	vector<EntityPtr> entities;
@@ -228,7 +232,7 @@ void level1(GLFWwindow * window,
 
 		frameEnd = glfwGetTime();
 
-		printf("%lf ms\n", (frameEnd - frameBegin) * 1000);
+		// printf("%lf ms\n", (frameEnd - frameBegin) * 1000);
 
 	} while(true);
 }

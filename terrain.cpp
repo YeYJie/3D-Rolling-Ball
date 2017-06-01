@@ -1,8 +1,16 @@
 #include "terrain.h"
 
-Terrain::Terrain(const char * heightMapFileName, float scale)
+float _defaultHeightFunction(float h)
+{
+	return h;
+}
+
+Terrain::Terrain(const char * heightMapFileName, float scale,
+				std::function<float(float)> heightFunction)
 {
 	_scale = scale;
+
+	_heightFunction = heightFunction;
 	loadHeightMap(heightMapFileName);
 
 	vector<const char*> textureFiles = {
@@ -115,9 +123,7 @@ void Terrain::loadHeightMap(const char * heightMapFileName)
 	int index = 0;
 	for(int i = 0; i < height; ++i) {
 		for(int j = 0; j < width; ++j) {
-			// _heightMap[i][j] = 1;
-			_heightMap[i][j] = float(imgData[index++]) / 255.0 * 100.0 - 50;
-			// if(_heightMap[i][j] > 32) _heightMap[i][j] = 32;
+			_heightMap[i][j] = _heightFunction(imgData[index++]);
 		}
 	}
 	SOIL_free_image_data(imgData);

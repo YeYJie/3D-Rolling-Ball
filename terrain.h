@@ -5,12 +5,15 @@
 #include "texture.h"
 // #include "vertex.h"
 
+float _defaultHeightFunction(float h);
+
 class Terrain
 {
 
 public:
 
-	Terrain(const char * heightMapFileName, float scale);
+	Terrain(const char * heightMapFileName, float scale,
+			std::function<float(float)> heightFunction = _defaultHeightFunction);
 
 	~Terrain();
 
@@ -34,6 +37,8 @@ public:
 
 private:
 
+	// float _defaultHeightFunction(float h);
+
 	float getHeightRaw(const int x, const int z) const;
 
 private:
@@ -43,7 +48,7 @@ private:
 	GLuint _textCoordsVBO = 0;
 	GLuint _normalVBO = 0;
 	GLuint _EBO = 0;
-	
+
 	GLuint _indicesNum;
 
 
@@ -55,6 +60,7 @@ private:
 	vector<TexturePtr> _texture;
 
 	vector<vector<float>> _heightMap;
+	std::function<float(float)> _heightFunction;
 
 private:
 

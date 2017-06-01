@@ -29,13 +29,13 @@ extern int mouseScrollOffset;
 extern int displayMenu;
 extern int level;
 
-void level2(GLFWwindow * window, 
+void level2(GLFWwindow * window,
 			const glm::mat4 & projectionMatrix,
-			
+
 			Shader * entityShader,
 			EntityRenderer * entityRenderer,
 			BallPtr ball,
-			
+
 			Shader * terrainShader,
 			TerrainRenderer * terrainRenderer,
 
@@ -62,7 +62,11 @@ void level2(GLFWwindow * window,
 	entities.push_back(static_pointer_cast<Entity>(ball));
 
 	// terrain
-	TerrainPtr terrain(new Terrain("h2.png", 2.0f));
+	TerrainPtr terrain(new Terrain("h2.png", 2.0f,
+				[](float h)->float {
+					return h / 255.0 * 100.0 - 50;
+				}
+		));
 
 	// water
 	vector<WaterPtr> waters;
@@ -89,6 +93,8 @@ void level2(GLFWwindow * window,
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	ball->setPosition(400, 0, 400);
+
 	do {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -99,6 +105,7 @@ void level2(GLFWwindow * window,
 		glm::vec3 cameraPostion = camera->getPosition();
 		glm::vec3 ballPosition = ball->getPosition();
 
+		// printVec3(ballPosition, "ballPosition");
 		// cout << ballPosition.y << endl;
 
 		float ballDistanceFromWater = ballPosition.y - WATERHEIGHT;
@@ -106,7 +113,7 @@ void level2(GLFWwindow * window,
 							ballPosition.y - 2 * ballDistanceFromWater,
 							ballPosition.z);
 		float cameraDistanceFromWater = cameraPostion.y - WATERHEIGHT;
-		camera->setPosition(cameraPostion.x, 
+		camera->setPosition(cameraPostion.x,
 							cameraPostion.y - 2 * cameraDistanceFromWater,
 							cameraPostion.z);
 		glm::mat4 viewMatrix = camera->getViewMatrix();
@@ -165,7 +172,7 @@ void level2(GLFWwindow * window,
 				skyboxShader->setViewMatrix(glm::mat4(glm::mat3(viewMatrix)));
 				skyboxRenderer->render();
 				skyboxShader->unbindGL();
-			
+
 				// terrain
 				terrainShader->bindGL();
 				terrainShader->setViewMatrix(viewMatrix);
