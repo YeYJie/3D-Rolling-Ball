@@ -24,6 +24,9 @@ private:
 
 	void initMenuList();
 
+	void resetMenuPosition();
+
+
 private:
 
 	static const int MENUFRAMEBUFFERWIDTH = 1024;

@@ -3,8 +3,6 @@
 extern const int WIDTH;
 extern const int HEIGHT;
 
-
-
 Menu::Menu()
 	: _menuTextRenderer("arial.fnt", "arial.png", TEXT_SDF()),
 	  _bgRenderer("menu.vs", "menu.fs")
@@ -18,7 +16,7 @@ Menu::Menu()
 	glGenTextures(1, &_bgColor);
 	glBindTexture(GL_TEXTURE_2D, _bgColor);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
 					MENUFRAMEBUFFERWIDTH, MENUFRAMEBUFFERHEIGHT,
 					0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -51,9 +49,9 @@ Menu::Menu()
 void Menu::initMenuList()
 {
 	_menuTexts.push_back(TextPtr(new Text(L"Rolling Ball",
-								200, 200, 1.0, 1.0)));
-	_menuTexts.push_back(TextPtr(new Text(L"Level 1", 250, 300, 1.0, 1.0)));
-	_menuTexts.push_back(TextPtr(new Text(L"Level 2", 250, 400, 1.0, 1.0)));
+								WIDTH, 200, 1.0, 1.0)));
+	_menuTexts.push_back(TextPtr(new Text(L"Level 1", WIDTH + 50, 300, 1.0, 1.0)));
+	_menuTexts.push_back(TextPtr(new Text(L"Level 2", WIDTH + 50, 400, 1.0, 1.0)));
 	// _menuTexts.push_back(TextPtr(new Text(L"Level 3", 250, 500, 1.0, 1.0)));
 }
 
@@ -61,7 +59,7 @@ void Menu::bindMenuFrameBuffer() const
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, _menuFBO);
-	glViewport(0, 0, MENUFRAMEBUFFERWIDTH, MENUFRAMEBUFFERHEIGHT);	
+	glViewport(0, 0, MENUFRAMEBUFFERWIDTH, MENUFRAMEBUFFERHEIGHT);
 }
 
 void Menu::unbindMenuFrameBuffer() const
@@ -83,27 +81,54 @@ extern bool mouseLeftPressed;
 extern int displayMenu;
 extern int level;
 
+void Menu::resetMenuPosition()
+{
+	_menuTexts[0]->setPositionX(WIDTH);
+	_menuTexts[1]->setPositionX(WIDTH + 50);
+	_menuTexts[2]->setPositionX(WIDTH + 50);
+}
+
 void Menu::render()
 {
-	_menuTexts[1]->setScale(1, 1);
-	_menuTexts[2]->setScale(1, 1);
-	if(mouseX >= 200 && mouseX <= 800) {
-		if(mouseY >= 300 && mouseY < 400) {
-			_menuTexts[1]->setScale(1.05, 1.05);
-			if(mouseLeftPressed) {
-				displayMenu = 0;
-				level = 1;
+	static bool fadingDone = false;
+
+	if(fadingDone)
+	{
+		_menuTexts[1]->setScale(1, 1);
+		_menuTexts[2]->setScale(1, 1);
+		if(mouseX >= 200 && mouseX <= 800) {
+			if(mouseY >= 300 && mouseY < 400) {
+				_menuTexts[1]->setScale(1.05, 1.05);
+				if(mouseLeftPressed) {
+					displayMenu = 0;
+					level = 1;
+					fadingDone = false;
+					resetMenuPosition();
+				}
 			}
-		}
-		else if(mouseY >= 400 && mouseY < 500) {
-			_menuTexts[2]->setScale(1.05, 1.05);
-			if(mouseLeftPressed) {
-				displayMenu = 0;
-				level = 2;
+			else if(mouseY >= 400 && mouseY < 500) {
+				_menuTexts[2]->setScale(1.05, 1.05);
+				if(mouseLeftPressed) {
+					displayMenu = 0;
+					level = 2;
+					fadingDone = false;
+					resetMenuPosition();
+				}
 			}
 		}
 	}
+	else
+	{
+		if(_menuTexts[0]->getPositionX() > 500) {
+			_menuTexts[0]->movePositionX(-10);
+			_menuTexts[1]->movePositionX(-10);
+			_menuTexts[2]->movePositionX(-10);
+		}
+		if(_menuTexts[0]->getPositionX() <= 500) {
+			fadingDone = true;
+		}
+	}
+
 	_bgRenderer.render(_bg);
 	_menuTextRenderer.render(_menuTexts);
-	// cout << level << endl;
 }

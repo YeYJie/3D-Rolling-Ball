@@ -9,9 +9,9 @@ uniform vec3 textColor;
 uniform sampler2D guiTexture;
 
 const float width = 0.5;
-const float edge = 0.01;
+const float edge = 0.08;
 
-void main(void) 
+void main(void)
 {
 	float distance = 1.0 - texture(guiTexture, textCoords).a;
 	float alpha = 1.0 - smoothstep(width, width + edge, distance);

@@ -14,7 +14,7 @@ class Text
 
 public:
 
-	Text(const string & s, float x, float y, float scale, 
+	Text(const string & s, float x, float y, float scale,
 			glm::vec3 color = glm::vec3(0.0f))
 	{
 		_content = s;
@@ -36,7 +36,7 @@ public:
 		_color = color;
 	}
 
-	Text(const wstring & s, float x, float y, float scale, 
+	Text(const wstring & s, float x, float y, float scale,
 			glm::vec3 color = glm::vec3(0.0f))
 	{
 		_wcontent = s;
@@ -65,6 +65,17 @@ public:
 	void setContentW(const wstring & s) { _wcontent = s; }
 
 	glm::vec2 getPosition() const { return glm::vec2(_x, _y); }
+	float getPositionX() const { return _x; }
+	float getPositionY() const { return _y; }
+
+	void setPosition(float x, float y) {
+		_x = x;
+		_y = y;
+	}
+	void setPositionX(float x) { _x = x; }
+	void setPositionY(float y) { _y = y; }
+	void movePositionX(float x) { _x += x; }
+	void movePositionY(float y) { _y += y; }
 
 	glm::vec2 setScale(float scaleX, float scaleY) {
 		glm::vec2 old = glm::vec2(_scaleX, _scaleY);
