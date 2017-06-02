@@ -35,10 +35,10 @@ Camera::Camera(EntityPtr ball)
 void Camera::update(const TerrainPtr & terrain)
 {
 	_distanceFromBall -= 10 * mouseScrollOffset;
-	if(_distanceFromBall < 10) 
+	if(_distanceFromBall < 10)
 		_distanceFromBall = 10;
-	else if(_distanceFromBall > 100) 
-		_distanceFromBall = 100;
+	// else if(_distanceFromBall > 100)
+	// 	_distanceFromBall = 100;
 
 	static int _lastY;
 	if(mouseRightPressed) {
@@ -68,7 +68,7 @@ void Camera::update(const TerrainPtr & terrain)
 	_position.z = p.z - m * sin(angleWithX * 0.0174533f);
 
 	// cout << "camera : " << _pitch << " " << _distanceFromBall << " " << m << endl;
-	_position.y = max(_position.y, 
+	_position.y = max(_position.y,
 		3.0f + terrain->getHeight(_position.x, _position.z));
 	// _position.y = max(_position.y, WATERHEIGHT + 2);
 	terrain->correctPosition(_position.x, _position.z);

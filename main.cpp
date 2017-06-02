@@ -2,17 +2,23 @@
 #include "ball.h"
 #include "camera.h"
 #include "entity.h"
+#include "entityShader.h"
 #include "entityRenderer.h"
 #include "shader.h"
 #include "skybox.h"
+#include "skyboxShader.h"
 #include "terrain.h"
+#include "terrainShader.h"
 #include "terrainRenderer.h"
 #include "texture.h"
 #include "gui.h"
 #include "water.h"
+#include "waterShader.h"
 #include "text.h"
 #include "menu.h"
 #include "sun.h"
+#include "sunShader.h"
+#include "shadow.h"
 
 extern const int WIDTH = 1422;
 extern const int HEIGHT = 800;
@@ -24,6 +30,7 @@ extern const float WATERHEIGHT = -10;
 // glfw is a piece of shit :-)
 
 int keyPressed = 0;
+int keyAction = 0;
 int mouseX = 0;
 int mouseY = 0;
 bool mouseLeftPressed = false;
@@ -44,11 +51,12 @@ void onKeyBoard(GLFWwindow * window, int key,
 		displayMenu = (displayMenu + 1) % 2;
 		if(displayMenu)
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		else
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		// else
+			// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
-	else
-		keyPressed = key;
+	// else
+	keyPressed = key;
+	keyAction = action;
 }
 
 void onMousePosition(GLFWwindow * window, double xx, double yy)
@@ -85,27 +93,28 @@ void InitCallbacks(GLFWwindow * window)
 
 void level1(GLFWwindow * window,
 			const glm::mat4 & projectionMatrix,
-			Shader * entityShader, EntityRenderer * entityRenderer, BallPtr ball,
-			Shader * terrainShader, TerrainRenderer * terrainRenderer,
-			Shader * skyboxShader, SkyboxRenderer * skyboxRenderer,
+			EntityShader * entityShader, EntityRenderer * entityRenderer, BallPtr ball,
+			TerrainShader * terrainShader, TerrainRenderer * terrainRenderer,
+			SkyboxShader * skyboxShader, SkyboxRenderer * skyboxRenderer,
 			Camera * camera,
-			Shader * waterShader, WaterFrameBuffer * waterFrameBuffer, WaterRenderer * waterRenderer,
+			WaterShader * waterShader, WaterFrameBuffer * waterFrameBuffer, WaterRenderer * waterRenderer,
 			GUIRenderer * guiRenderer,
 			TextRenderer * textRenderer,
 			Menu * menuFrameBuffer,
-			Shader * sunShader,SunRenderer * sunRenderer );
+			SunShader * sunShader,SunRenderer * sunRenderer );
 
 void level2(GLFWwindow * window,
 			const glm::mat4 & projectionMatrix,
-			Shader * entityShader, EntityRenderer * entityRenderer, BallPtr ball,
-			Shader * terrainShader, TerrainRenderer * terrainRenderer,
-			Shader * skyboxShader, SkyboxRenderer * skyboxRenderer,
+			EntityShader * entityShader, EntityRenderer * entityRenderer, BallPtr ball,
+			TerrainShader * terrainShader, TerrainRenderer * terrainRenderer,
+			SkyboxShader * skyboxShader, SkyboxRenderer * skyboxRenderer,
 			Camera * camera,
-			Shader * waterShader, WaterFrameBuffer * waterFrameBuffer, WaterRenderer * waterRenderer,
+			WaterShader * waterShader, WaterFrameBuffer * waterFrameBuffer, WaterRenderer * waterRenderer,
 			GUIRenderer * guiRenderer,
 			TextRenderer * textRenderer,
 			Menu * menuFrameBuffer,
-			Shader * sunShader,SunRenderer * sunRenderer );
+			SunShader * sunShader,SunRenderer * sunRenderer );
+
 
 int main()
 {
@@ -141,7 +150,7 @@ int main()
 										10000.0f);
 
 	// entity
-	Shader * entityShader = new Shader("entity.vs", "entity.fs");
+	EntityShader * entityShader = new EntityShader("entity.vs", "entity.fs");
 	EntityRenderer * entityRenderer
 						= new EntityRenderer(entityShader, projectionMatrix);
 	// vector<Entity*> entities;
@@ -154,12 +163,12 @@ int main()
 							glm::vec3(0.0f), 1.0f));
 
 	// terrain
-	Shader * terrainShader = new Shader("terrain.vs", "terrain.fs");
+	TerrainShader * terrainShader = new TerrainShader("terrain.vs", "terrain.fs");
 	TerrainRenderer * terrainRenderer
 						= new TerrainRenderer(terrainShader, projectionMatrix);
 
 	// skybox
-	Shader * skyboxShader = new Shader("skybox.vs", "skybox.fs");
+	SkyboxShader * skyboxShader = new SkyboxShader("skybox.vs", "skybox.fs");
 	SkyboxRenderer * skyboxRenderer
 						= new SkyboxRenderer(skyboxShader, projectionMatrix);
 
@@ -168,7 +177,7 @@ int main()
 
 	// water
 	WaterFrameBuffer * waterFrameBuffer = new WaterFrameBuffer();
-	Shader * waterShader = new Shader("water.vs", "water.fs");
+	WaterShader * waterShader = new WaterShader("water.vs", "water.fs");
 	WaterRenderer * waterRenderer = new WaterRenderer(waterShader,
 										projectionMatrix,
 										waterFrameBuffer,
@@ -189,7 +198,7 @@ int main()
 	Menu *  menuFrameBuffer = new Menu();
 
 	// sun
-	Shader * sunShader = new Shader("sun.vs", "sun.fs");
+	SunShader * sunShader = new SunShader("sun.vs", "sun.fs");
 	SunRenderer * sunRenderer = new SunRenderer(sunShader, projectionMatrix);
 
 

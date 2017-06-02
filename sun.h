@@ -4,7 +4,7 @@
 #include "include.h"
 #include "texture.h"
 #include "camera.h"
-#include "shader.h"
+#include "sunShader.h"
 
 
 class Sun
@@ -16,7 +16,7 @@ public:
 	Sun(const Sun &) = delete;
 	Sun & operator=(const Sun &) = delete;
 
-	Sun(TexturePtr texture, const glm::vec3 & lightDirection, float scale) 
+	Sun(TexturePtr texture, const glm::vec3 & lightDirection, float scale)
 	{
 		_texture = texture;
 		_lightDirection = glm::normalize(lightDirection);
@@ -31,16 +31,16 @@ public:
 		_scale = scale;
 	}
 
-	TexturePtr getTexture() const { 
-		return _texture; 
+	TexturePtr getTexture() const {
+		return _texture;
 	}
 
 	void setTexture(TexturePtr texture) {
 		_texture = texture;
 	}
 
-	glm::vec3 getLightDirection() const { 
-		return _lightDirection; 
+	glm::vec3 getLightDirection() const {
+		return _lightDirection;
 	}
 
 	void setLightDirection(const glm::vec3 & lightDirection) {
@@ -97,7 +97,7 @@ class SunRenderer
 
 public:
 
-	SunRenderer(Shader * shader, const glm::mat4 & projectionMatrix);
+	SunRenderer(SunShader * shader, const glm::mat4 & projectionMatrix);
 
 	~SunRenderer();
 
@@ -119,7 +119,7 @@ private:
 
 private:
 
-	Shader * _shader;
+	SunShader * _shader;
 
 	// glm::mat4 _projectionMatrix;
 

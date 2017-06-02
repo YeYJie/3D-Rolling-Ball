@@ -5,6 +5,7 @@
 #include "shader.h"
 #include "camera.h"
 #include "texture.h"
+#include "waterShader.h"
 
 class Water
 {
@@ -18,13 +19,13 @@ public:
 	Water(float x, float y, float z, float sideLength)
 		: _position(glm::vec3(x, y, z)), _sideLength(sideLength) {}
 
-	glm::vec3 getPosition() const { 
-		return _position; 
+	glm::vec3 getPosition() const {
+		return _position;
 	}
 
 	void setPosition(glm::vec3 position) {
 		_position = position;
-	} 
+	}
 
 	void setScale(float s) {
 		_sideLength = s;
@@ -96,7 +97,7 @@ class WaterRenderer
 
 public:
 
-	WaterRenderer(Shader * shader, 
+	WaterRenderer(WaterShader * shader,
 					glm::mat4 projectionMatrix,
 					WaterFrameBuffer * waterFrameBuffer,
 					Texture * dudv,
@@ -107,7 +108,7 @@ public:
 
 private:
 
-	Shader * _shader;
+	WaterShader * _shader;
 
 	WaterFrameBuffer * _waterFrameBuffer;
 

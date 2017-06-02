@@ -83,7 +83,7 @@ WaterFrameBuffer::~WaterFrameBuffer()
 	glDeleteFramebuffers(1, &_reflectionFBO);
 	glDeleteTextures(1, &_reflectionColor);
 	glDeleteFramebuffers(1, &_refractionFBO);
-	glDeleteTextures(1, &_refractionColor);	
+	glDeleteTextures(1, &_refractionColor);
 }
 
 void WaterFrameBuffer::bindReflectionBuffer() const
@@ -107,7 +107,7 @@ void WaterFrameBuffer::bindFrameBuffer(GLuint framebuffer,
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	glViewport(0, 0, width, height);	
+	glViewport(0, 0, width, height);
 }
 
 TexturePtr WaterFrameBuffer::getReflectionTexture() const
@@ -142,8 +142,8 @@ GLuint WaterFrameBuffer::getRefractionTextureRaw() const
 *
 ************************************************/
 
-WaterRenderer::WaterRenderer(Shader * shader, glm::mat4 projectionMatrix,
-								WaterFrameBuffer * waterFrameBuffer, 
+WaterRenderer::WaterRenderer(WaterShader * shader, glm::mat4 projectionMatrix,
+								WaterFrameBuffer * waterFrameBuffer,
 								Texture * dudv, Texture * normal)
 {
 	_shader = shader;
@@ -152,24 +152,24 @@ WaterRenderer::WaterRenderer(Shader * shader, glm::mat4 projectionMatrix,
 	_normal = normal;
 
 	_shader->bindGL();
-	_shader->setProjectionMatrix(projectionMatrix);
 
-	_shader->setUniform1i("reflectionTexture", 0);
-	_shader->setUniform1i("refractionTexture", 1);
-	_shader->setUniform1i("dudvTexture", 2);
-	_shader->setUniform1i("normalMap", 3);
+	_shader->setProjectionMatrix(projectionMatrix);
+	_shader->setReflectionTexture(0);
+	_shader->setRefractionTexture(1);
+	_shader->setDudvTexture(2);
+	_shader->setNormalMap(3);
 
 	_shader->unbindGL();
 	initGL();
 }
 
-static vector<float> vertices = { 
-	-1, 0, -1, 
-	-1, 0, 1, 
-	1, 0, -1, 
-	1, 0, -1, 
-	-1, 0, 1, 
-	1, 0, 1 
+static vector<float> vertices = {
+	-1, 0, -1,
+	-1, 0, 1,
+	1, 0, -1,
+	1, 0, -1,
+	-1, 0, 1,
+	1, 0, 1
 };
 
 void WaterRenderer::initGL()
@@ -196,7 +196,7 @@ void WaterRenderer::render(const vector<WaterPtr> & waters,
 	_shader->setViewMatrix(camera->getViewMatrix());
 
 	static float distortionOffset = 0.0f;
-	_shader->setUniform1f("distortionOffset", distortionOffset);
+	_shader->setDistortionOffset(distortionOffset);
 	distortionOffset += 0.0001f;
 	// distortionOffset %= 1;
 	if(distortionOffset > 1.0f) distortionOffset -= 1.0f;

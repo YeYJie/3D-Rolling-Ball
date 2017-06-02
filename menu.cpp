@@ -73,6 +73,8 @@ GLuint Menu::getBgTexture() const
 	return _bgColor;
 }
 
+extern int keyPressed;
+extern int keyAction;
 extern int mouseX;
 extern int mouseY;
 
@@ -127,6 +129,10 @@ void Menu::render()
 		if(_menuTexts[0]->getPositionX() <= 500) {
 			fadingDone = true;
 		}
+	}
+	if(keyPressed == GLFW_KEY_ESCAPE && keyAction == GLFW_PRESS) {
+		fadingDone = false;
+		resetMenuPosition();
 	}
 
 	_bgRenderer.render(_bg);

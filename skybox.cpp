@@ -50,16 +50,16 @@ static vector<const char*> cubeMapDayFileName = {
 	"./skybox/dayTop.png",
 	"./skybox/dayBottom.png",
 	"./skybox/dayBack.png",
-	"./skybox/dayFront.png"	
+	"./skybox/dayFront.png"
 };
 
 static vector<const char*> cubeMapNightFileName = {
-	"./skybox/nightRight.png", 
-	"./skybox/nightLeft.png", 
-	"./skybox/nightTop.png", 
-	"./skybox/nightBottom.png", 
-	"./skybox/nightBack.png", 
-	"./skybox/nightFront.png"	
+	"./skybox/nightRight.png",
+	"./skybox/nightLeft.png",
+	"./skybox/nightTop.png",
+	"./skybox/nightBottom.png",
+	"./skybox/nightBack.png",
+	"./skybox/nightFront.png"
 };
 
 void SkyboxRenderer::initGL()
@@ -91,18 +91,18 @@ void SkyboxRenderer::render() const
 	// day cubemap
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _cubeMapDay);
-	_shader->setUniform1i("cubeMapDay", 1);
+	_shader->setCubeMapDay(1);
 
 	// night cubemap
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _cubeMapNight);
-	_shader->setUniform1i("cubeMapNight", 0);
+	_shader->setCubeMapNight(0);
 
 	// blend day and night
 	static float blend = 0;
 	float blendFactor = cos(blend);
 	if(blendFactor < 0) blendFactor = -blendFactor;
-	_shader->setUniform1f("blendFactor", blendFactor);
+	_shader->setBlendFactor(blendFactor);
 	blend += 0.0002f;
 
 	// rotate

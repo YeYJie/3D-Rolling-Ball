@@ -3,7 +3,7 @@
 
 #include "include.h"
 #include "model.h"
-#include "shader.h"
+#include "skyboxShader.h"
 
 
 class SkyboxRenderer
@@ -11,7 +11,7 @@ class SkyboxRenderer
 
 public:
 
-	SkyboxRenderer(Shader * shader, glm::mat4 projectionMatrix)
+	SkyboxRenderer(SkyboxShader * shader, glm::mat4 projectionMatrix)
 	{
 		_shader = shader;
 		_shader->bindGL();
@@ -25,7 +25,7 @@ public:
 
 private:
 
-	Shader * _shader;
+	SkyboxShader * _shader;
 
 	GLuint _cube;
 

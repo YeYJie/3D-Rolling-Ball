@@ -1,6 +1,6 @@
 #include "sun.h"
 
-SunRenderer::SunRenderer(Shader * shader, const glm::mat4 & projectionMatrix)
+SunRenderer::SunRenderer(SunShader * shader, const glm::mat4 & projectionMatrix)
 	// : _projectionMatrix(glm::perspective(45.0f, 1.0f, 0.1f, 10000.0f))
 {
 	_shader = shader;
@@ -48,14 +48,17 @@ void SunRenderer::render(const SunPtr & sun, const Camera * camera) {
 
 	glm::mat4 modelViewMatrix = calculateModelViewMatrix(sun, camera);
 
-	_shader->setUniform1i("renderSun", 1);
-	_shader->setUniformMatrix4fv("modelViewMatrix", modelViewMatrix);
+	// _shader->setUniform1i("renderSun", 1);
+	// _shader->setUniformMatrix4fv("modelViewMatrix", modelViewMatrix);
+	_shader->setRenderSun(1);
+	_shader->setModelViewMatrix(modelViewMatrix);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	sun->unbindGL();
 
-	_shader->setUniform1i("renderSun", 0);
+	// _shader->setUniform1i("renderSun", 0);
+	_shader->setRenderSun(0);
 	renderFlare(sun, camera);
 
 	glEnable(GL_DEPTH_TEST);
@@ -71,17 +74,18 @@ void SunRenderer::render(const SunPtr & sun, const Camera * camera) {
 void SunRenderer::renderFlare(const SunPtr & sun, const Camera * camera)
 {
 	glm::vec2 sunScreenCoords = getScreenCoords(sun->getPosition(camera), camera);
-	float sunDistanceToCenter = sqrt((0.5f - sunScreenCoords.x) * (0.5f - sunScreenCoords.x) 
+	float sunDistanceToCenter = sqrt((0.5f - sunScreenCoords.x) * (0.5f - sunScreenCoords.x)
 									+ (0.5f - sunScreenCoords.y) * (0.5f - sunScreenCoords.y));
 	float bright = 1.0 - (sunDistanceToCenter / 0.8f);
 
 	// cout << "sun screen coords : " << sunScreenCoords.x <<  " "
 	// 		<< sunScreenCoords.y << " " << bright << endl;
-	
+
 	if(bright < 0)
 		return;
 
-	_shader->setUniform1f("bright", bright);
+	// _shader->setUniform1f("bright", bright);
+	_shader->setBright(bright);
 
 	glm::vec2 direction = glm::vec2(0.5f, 0.5f) - sunScreenCoords;
 
@@ -101,7 +105,8 @@ void SunRenderer::renderFlare(const SunPtr & sun, const Camera * camera)
 		flareMatrix[3][3] = 1.0f;
 		flareMatrix[3][0] = _flares[i].screenCoords.x * 2.0 - 1.0;
 		flareMatrix[3][1] = 1.0 - 2.0 * _flares[i].screenCoords.y;
-		_shader->setUniformMatrix4fv("flareMatrix", flareMatrix);
+		// _shader->setUniformMatrix4fv("flareMatrix", flareMatrix);
+		_shader->setFlareMatrix(flareMatrix);
 
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		_flares[i].texture->unbindGL();
@@ -109,13 +114,13 @@ void SunRenderer::renderFlare(const SunPtr & sun, const Camera * camera)
 
 }
 
-glm::vec2 SunRenderer::getScreenCoords(const glm::vec3 & position, 
+glm::vec2 SunRenderer::getScreenCoords(const glm::vec3 & position,
 										const Camera * camera)
 {
 	return getScreenCoords(position, camera->getViewMatrix());
 }
 
-glm::vec2 SunRenderer::getScreenCoords(const glm::vec3 & position, 
+glm::vec2 SunRenderer::getScreenCoords(const glm::vec3 & position,
 										const glm::mat4 & viewMatrix)
 {
 	// return glm::vec2(0.0f);
@@ -142,7 +147,7 @@ glm::mat4 SunRenderer::calculateModelViewMatrix(const SunPtr & sun, const Camera
 	res[1] = glm::vec4(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1], 0.0f); // second column
 	res[2] = glm::vec4(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2], 0.0f); // third column
 	res[3] = glm::vec4(sun->getPosition(camera), 1.0f);
-	
+
 	res = viewMatrix * res;
 	float scale = 3.0f;
 	res[0][0] = res[1][1] = res[2][2] = scale;

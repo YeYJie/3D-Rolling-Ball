@@ -56,7 +56,7 @@ TextRenderer::TextRenderer(const char * fnt, const char * png, TEXT_SDF)
 	: _textAtlas(new Texture(png))
 {
 	_useSDF = true;
-	_shader = new Shader("textSDF.vs", "textSDF.fs");
+	_shader = new TextShader("textSDF.vs", "textSDF.fs");
 	initGL();
 	_SDFcharMap = parsefnt(fnt);
 }
@@ -114,7 +114,7 @@ static map<char, TTFChar> parsettf(const char * ttf)
 TextRenderer::TextRenderer(const char * ttf, TEXT_TTF)
 {
 	_useSDF = false;
-	_shader = new Shader("textTTF.vs", "textTTF.fs");
+	_shader = new TextShader("textTTF.vs", "textTTF.fs");
 	initGL();
 	_TTFcharMap = parsettf(ttf);
 }
@@ -129,7 +129,7 @@ void TextRenderer::initGL()
 	// GLuint VBO;
 	glGenBuffers(1, &_positionVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _positionVBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), 
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float),
 									vertices.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
@@ -158,7 +158,7 @@ void TextRenderer::renderTTF(const vector<TextPtr> & texts)
 	glDisable(GL_DEPTH_TEST);
 
 
-	for(auto i : texts) 
+	for(auto i : texts)
 	{
 		glm::vec2 position = i->getPosition();
 		glm::vec2 scale = i->getScale();
@@ -167,7 +167,7 @@ void TextRenderer::renderTTF(const vector<TextPtr> & texts)
 		if(content.empty()) continue;
 
 		// set color
-		_shader->setUniform3f("textColor", i->getColor());
+		_shader->setTextColor(i->getColor());
 
 		// calculate offset
 		float totalAdvance = 0.0f;
@@ -176,7 +176,7 @@ void TextRenderer::renderTTF(const vector<TextPtr> & texts)
 
 		float originY = position.y + _TTFcharMap[content[0]].bearing.y * scale.y;
 
-		for(int j = 0; j < content.size(); ++j) 
+		for(int j = 0; j < content.size(); ++j)
 		{
 			char c = content[j];
 			TTFChar currentChar = _TTFcharMap[c];
@@ -186,14 +186,14 @@ void TextRenderer::renderTTF(const vector<TextPtr> & texts)
 			temp.setPositionAndSize(
 					position.x + totalAdvance + currentChar.bearing.x * scale.x,
 					originY - currentChar.bearing.y * scale.y,
-					currentChar.size.x * scale.x, 
+					currentChar.size.x * scale.x,
 					currentChar.size.y * scale.y
 				);
 
 			temp.bindGL();
 			_shader->setModelMatrix(temp.getModelMatrix());
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		
+
 			temp.unbindGL();
 
 			totalAdvance += (currentChar.advance >> 6) * scale.x;
@@ -223,7 +223,7 @@ void TextRenderer::renderSDF(const vector<TextPtr> & texts)
 
 	// glBindBuffer(GL_ARRAY_BUFFER, _textCoordsVBO);
 
-	for(auto i : texts) 
+	for(auto i : texts)
 	{
 		glm::vec2 position = i->getPosition();
 		glm::vec2 scale = i->getScale();
@@ -232,7 +232,7 @@ void TextRenderer::renderSDF(const vector<TextPtr> & texts)
 		if(content.empty()) continue;
 
 		// set color
-		_shader->setUniform3f("textColor", i->getColor());
+		_shader->setTextColor(i->getColor());
 
 		// calculate offset
 		float totalAdvance = 0.0f;
@@ -242,7 +242,7 @@ void TextRenderer::renderSDF(const vector<TextPtr> & texts)
 		// float originY = position.y + _SDFcharMap[content[0]].bearing.y * scale.y;
 		float originY = position.y  - _SDFcharMap[(int)content[0]].yoffset;
 
-		for(int j = 0; j < content.size(); ++j) 
+		for(int j = 0; j < content.size(); ++j)
 		{
 			int c = content[j];
 			SDFChar currentChar = _SDFcharMap[c];
@@ -265,7 +265,7 @@ void TextRenderer::renderSDF(const vector<TextPtr> & texts)
 			float mx = currentChar.x / 512.0f + sx;
 			float my = (512.0f - currentChar.y - currentChar.height) / 512.0f + sy;
 
-			// printf("x : %d y : %d width : %d height : %d sx : %f sy : %f mx : %f my : %f\n", 
+			// printf("x : %d y : %d width : %d height : %d sx : %f sy : %f mx : %f my : %f\n",
 			// 	currentChar.x, currentChar.y, currentChar.width, currentChar.height,
 			// 	sx, sy, mx, my);
 
@@ -273,10 +273,10 @@ void TextRenderer::renderSDF(const vector<TextPtr> & texts)
 			glm::mat3 textTranslateMatrix = glm::mat3(
 					sx, 0, 0, 0, sy, 0, mx, my, 1
 				);
-			_shader->setUniformMatrix3fv("textTranslateMatrix", textTranslateMatrix);
+			_shader->setTextTranslateMatrix(textTranslateMatrix);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		
+
 			temp.unbindGL();
 
 			totalAdvance += currentChar.xadvance * scale.x * 0.7;

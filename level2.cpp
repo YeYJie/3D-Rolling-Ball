@@ -2,17 +2,22 @@
 #include "ball.h"
 #include "camera.h"
 #include "entity.h"
+#include "entityShader.h"
 #include "entityRenderer.h"
 #include "shader.h"
 #include "skybox.h"
+#include "skyboxShader.h"
 #include "terrain.h"
+#include "terrainShader.h"
 #include "terrainRenderer.h"
 #include "texture.h"
 #include "gui.h"
 #include "water.h"
+#include "waterShader.h"
 #include "text.h"
 #include "menu.h"
 #include "sun.h"
+#include "sunShader.h"
 
 extern const int WIDTH;
 extern const int HEIGHT;
@@ -32,29 +37,28 @@ extern int level;
 void level2(GLFWwindow * window,
 			const glm::mat4 & projectionMatrix,
 
-			Shader * entityShader,
+			EntityShader * entityShader,
 			EntityRenderer * entityRenderer,
+
 			BallPtr ball,
 
-			Shader * terrainShader,
+			TerrainShader * terrainShader,
 			TerrainRenderer * terrainRenderer,
 
-			Shader * skyboxShader,
+			SkyboxShader * skyboxShader,
 			SkyboxRenderer * skyboxRenderer,
 
 			Camera * camera,
 
-			Shader * waterShader,
+			WaterShader * waterShader,
 			WaterFrameBuffer * waterFrameBuffer,
 			WaterRenderer * waterRenderer,
 
 			GUIRenderer * guiRenderer,
-
 			TextRenderer * textRenderer,
-
 			Menu * menuFrameBuffer,
 
-			Shader * sunShader,
+			SunShader * sunShader,
 			SunRenderer * sunRenderer
 			)
 {
@@ -131,14 +135,14 @@ void level2(GLFWwindow * window,
 
 				// terrain
 				terrainShader->bindGL();
-				terrainShader->setUniform4f("clipPlane", 0, 1, 0, -WATERHEIGHT);
+				terrainShader->setClipPlane(0, 1, 0, -WATERHEIGHT);
 				terrainShader->setViewMatrix(viewMatrix);
 				terrainRenderer->render(terrain);
 				terrainShader->unbindGL();
 
 				// entity
 				entityShader->bindGL();
-				entityShader->setUniform4f("clipPlane", 0, 1, 0, -WATERHEIGHT);
+				entityShader->setClipPlane(0, 1, 0, -WATERHEIGHT);
 				entityShader->setViewMatrix(viewMatrix);
 				entityRenderer->render(entities);
 				entityShader->unbindGL();
@@ -152,7 +156,7 @@ void level2(GLFWwindow * window,
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				// terrain
 				terrainShader->bindGL();
-				terrainShader->setUniform4f("clipPlane", 0, -1, 0, 20);
+				terrainShader->setClipPlane(0, -1, 0, WATERHEIGHT);
 				terrainShader->setViewMatrix(viewMatrix);
 				terrainRenderer->render(terrain);
 				terrainShader->unbindGL();
@@ -182,13 +186,13 @@ void level2(GLFWwindow * window,
 				// entity
 				entityShader->bindGL();
 				entityShader->setViewMatrix(viewMatrix);
-				entityShader->setUniform3f("viewPosition", cameraPostion);
+				entityShader->setViewPosition(cameraPostion);
 				entityRenderer->render(entities);
 				entityShader->unbindGL();
 
 				// water
 				waterShader->bindGL();
-				waterShader->setUniform3f("viewPosition", cameraPostion);
+				waterShader->setViewPosition(cameraPostion);
 				waterRenderer->render(waters, camera);
 				waterShader->unbindGL();
 

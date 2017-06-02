@@ -2,14 +2,14 @@
 #define _TERRAINRENDERER_H_
 
 #include "include.h"
-#include "shader.h"
+#include "terrainShader.h"
 
 class TerrainRenderer
 {
 
 public:
 
-	TerrainRenderer(Shader * shader, const glm::mat4 projectionMatrix)
+	TerrainRenderer(TerrainShader * shader, const glm::mat4 projectionMatrix)
 		: _shader(shader)
 	{
 		_shader->bindGL();
@@ -18,7 +18,7 @@ public:
 	}
 
 
-	void render(const vector<TerrainPtr> & terrains) const 
+	void render(const vector<TerrainPtr> & terrains) const
 	{
 		_shader->bindGL();
 		for(auto & terrain : terrains)
@@ -30,7 +30,7 @@ public:
 	{
 		_shader->bindGL();
 		renderSingleTerrain(terrain);
-		_shader->unbindGL();	
+		_shader->unbindGL();
 	}
 
 private:
@@ -42,9 +42,10 @@ private:
 		const vector<TexturePtr> & textures = terrain->getTexture();
 		for(int i = 0; i < textures.size(); ++i) {
 			textures[i]->bindGL(i);
-			char name[6];
-			snprintf(name, sizeof(name), "text%d", i + 1);
-			_shader->setUniform1i(name, i);
+			// char name[6];
+			// snprintf(name, sizeof(name), "text%d", i + 1);
+			// _shader->setUniform1i(name, i);
+			_shader->setText(i+1, i);
 		}
 		terrain->draw();
 
@@ -56,7 +57,7 @@ private:
 
 private:
 
-	Shader * _shader;
+	TerrainShader * _shader;
 
 };
 

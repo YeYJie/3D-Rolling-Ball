@@ -2,17 +2,22 @@
 #include "ball.h"
 #include "camera.h"
 #include "entity.h"
+#include "entityShader.h"
 #include "entityRenderer.h"
 #include "shader.h"
 #include "skybox.h"
+#include "skyboxShader.h"
 #include "terrain.h"
+#include "terrainShader.h"
 #include "terrainRenderer.h"
 #include "texture.h"
 #include "gui.h"
 #include "water.h"
+#include "waterShader.h"
 #include "text.h"
 #include "menu.h"
 #include "sun.h"
+#include "sunShader.h"
 
 extern const int WIDTH;
 extern const int HEIGHT;
@@ -32,20 +37,20 @@ extern int level;
 void level1(GLFWwindow * window,
 			const glm::mat4 & projectionMatrix,
 
-			Shader * entityShader,
+			EntityShader * entityShader,
 			EntityRenderer * entityRenderer,
 
 			BallPtr ball,
 
-			Shader * terrainShader,
+			TerrainShader * terrainShader,
 			TerrainRenderer * terrainRenderer,
 
-			Shader * skyboxShader,
+			SkyboxShader * skyboxShader,
 			SkyboxRenderer * skyboxRenderer,
 
 			Camera * camera,
 
-			Shader * waterShader,
+			WaterShader * waterShader,
 			WaterFrameBuffer * waterFrameBuffer,
 			WaterRenderer * waterRenderer,
 
@@ -53,7 +58,7 @@ void level1(GLFWwindow * window,
 			TextRenderer * textRenderer,
 			Menu * menuFrameBuffer,
 
-			Shader * sunShader,
+			SunShader * sunShader,
 			SunRenderer * sunRenderer
 			)
 {
@@ -155,12 +160,10 @@ void level1(GLFWwindow * window,
 		// terrain
 		terrainShader->bindGL();
 		terrainShader->setViewMatrix(viewMatrix);
-		terrainShader->setUniform3f("dirLight", lightDirection);
-		terrainShader->setUniform1i("numLights", numStar - collectedStar);
-		for(int i = 0; i < numStar - collectedStar; ++i) {
-			string pointLight = "pointLight[" + to_string(i) + "]";
-			terrainShader->setUniform3f(pointLight.c_str(), entities[i+1]->getPosition());
-		}
+		terrainShader->setDirLight(lightDirection);
+		terrainShader->setNumLights(numStar - collectedStar);
+		for(int i = 0; i < numStar - collectedStar; ++i)
+			terrainShader->setPointLight(i, entities[i+1]->getPosition());
 		terrainRenderer->render(terrain);
 		terrainShader->unbindGL();
 
@@ -198,20 +201,18 @@ void level1(GLFWwindow * window,
 		// entity
 		entityShader->bindGL();
 		entityShader->setViewMatrix(viewMatrix);
-		entityShader->setUniform3f("dirLight", lightDirection);
-		entityShader->setUniform1i("numLights", numStar - collectedStar);
-		for(int i = 0; i < numStar - collectedStar; ++i) {
-			string pointLight = "pointLight[" + to_string(i) + "]";
-			entityShader->setUniform3f(pointLight.c_str(), entities[i+1]->getPosition());
-		}
-		entityShader->setUniform3f("viewPosition", cameraPostion);
+		entityShader->setDirLight(lightDirection);
+		entityShader->setViewPosition(cameraPostion);
+		entityShader->setNumLights(numStar - collectedStar);
+		for(int i = 0; i < numStar - collectedStar; ++i)
+			entityShader->setPointLight(i, entities[i+1]->getPosition());
 		entityRenderer->render(entities);
 		entityShader->unbindGL();
 
 		guiRenderer->render(guis);
 		textRenderer->render(texts);
 
-		// sunRenderer->render(sun, camera);
+		sunRenderer->render(sun, camera);
 
 		if(displayMenu) {
 			menuFrameBuffer->unbindMenuFrameBuffer();

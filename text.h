@@ -140,6 +140,46 @@ struct TEXT_TTF {};
 struct TEXT_SDF {};
 
 
+class TextShader : public Shader
+{
+
+public:
+
+	TextShader(const char * vertexShaderFileName,
+					const char * fragmentShaderFileName)
+		: Shader(vertexShaderFileName, fragmentShaderFileName)
+	{
+		bindGL();
+
+		_textTranslateMatrix = getUniformLocation("textTranslateMatrix");
+		_textColor = getUniformLocation("textColor");
+		_guiTexture = getUniformLocation("guiTexture");
+
+		unbindGL();
+	}
+
+	void setTextTranslateMatrix(const glm::mat3 & m) {
+		setUniformMatrix3fv(_textTranslateMatrix, m);
+	}
+
+	void setTextColor(const glm::vec3 & color) {
+		setUniform3f(_textColor, color);
+	}
+
+	void setGuiTexture(int value) {
+		setUniform1i(_guiTexture, value);
+	}
+
+private:
+
+	GLuint _textTranslateMatrix;
+
+	GLuint _textColor;
+
+	GLuint _guiTexture;
+
+};
+
 class TextRenderer
 {
 
@@ -154,7 +194,7 @@ public:
 
 private:
 
-	Shader * _shader;
+	TextShader * _shader;
 
 	GLuint _VAO;
 	GLuint _positionVBO;
