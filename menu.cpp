@@ -4,7 +4,7 @@ extern const int WIDTH;
 extern const int HEIGHT;
 
 Menu::Menu()
-	: _menuTextRenderer("arial.fnt", "arial.png", TEXT_SDF()),
+	: _menuTextRenderer("yahei.fnt", "yahei.png", TEXT_SDF()),
 	  _bgRenderer("menu.vs", "menu.fs")
 {
 	// init FBO
@@ -48,11 +48,21 @@ Menu::Menu()
 
 void Menu::initMenuList()
 {
-	_menuTexts.push_back(TextPtr(new Text(L"Rolling Ball",
-								WIDTH, 200, 1.0, 1.0)));
-	_menuTexts.push_back(TextPtr(new Text(L"Level 1", WIDTH + 50, 300, 1.0, 1.0)));
-	_menuTexts.push_back(TextPtr(new Text(L"Level 2", WIDTH + 50, 400, 1.0, 1.0)));
-	// _menuTexts.push_back(TextPtr(new Text(L"Level 3", 250, 500, 1.0, 1.0)));
+	// _menuTexts.push_back(TextPtr(new Text(L"Rolling Ball",
+	// 							WIDTH, 200, 1.0, 1.0)));
+	// _menuTexts.push_back(TextPtr(new Text(L"Level 1", WIDTH + 50, 300, 1.0, 1.0)));
+	// _menuTexts.push_back(TextPtr(new Text(L"Level 2", WIDTH + 50, 400, 1.0, 1.0)));
+
+	TextPtr head(new Text(L"Rolling Ball", WIDTH, 200, 1.5f, TEXT_MODE_OUTLINE));
+	TextPtr line1(new Text(L"Level 1", WIDTH + 120, 400, 1.0f, TEXT_MODE_GLOW));
+	TextPtr line2(new Text(L"Level 2", WIDTH + 120, 500, 1.0f, TEXT_MODE_DROPSHADOW));
+	TextPtr line3(new Text(L"曹磊 永杰 浩楠", WIDTH + 60, 600, 1.0f, TEXT_MODE_NORMAL));
+	line3->setTextColor(255.0/255.0, 204.0/255.0, 255.0/255.0);
+
+	_menuTexts.push_back(head);
+	_menuTexts.push_back(line1);
+	_menuTexts.push_back(line2);
+	_menuTexts.push_back(line3);
 }
 
 void Menu::bindMenuFrameBuffer() const
@@ -86,8 +96,9 @@ extern int level;
 void Menu::resetMenuPosition()
 {
 	_menuTexts[0]->setPositionX(WIDTH);
-	_menuTexts[1]->setPositionX(WIDTH + 50);
-	_menuTexts[2]->setPositionX(WIDTH + 50);
+	_menuTexts[1]->setPositionX(WIDTH + 120);
+	_menuTexts[2]->setPositionX(WIDTH + 120);
+	_menuTexts[3]->setPositionX(WIDTH + 60);
 }
 
 void Menu::render()
@@ -99,7 +110,7 @@ void Menu::render()
 		_menuTexts[1]->setScale(1, 1);
 		_menuTexts[2]->setScale(1, 1);
 		if(mouseX >= 200 && mouseX <= 800) {
-			if(mouseY >= 300 && mouseY < 400) {
+			if(mouseY >= 400 && mouseY < 500) {
 				_menuTexts[1]->setScale(1.05, 1.05);
 				if(mouseLeftPressed) {
 					displayMenu = 0;
@@ -108,7 +119,7 @@ void Menu::render()
 					resetMenuPosition();
 				}
 			}
-			else if(mouseY >= 400 && mouseY < 500) {
+			else if(mouseY >= 500 && mouseY < 600) {
 				_menuTexts[2]->setScale(1.05, 1.05);
 				if(mouseLeftPressed) {
 					displayMenu = 0;
@@ -121,12 +132,15 @@ void Menu::render()
 	}
 	else
 	{
-		if(_menuTexts[0]->getPositionX() > 500) {
-			_menuTexts[0]->movePositionX(-10);
-			_menuTexts[1]->movePositionX(-10);
-			_menuTexts[2]->movePositionX(-10);
+		if(_menuTexts[0]->getPositionX() > 450) {
+			for(auto i : _menuTexts)
+				i->movePositionX(-10);
+			// _menuTexts[0]->movePositionX(-10);
+			// _menuTexts[1]->movePositionX(-10);
+			// _menuTexts[2]->movePositionX(-10);
+			// _menuTexts[3]->movePositionX(-10);
 		}
-		if(_menuTexts[0]->getPositionX() <= 500) {
+		if(_menuTexts[0]->getPositionX() <= 450) {
 			fadingDone = true;
 		}
 	}

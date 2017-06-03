@@ -84,8 +84,7 @@ void level2(GLFWwindow * window,
 
 	vector<TextPtr> texts;
 	float scaleFactor = 1.0f;
-	TextPtr text1(new Text(L"ye yongjie", 0, 0, scaleFactor, scaleFactor,
-						glm::vec3(0.0f, 1.0f, 1.0f)));
+	TextPtr text1(new Text(L"ye yongjie", 0, 0, scaleFactor, TEXT_MODE_NORMAL));
 	texts.push_back(text1);
 
 	// sun

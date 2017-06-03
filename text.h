@@ -9,53 +9,58 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#define TEXT_MODE_NORMAL 	1
+#define TEXT_MODE_OUTLINE 	2
+#define TEXT_MODE_GLOW 		3
+#define TEXT_MODE_DROPSHADOW 4
+
 class Text
 {
 
 public:
 
-	Text(const string & s, float x, float y, float scale,
-			glm::vec3 color = glm::vec3(0.0f))
+	Text(const string & s, float x, float y, float scale = 1.0f,
+			int textMode = TEXT_MODE_NORMAL)
 	{
 		_content = s;
 		_x = x;
 		_y = y;
 		_scaleX = _scaleY = scale;
-		_color = color;
+		_textMode = textMode;
 	}
 
 	Text(const string & s, float x, float y,
-							float scaleX, float scaleY,
-							glm::vec3 color = glm::vec3(0.0f))
+							float scaleX = 1.0f, float scaleY = 1.0f,
+							int textMode = TEXT_MODE_NORMAL)
 	{
 		_content = s;
 		_x = x;
 		_y = y;
 		_scaleX = scaleX;
 		_scaleY = scaleY;
-		_color = color;
+		_textMode = textMode;
 	}
 
-	Text(const wstring & s, float x, float y, float scale,
-			glm::vec3 color = glm::vec3(0.0f))
+	Text(const wstring & s, float x, float y, float scale = 1.0f,
+			int textMode = TEXT_MODE_NORMAL)
 	{
 		_wcontent = s;
 		_x = x;
 		_y = y;
 		_scaleX = _scaleY = scale;
-		_color = color;
+		_textMode = textMode;
 	}
 
 	Text(const wstring & s, float x, float y,
-							float scaleX, float scaleY,
-							glm::vec3 color = glm::vec3(0.0f))
+							float scaleX = 1.0f, float scaleY = 1.0f,
+							int textMode = TEXT_MODE_NORMAL)
 	{
 		_wcontent = s;
 		_x = x;
 		_y = y;
 		_scaleX = scaleX;
 		_scaleY = scaleY;
-		_color = color;
+		_textMode = textMode;
 	}
 
 	string getContent() const { return _content; }
@@ -63,6 +68,9 @@ public:
 
 	wstring getContentW() const { return _wcontent; }
 	void setContentW(const wstring & s) { _wcontent = s; }
+
+	int getTextMode() const { return _textMode; }
+	void setTextMode(int textMode) { _textMode = textMode; }
 
 	glm::vec2 getPosition() const { return glm::vec2(_x, _y); }
 	float getPositionX() const { return _x; }
@@ -77,20 +85,61 @@ public:
 	void movePositionX(float x) { _x += x; }
 	void movePositionY(float y) { _y += y; }
 
+	glm::vec2 getScale() const { return glm::vec2(_scaleX, _scaleY); }
 	glm::vec2 setScale(float scaleX, float scaleY) {
 		glm::vec2 old = glm::vec2(_scaleX, _scaleY);
 		_scaleX = scaleX;
 		_scaleY = scaleY;
 		return old;
 	}
-	glm::vec2 getScale() const { return glm::vec2(_scaleX, _scaleY); }
 
-	glm::vec3 getColor() const { return _color; }
+	float getScaleX() const { return _scaleX; }
+	void setScaleX(float scaleX) { _scaleX = scaleX; }
 
-	void setColor(glm::vec3 color) { _color = color; }
+	float getScaleY() const { return _scaleY; }
+	void setScaleY(float scaleY) { _scaleY = scaleY; }
 
-	void setColor(float r, float g, float b) {
-		_color = glm::vec3(r, g ,b);
+	glm::vec3 getTextColor() const {
+		return _textColor;
+	}
+	void setTextColor(const glm::vec3 & color) {
+		_textColor = color;
+	}
+	void setTextColor(float r, float g, float b) {
+		_textColor = glm::vec3(r, g ,b);
+	}
+
+
+	glm::vec3 getOutlineColor() const {
+		return _outlineColor;
+	}
+	void setOutlineColor(const glm::vec3 & color) {
+		_outlineColor = color;
+	}
+	void setOutlineColor(float r, float g, float b) {
+		_outlineColor = glm::vec3(r, g ,b);
+	}
+
+
+	glm::vec3 getGlowColor() const {
+		return _glowColor;
+	}
+	void setGlowColor(const glm::vec3 & color) {
+		_glowColor = color;
+	}
+	void setGlowColor(float r, float g, float b) {
+		_glowColor = glm::vec3(r, g ,b);
+	}
+
+
+	glm::vec3 getDropShadowColor() const {
+		return _dropShadowColor;
+	}
+	void setDropShadowColor(const glm::vec3 & color) {
+		_dropShadowColor = color;
+	}
+	void setDropShadowColor(float r, float g, float b) {
+		_dropShadowColor = glm::vec3(r, g ,b);
 	}
 
 private:
@@ -98,7 +147,12 @@ private:
 	string _content = "";
 	wstring _wcontent = L"";
 
-	glm::vec3 _color = glm::vec3(0.0f);
+	glm::vec3 _textColor = glm::vec3(1.0f, 1.0f, 0.0f); // default yellow
+	glm::vec3 _outlineColor = glm::vec3(1.0f, 0.0f, 0.0f); // default red
+	glm::vec3 _glowColor = glm::vec3(0.0f, 1.0f, 0.0f); // default green
+	glm::vec3 _dropShadowColor = glm::vec3(0.0f); // default black
+
+	int _textMode;
 
 	float _x = 0.0f;
 	float _y = 0.0f;
@@ -152,8 +206,13 @@ public:
 		bindGL();
 
 		_textTranslateMatrix = getUniformLocation("textTranslateMatrix");
-		_textColor = getUniformLocation("textColor");
 		_guiTexture = getUniformLocation("guiTexture");
+
+		_textMode = getUniformLocation("textMode");
+		_textColor = getUniformLocation("textColor");
+		_outlineColor = getUniformLocation("outlineColor");
+		_glowColor = getUniformLocation("glowColor");
+		_dropShadowColor = getUniformLocation("dropShadowColor");
 
 		unbindGL();
 	}
@@ -162,21 +221,53 @@ public:
 		setUniformMatrix3fv(_textTranslateMatrix, m);
 	}
 
+	void setGuiTexture(int value) {
+		setUniform1i(_guiTexture, value);
+	}
+
+	void setTextMode(int value) {
+		setUniform1i(_textMode, value);
+	}
+
 	void setTextColor(const glm::vec3 & color) {
 		setUniform3f(_textColor, color);
 	}
+	void setTextColor(float r, float g, float b) {
+		setUniform3f(_textColor, r, g, b);
+	}
 
-	void setGuiTexture(int value) {
-		setUniform1i(_guiTexture, value);
+	void setOutlineColor(const glm::vec3 & color) {
+		setUniform3f(_outlineColor, color);
+	}
+	void setOutlineColor(float r, float g, float b) {
+		setUniform3f(_outlineColor, r, g, b);
+	}
+
+	void setGlowColor(const glm::vec3 & color) {
+		setUniform3f(_glowColor, color);
+	}
+	void setGlowColor(float r, float g, float b) {
+		setUniform3f(_glowColor, r, g, b);
+	}
+
+	void setDropShadowColor(const glm::vec3 & color) {
+		setUniform3f(_dropShadowColor, color);
+	}
+	void setDropShadowColor(float r, float g, float b) {
+		setUniform3f(_dropShadowColor, r, g, b);
 	}
 
 private:
 
 	GLuint _textTranslateMatrix;
 
-	GLuint _textColor;
-
 	GLuint _guiTexture;
+
+	GLuint  _textMode;
+	GLuint _textColor;
+	GLuint _outlineColor;
+	GLuint _glowColor;
+	GLuint _dropShadowColor;
 
 };
 

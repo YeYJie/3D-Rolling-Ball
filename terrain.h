@@ -38,6 +38,7 @@ public:
 private:
 
 	// float _defaultHeightFunction(float h);
+	void updateModelMatrix();
 
 	float getHeightRaw(const int x, const int z) const;
 
@@ -56,6 +57,8 @@ private:
 	int _half_size;
 
 	float _scale = 1.0f;
+
+	glm::mat4 _modelMatrix;
 
 	vector<TexturePtr> _texture;
 

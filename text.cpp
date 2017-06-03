@@ -167,7 +167,7 @@ void TextRenderer::renderTTF(const vector<TextPtr> & texts)
 		if(content.empty()) continue;
 
 		// set color
-		_shader->setTextColor(i->getColor());
+		_shader->setTextColor(i->getTextColor());
 
 		// calculate offset
 		float totalAdvance = 0.0f;
@@ -232,7 +232,27 @@ void TextRenderer::renderSDF(const vector<TextPtr> & texts)
 		if(content.empty()) continue;
 
 		// set color
-		_shader->setTextColor(i->getColor());
+		// _shader->setTextColor(i->getColor());
+
+		int textMode = i->getTextMode();
+		_shader->setTextMode(textMode);
+
+		if(textMode == TEXT_MODE_NORMAL) {
+			_shader->setTextColor(i->getTextColor());
+		}
+		else if(textMode == TEXT_MODE_OUTLINE) {
+			_shader->setTextColor(i->getTextColor());
+			_shader->setOutlineColor(i->getOutlineColor());
+		}
+		else if(textMode == TEXT_MODE_GLOW) {
+			_shader->setTextColor(i->getTextColor());
+			_shader->setGlowColor(i->getGlowColor());
+		}
+		else if(textMode == TEXT_MODE_DROPSHADOW) {
+			_shader->setTextColor(i->getTextColor());
+			_shader->setDropShadowColor(i->getDropShadowColor());
+		}
+
 
 		// calculate offset
 		float totalAdvance = 0.0f;
@@ -240,7 +260,7 @@ void TextRenderer::renderSDF(const vector<TextPtr> & texts)
 		// 	totalAdvance += _TTFcharMap[content[0]].bearing.x * scale.x * (-1.0);
 
 		// float originY = position.y + _SDFcharMap[content[0]].bearing.y * scale.y;
-		float originY = position.y  - _SDFcharMap[(int)content[0]].yoffset;
+		float originY = position.y  - _SDFcharMap[(int)content[0]].yoffset * scale.y;
 
 		for(int j = 0; j < content.size(); ++j)
 		{
@@ -249,10 +269,9 @@ void TextRenderer::renderSDF(const vector<TextPtr> & texts)
 
 			GUI temp(_textAtlas);
 
-
 			temp.setPositionAndSize(
 					position.x + totalAdvance + currentChar.xoffset * scale.x,
-					originY + currentChar.yoffset,
+					originY + currentChar.yoffset * scale.y,
 					currentChar.width * scale.x,
 					currentChar.height * scale.y
 				);

@@ -153,7 +153,6 @@ int main()
 	EntityShader * entityShader = new EntityShader("entity.vs", "entity.fs");
 	EntityRenderer * entityRenderer
 						= new EntityRenderer(entityShader, projectionMatrix);
-	// vector<Entity*> entities;
 
 	RawModelPtr rawModelBall(new RawModel(LoadObjModel("ball.obj")));
 	TexturePtr ballTexture(new Texture(LoadTexture("ball.png")));
@@ -183,16 +182,15 @@ int main()
 										waterFrameBuffer,
 										new Texture("dudv2.png"),
 										new Texture("normal.png"));
-	// vector<Water> waters;
 
 	// gui
 	GUIRenderer * guiRenderer = new GUIRenderer();
-	// vector<GUI> guis;
 
 	// text
+	// TextRenderer * textRenderer = new TextRenderer(
+	// 						"arial.fnt", "arial.png", TEXT_SDF());
 	TextRenderer * textRenderer = new TextRenderer(
-							"arial.fnt", "arial.png", TEXT_SDF());
-	// vector<Text*> texts;
+							"yahei.fnt", "yahei.png", TEXT_SDF());
 
 	// menu
 	Menu *  menuFrameBuffer = new Menu();
@@ -205,7 +203,8 @@ int main()
 	while(true) {
 		if(level == 1) {
 			cout << "\nswitching to level1\n\n";
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			level1(window, projectionMatrix,
 					entityShader, entityRenderer, ball,
 					terrainShader, terrainRenderer,

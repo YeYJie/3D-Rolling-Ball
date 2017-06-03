@@ -111,9 +111,9 @@ void level1(GLFWwindow * window,
 	// text
 	vector<TextPtr> texts;
 	float scaleFactor = 1.0f;
-	TextPtr text1(new Text(L"0 / 10", 0, 0, scaleFactor, scaleFactor,
-						glm::vec3(0.0f, 1.0f, 1.0f)));
-	texts.push_back(text1);
+	TextPtr score(new Text(L"0/10", 10, 10, 1.0f, TEXT_MODE_NORMAL));
+	score->setTextColor(0.0f, 128.0f/255.0f, 1.0f);
+	texts.push_back(score);
 
 	// direction light
 	glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, 0.0f);
@@ -173,7 +173,7 @@ void level1(GLFWwindow * window,
 		{
 			int minIndex = 0;
 			float minDistance = 10000.0f;
-			for(int i = 1; i < entities.size(); ++i) {
+			for(int i = 1; i <= numStar - collectedStar; ++i) {
 				float tempDistance = (ballPosition.x - entities[i]->getPositionX())
 								* (ballPosition.x - entities[i]->getPositionX())
 								+ (ballPosition.z - entities[i]->getPositionZ())
@@ -190,9 +190,9 @@ void level1(GLFWwindow * window,
 			{
 				++collectedStar;
 				entities.erase(entities.begin() + minIndex);
-				text1->setContentW(
+				score->setContentW(
 							to_wstring(collectedStar)
-							+ L" / "
+							+ L"/"
 							+ to_wstring(numStar)
 							);
 			}
@@ -212,7 +212,7 @@ void level1(GLFWwindow * window,
 		guiRenderer->render(guis);
 		textRenderer->render(texts);
 
-		sunRenderer->render(sun, camera);
+		// sunRenderer->render(sun, camera);
 
 		if(displayMenu) {
 			menuFrameBuffer->unbindMenuFrameBuffer();

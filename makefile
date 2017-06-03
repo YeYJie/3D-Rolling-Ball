@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -g -std=c++11
+CXXFLAGS = -pg -g -std=c++11
 CXXFLAGS += $(shell pkg-config --cflags glfw3)
 CXXFLAGS += $(shell pkg-config --cflags --static freetype2)
 # CFLAGS += $(shell pkg-config --cflags assimp)

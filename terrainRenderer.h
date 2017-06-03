@@ -42,9 +42,6 @@ private:
 		const vector<TexturePtr> & textures = terrain->getTexture();
 		for(int i = 0; i < textures.size(); ++i) {
 			textures[i]->bindGL(i);
-			// char name[6];
-			// snprintf(name, sizeof(name), "text%d", i + 1);
-			// _shader->setUniform1i(name, i);
 			_shader->setText(i+1, i);
 		}
 		terrain->draw();
