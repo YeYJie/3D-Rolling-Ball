@@ -29,18 +29,13 @@ WaterFrameBuffer::WaterFrameBuffer()
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	// glGenTextures(1, &_reflectionDepth);
-	// glBindTexture(GL_TEXTURE_2D, _reflectionDepth);
-
-	// glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, FRAMEBUFFERWIDTH, FRAMEBUFFERHEIGHT,
-	// 				0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-	// 						GL_TEXTURE_2D, _reflectionDepth, 0);
-	// glBindTexture(GL_TEXTURE_2D, 0);
-
+	glGenRenderbuffers(1, &_reflectionDepthRenderBuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, _reflectionDepthRenderBuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT,
+							FRAMEBUFFERWIDTH, FRAMEBUFFERHEIGHT);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+							GL_RENDERBUFFER, _reflectionDepthRenderBuffer);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -62,18 +57,13 @@ WaterFrameBuffer::WaterFrameBuffer()
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	// glGenTextures(1, &_refractionDepth);
-	// glBindTexture(GL_TEXTURE_2D, _refractionDepth);
-
-	// glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, FRAMEBUFFERWIDTH, FRAMEBUFFERHEIGHT,
-	// 				0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	// glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-	// 						GL_TEXTURE_2D, _refractionDepth, 0);
-	// glBindTexture(GL_TEXTURE_2D, 0);
-
+	glGenRenderbuffers(1, &_refractionDepthRenderBuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, _refractionDepthRenderBuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT,
+							FRAMEBUFFERWIDTH, FRAMEBUFFERHEIGHT);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+							GL_RENDERBUFFER, _refractionDepthRenderBuffer);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -107,6 +97,7 @@ void WaterFrameBuffer::bindFrameBuffer(GLuint framebuffer,
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, width, height);
 }
 
@@ -130,10 +121,6 @@ GLuint WaterFrameBuffer::getRefractionTextureRaw() const
 	return _refractionColor;
 }
 
-// GLuint WaterFrameBuffer::getRefractionDepthTexture() const
-// {
-// 	return _refractionDepth;
-// }
 
 
 /************************************************
@@ -197,7 +184,7 @@ void WaterRenderer::render(const vector<WaterPtr> & waters,
 
 	static float distortionOffset = 0.0f;
 	_shader->setDistortionOffset(distortionOffset);
-	distortionOffset += 0.0001f;
+	distortionOffset += 0.0004f;
 	// distortionOffset %= 1;
 	if(distortionOffset > 1.0f) distortionOffset -= 1.0f;
 

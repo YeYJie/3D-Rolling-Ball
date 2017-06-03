@@ -105,6 +105,8 @@ void level1(GLFWwindow * window,
 			));
 	}
 
+	ball->setPosition(0.0f, 0.0f, 0.0f);
+
 	// gui
 	vector<GUIPtr> guis;
 

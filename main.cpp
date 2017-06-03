@@ -218,7 +218,8 @@ int main()
 		}
 		if(level == 2) {
 			cout << "\nswitching to level2\n\n";
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			level2(window, projectionMatrix,
 					entityShader, entityRenderer, ball,
 					terrainShader, terrainRenderer,

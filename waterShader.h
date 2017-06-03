@@ -16,7 +16,7 @@ public:
 		bindGL();
 
 		_distortionOffset = getUniformLocation("distortionOffset");
-		_lightPosition = getUniformLocation("lightPosition");
+		_dirLight = getUniformLocation("dirLight");
 		_viewPosition = getUniformLocation("viewPosition");
 
 		_reflectionTexture = getUniformLocation("reflectionTexture");
@@ -31,11 +31,11 @@ public:
 		setUniform1f(_distortionOffset, d);
 	}
 
-	void setLightPosition(const glm::vec3 & lightPosition) {
-		setUniform3f(_lightPosition, lightPosition);
+	void setDirLight(const glm::vec3 & dirLight) {
+		setUniform3f(_dirLight, dirLight);
 	}
-	void setLightPosition(float x, float y, float z) {
-		setUniform3f(_lightPosition, x, y, z);
+	void setDirLight(float x, float y, float z) {
+		setUniform3f(_dirLight, x, y, z);
 	}
 
 	void setViewPosition(const glm::vec3 & viewPosition) {
@@ -64,7 +64,7 @@ public:
 private:
 
 	GLuint _distortionOffset;
-	GLuint _lightPosition;
+	GLuint _dirLight;
 	GLuint _viewPosition;
 
 	GLuint _reflectionTexture;

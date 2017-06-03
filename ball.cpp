@@ -22,24 +22,18 @@ void Ball::update(const TerrainPtr & terrain)
 
 	static const float speed = 1.0f;
 	if(keyPressed == GLFW_KEY_UP || keyPressed == GLFW_KEY_W) {
-		// move(orientation.x * speed, 0, orientation.z * speed);
 		_accelerationKeyboard = orientation;
 	}
 	else if(keyPressed == GLFW_KEY_DOWN || keyPressed == GLFW_KEY_S) {
-		// move(-orientation.x * speed, 0, -orientation.z * speed);
 		_accelerationKeyboard = -orientation;
 	}
 	else if(keyPressed == GLFW_KEY_LEFT || keyPressed == GLFW_KEY_A) {
-		// orientation = glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), orientation);
-		// move(orientation.x * speed, 0, orientation.z * speed);
 		_accelerationKeyboard = glm::cross(
 											glm::vec3(0.0f, 1.0f, 0.0f),
 											orientation
 										);
 	}
 	else if(keyPressed == GLFW_KEY_RIGHT || keyPressed == GLFW_KEY_D) {
-		// orientation = glm::cross(orientation, glm::vec3(0.0f, 1.0f, 0.0f));
-		// move(orientation.x * speed, 0, orientation.z * speed);
 		_accelerationKeyboard = glm::cross(
 											orientation,
 											glm::vec3(0.0f, 1.0f, 0.0f)

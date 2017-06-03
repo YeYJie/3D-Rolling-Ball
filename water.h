@@ -54,6 +54,8 @@ private:
 
 typedef shared_ptr<Water> WaterPtr;
 
+
+
 class WaterFrameBuffer
 {
 
@@ -84,13 +86,15 @@ private:
 
 	GLuint _reflectionFBO;
 	GLuint _reflectionColor;
-	// GLuint _reflectionDepth;
+	GLuint _reflectionDepthRenderBuffer;
 
 	GLuint _refractionFBO;
 	GLuint _refractionColor;
-	// GLuint _refractionDepth;
+	GLuint _refractionDepthRenderBuffer;
 
 }; // class WaterFrameBuffer
+
+
 
 class WaterRenderer
 {

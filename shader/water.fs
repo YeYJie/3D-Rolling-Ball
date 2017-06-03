@@ -13,37 +13,25 @@ uniform sampler2D refractionTexture;
 uniform sampler2D dudvTexture;
 uniform sampler2D normalMap;
 
-const float wave = 0.005f;
+const float wave = 0.01;
 
 uniform float distortionOffset;
 
 in vec3 FragPos;
-uniform vec3 lightPosition = vec3(10000.0f, 10000.0f, 10000.0f);
 uniform vec3 viewPosition;
-
-// uniform vec3 shitC;
+uniform vec3 dirLight;
 
 void main()
 {
-
 	vec2 temp = (clipSpace.xy / clipSpace.w) / 2.0f + 0.5f;
 
 	vec2 reflectionCoords = vec2(temp.x, -temp.y);
 	vec2 refractionCoords = vec2(temp.x, temp.y);
 
-	// vec2 distortion1 = (texture(dudvTexture, 
-	// 	vec2(textCoords.x + distortionOffset, textCoords.y))).xy * 2.0f - 1.0f;
-	// vec2 distortion2 = (texture(dudvTexture,
-	// 	vec2(-textCoords.x + distortionOffset, -textCoords.y + distortionOffset))).xy * 2.0f - 1.0f;
 
-	// // vec2 distortion = texture(dudvTexture, vec2(textCoords.x, textCoords.y)).rg * 2.0f - 1.0f;
-	// vec2 distortion = distortion1 + distortion2;
-	// distortion *= wave;
-
-	vec2 distortedTexCoords = texture(dudvTexture, vec2(textCoords.x + distortionOffset, textCoords.y)).rg * 0.1;
+	vec2 distortedTexCoords = texture(dudvTexture, vec2(textCoords.x + distortionOffset, textCoords.y)).rg * 0.01;
 	distortedTexCoords = textCoords + vec2(distortedTexCoords.x, distortedTexCoords.y + distortionOffset);
 	vec2 distortion = (texture(dudvTexture, distortedTexCoords).rg * 2.0 - 1.0) * wave;
-
 
 	reflectionCoords += distortion;
 	reflectionCoords.x = clamp(reflectionCoords.x, 0.001, 0.999);
@@ -58,30 +46,18 @@ void main()
 	color = mix(reflection, refraction, 0.5);
 	// color = reflection;
 
-	vec4 normalColor = texture(normalMap, distortedTexCoords * 0.5f);
+	vec4 normalColor = texture(normalMap, distortedTexCoords);
 	vec3 normal = vec3(normalColor.r * 2.0f - 1.0f,
-						normalColor.b * 5.0f,
+						normalColor.b * 3.0f,
 						normalColor.g  * 2.0f - 1.0f);
 	normal = normalize(normal);
 
-	// vec3 norm = normalize(Normal);
-	// vec3 viewDir = normalize(viewPosition - FragPos);
-	// vec4 dir = CalcDirLight(dirLight, norm, viewDir);
 
-	// color = dir;
+	vec3 fromLight = normalize(dirLight);
+	vec3 toCamera = normalize(viewPosition - FragPos);
 
-	// color = texture(normalMap, distortedTexCoords * 0.1f);
-	vec3 fromLightVector = FragPos - lightPosition;
-	vec3 toCameraVector = viewPosition - FragPos;
+	float specularFactor = pow(max(dot(reflect(fromLight, normal), toCamera), 0.0), 4.0);
+	vec3 specular = vec3(1.2) * specularFactor * 0.2;
 
-	vec3 reflectedLight = reflect(normalize(fromLightVector), normal);
-	float specular = max(dot(normalize(reflectedLight), normalize(toCameraVector)), 0.0);
-	specular = pow(specular, 2.0f);
-	vec3 specularHighlights = vec3(1.5f, 1.5f, 1.5f) * specular * 0.1;
-	// vec3 specularHighlights = vec3(specular, specular, specular);
-
-	// color = vec4(normalize(toCameraVector), 1.0f);
-	// color = vec4(specularHighlights, 1.0f);
-	color += vec4(specularHighlights, 1.0f);
-	// color = normalColor;
+	color += vec4(specular, 1.0);
 }

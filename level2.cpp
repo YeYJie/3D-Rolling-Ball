@@ -62,21 +62,77 @@ void level2(GLFWwindow * window,
 			SunRenderer * sunRenderer
 			)
 {
-	vector<EntityPtr> entities;
-	entities.push_back(static_pointer_cast<Entity>(ball));
-
 	// terrain
+	// cout << "loading terrain..." << endl;
 	TerrainPtr terrain(new Terrain("h2.png", 2.0f,
 				[](float h)->float {
 					return h / 255.0 * 100.0 - 50;
 				}
 		));
 
+	// entity
+	// cout << "loading entities..." << endl;
+	vector<EntityPtr> entities;
+	entities.push_back(static_pointer_cast<Entity>(ball));
+
+	RawModelPtr starRawModel(new RawModel(LoadObjModel("star.obj")));
+	TexturePtr starTexture(new Texture(LoadTexture("star.png")));
+	TexturedModelPtr starTexturedModel(new TexturedModel(starRawModel, starTexture));
+	int x = 30;
+	int z = 90;
+	entities.push_back(EntityPtr(
+			new Entity(starTexturedModel,
+			glm::vec3(x, terrain->getHeight(x, z) + 5, z),
+			glm::vec3(0.0f), 8.0f)
+		));
+
+	RawModelPtr treeRawModel(new RawModel(LoadObjModel("tree.obj")));
+	TexturePtr treeTexture(new Texture(LoadTexture("tree.png")));
+	TexturedModelPtr treeTextureModel(new TexturedModel(treeRawModel, treeTexture));
+	x = 125, z = 210;
+	entities.push_back(EntityPtr(
+			new Entity(treeTextureModel,
+			glm::vec3(x, terrain->getHeight(x, z), z) - 0.5f,
+			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)
+		));
+	x = -265, z = 90;
+	entities.push_back(EntityPtr(
+			new Entity(treeTextureModel,
+			glm::vec3(x, terrain->getHeight(x, z), z) - 0.5f,
+			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)
+		));
+	x = -265, z = 50;
+	entities.push_back(EntityPtr(
+			new Entity(treeTextureModel,
+			glm::vec3(x, terrain->getHeight(x, z), z) - 0.5f,
+			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)
+		));
+	x = -113, z = -84;
+	entities.push_back(EntityPtr(
+			new Entity(treeTextureModel,
+			glm::vec3(x, terrain->getHeight(x, z), z) - 0.5f,
+			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)
+		));
+	x = -40, z = -315;
+		entities.push_back(EntityPtr(
+			new Entity(treeTextureModel,
+			glm::vec3(x, terrain->getHeight(x, z), z) - 0.5f,
+			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)
+		));
+	x = 55, z = -210;
+	entities.push_back(EntityPtr(
+			new Entity(treeTextureModel,
+			glm::vec3(x, terrain->getHeight(x, z), z) - 0.5f,
+			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)
+		));
+
 	// water
+	// cout << "loading water..." << endl;
 	vector<WaterPtr> waters;
 	WaterPtr water(new Water(0.0f, WATERHEIGHT, 0.0f, 1024.0f));
 	waters.push_back(water);
 
+	// cout << "loading other staff..." << endl;
 	vector<GUIPtr> guis;
 	// GUIPtr reflectionGUI(new GUI(waterFrameBuffer->getReflectionTexture()));
 	// reflectionGUI->setPositionAndSize(0, 0, 300, 300);
@@ -96,7 +152,18 @@ void level2(GLFWwindow * window,
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	ball->setPosition(400, 0, 400);
+	ball->setPosition(32, 0, -210);
+
+	// some light
+	glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, 0.0f);
+
+	terrainShader->bindGL();
+	terrainShader->setDirLight(lightDirection);
+	terrainShader->unbindGL();
+
+	entityShader->bindGL();
+	entityShader->setDirLight(lightDirection);
+	entityShader->unbindGL();
 
 	do {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -109,7 +176,6 @@ void level2(GLFWwindow * window,
 		glm::vec3 ballPosition = ball->getPosition();
 
 		// printVec3(ballPosition, "ballPosition");
-		// cout << ballPosition.y << endl;
 
 		float ballDistanceFromWater = ballPosition.y - WATERHEIGHT;
 		ball->setPosition(ballPosition.x,
@@ -155,7 +221,7 @@ void level2(GLFWwindow * window,
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				// terrain
 				terrainShader->bindGL();
-				terrainShader->setClipPlane(0, -1, 0, WATERHEIGHT);
+				terrainShader->setClipPlane(0, -1, 0, WATERHEIGHT + 100);
 				terrainShader->setViewMatrix(viewMatrix);
 				terrainRenderer->render(terrain);
 				terrainShader->unbindGL();
@@ -192,6 +258,7 @@ void level2(GLFWwindow * window,
 				// water
 				waterShader->bindGL();
 				waterShader->setViewPosition(cameraPostion);
+				waterShader->setDirLight(lightDirection);
 				waterRenderer->render(waters, camera);
 				waterShader->unbindGL();
 
