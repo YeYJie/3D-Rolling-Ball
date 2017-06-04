@@ -41,7 +41,7 @@ public:
 	}
 
 	void setBright(float value) {
-		setUniform1i(_bright, value);
+		setUniform1f(_bright, value);
 	}
 
 private:

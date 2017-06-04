@@ -15,6 +15,8 @@ uniform sampler2D text1;
 uniform sampler2D text2;
 uniform sampler2D shadowMap;
 
+uniform int useShadow = 0;
+
 #define MAX_POINT_LIGHTS 10
 
 uniform vec3 dirLight;
@@ -39,7 +41,7 @@ void main()
 
     // color = vec4(res, 1.0f);
     float shadowFactor = calculationShadow(FragPosLightSpace);
-    if(shadowFactor > 0.0)
+    if(useShadow == 1 && shadowFactor > 0.0)
         color = vec4(0.3) * textureColor;
     else
         color = vec4(res, 1.0f);

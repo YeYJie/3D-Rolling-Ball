@@ -1,11 +1,8 @@
 #include "sun.h"
 
 SunRenderer::SunRenderer(SunShader * shader, const glm::mat4 & projectionMatrix)
-	// : _projectionMatrix(glm::perspective(45.0f, 1.0f, 0.1f, 10000.0f))
 {
 	_shader = shader;
-	// _projectionMatrix = copy(projectionMatrix);
-	// _projectionMatrix = glm::perspective(45.0f, 1.0f, 0.1f, 10000.0f);
 	_shader->bindGL();
 	_shader->setProjectionMatrix(projectionMatrix);
 	_shader->unbindGL();
@@ -40,7 +37,7 @@ void SunRenderer::render(const SunPtr & sun, const Camera * camera) {
 	glEnableVertexAttribArray(0);
 
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glDisable(GL_DEPTH_TEST);
 
 	// sun
@@ -48,8 +45,6 @@ void SunRenderer::render(const SunPtr & sun, const Camera * camera) {
 
 	glm::mat4 modelViewMatrix = calculateModelViewMatrix(sun, camera);
 
-	// _shader->setUniform1i("renderSun", 1);
-	// _shader->setUniformMatrix4fv("modelViewMatrix", modelViewMatrix);
 	_shader->setRenderSun(1);
 	_shader->setModelViewMatrix(modelViewMatrix);
 
@@ -57,7 +52,6 @@ void SunRenderer::render(const SunPtr & sun, const Camera * camera) {
 
 	sun->unbindGL();
 
-	// _shader->setUniform1i("renderSun", 0);
 	_shader->setRenderSun(0);
 	renderFlare(sun, camera);
 
@@ -70,13 +64,12 @@ void SunRenderer::render(const SunPtr & sun, const Camera * camera) {
 	_shader->unbindGL();
 }
 
-// void SunRenderer::renderFlare(float bright)
 void SunRenderer::renderFlare(const SunPtr & sun, const Camera * camera)
 {
 	glm::vec2 sunScreenCoords = getScreenCoords(sun->getPosition(camera), camera);
 	float sunDistanceToCenter = sqrt((0.5f - sunScreenCoords.x) * (0.5f - sunScreenCoords.x)
 									+ (0.5f - sunScreenCoords.y) * (0.5f - sunScreenCoords.y));
-	float bright = 1.0 - (sunDistanceToCenter / 0.8f);
+	float bright = 1.0 - (sunDistanceToCenter / 1.0f);
 
 	// cout << "sun screen coords : " << sunScreenCoords.x <<  " "
 	// 		<< sunScreenCoords.y << " " << bright << endl;
@@ -84,21 +77,16 @@ void SunRenderer::renderFlare(const SunPtr & sun, const Camera * camera)
 	if(bright < 0)
 		return;
 
-	// _shader->setUniform1f("bright", bright);
 	_shader->setBright(bright);
 
 	glm::vec2 direction = glm::vec2(0.5f, 0.5f) - sunScreenCoords;
 
-	static float spacing = 0.16f;
+	static float spacing = 0.14f;
 
 	for(int i = 0; i < 14; ++i) {
 		_flares[i].screenCoords = sunScreenCoords + direction * (float)i * spacing;
 
-		// cout << "render flare " << i << " at " << _flares[i].screenCoords.x
-		// 		<< " " << _flares[i].screenCoords.y << endl;
-
 		_flares[i].texture->bindGL();
-		// _shader->setUniform2f("flarePosition", _flares[i].screenCoords);
 
 		glm::mat4 flareMatrix(0.0f);
 		flareMatrix[0][0] = flareMatrix[1][1] = flareMatrix[2][2] = _flares[i].scale;
@@ -123,8 +111,6 @@ glm::vec2 SunRenderer::getScreenCoords(const glm::vec3 & position,
 glm::vec2 SunRenderer::getScreenCoords(const glm::vec3 & position,
 										const glm::mat4 & viewMatrix)
 {
-	// return glm::vec2(0.0f);
-
 	glm::mat4 projectionMatrix = glm::perspective(45.0f, 16.0f/9.0f, 0.1f, 10000.0f);
 
 	glm::vec4 temp = glm::vec4(position, 1.0f);

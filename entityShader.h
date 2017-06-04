@@ -28,6 +28,7 @@ public:
 		}
 
 		_shadowMap = getUniformLocation("shadowMap");
+		_useShadow = getUniformLocation("useShadow");
 
 		unbindGL();
 	}
@@ -68,6 +69,10 @@ public:
 		setUniform1i(_shadowMap, value);
 	}
 
+	void setUseShadow(int value) {
+		setUniform1i(_useShadow, value);
+	}
+
 private:
 
 	GLint _clipPlane;
@@ -81,6 +86,7 @@ private:
 	GLint _numLights;
 
 	GLint _shadowMap;
+	GLint _useShadow;
 
 };
 

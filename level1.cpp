@@ -106,7 +106,7 @@ void level1(GLFWwindow * window,
 			));
 	}
 
-	ball->setPosition(0.0f, 0.0f, 0.0f);
+	ball->setPosition(-46.0f, 0.0f, 112.0f);
 
 	// shadow
 	ShadowFrameBuffer * shadowFrameBuffer = new ShadowFrameBuffer();
@@ -120,6 +120,12 @@ void level1(GLFWwindow * window,
 											glm::vec3(0.0f, 1.0f, 0.0f)
 										);
 	// lightSpaceMatrix = lightSpaceProjection * lightSpaceMatrix;
+	entityShader->bindGL();
+	entityShader->setUseShadow(1);
+	entityShader->unbindGL();
+	terrainShader->bindGL();
+	terrainShader->setUseShadow(1);
+	terrainShader->unbindGL();
 
 	// gui
 	vector<GUIPtr> guis;
@@ -137,6 +143,10 @@ void level1(GLFWwindow * window,
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+	// sun
+	TexturePtr sunTexture(new Texture("sun.png"));
+	SunPtr sun(new Sun(sunTexture, lightDirection, 1.0f));
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -158,6 +168,7 @@ void level1(GLFWwindow * window,
 		glm::mat4 viewMatrix = camera->getViewMatrix();
 		glm::vec3 ballPosition = ball->getPosition();
 
+		// printVec3(ballPosition, "ballPosition");
 
 		// shodow
 		shadowFrameBuffer->bindGL();
@@ -255,7 +266,7 @@ void level1(GLFWwindow * window,
 		guiRenderer->render(guis);
 		textRenderer->render(texts);
 
-		// sunRenderer->render(sun, camera);
+		sunRenderer->render(sun, camera);
 
 		if(displayMenu) {
 			menuFrameBuffer->unbindMenuFrameBuffer();

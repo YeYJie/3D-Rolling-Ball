@@ -10,6 +10,8 @@ out vec4 color;
 uniform sampler2D text;
 uniform sampler2D shadowMap;
 
+uniform int useShadow = 0;
+
 uniform vec3 viewPosition;
 
 #define MAX_POINT_LIGHTS 10
@@ -35,7 +37,7 @@ void main()
 		res += calculatePointLight(pointLight[i], FragPos, normal, toViewer, vec3(textureColor));
 
 	float shadowFactor = calculationShadow(FragPosLightSpace);
-	if(shadowFactor > 0.0)
+	if(useShadow == 1 && shadowFactor > 0.0)
 	    color = vec4(0.3) * textureColor;
 	else
 		color = vec4(res, 1.0f);

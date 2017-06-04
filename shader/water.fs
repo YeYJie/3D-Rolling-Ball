@@ -59,5 +59,6 @@ void main()
 	float specularFactor = pow(max(dot(reflect(fromLight, normal), toCamera), 0.0), 4.0);
 	vec3 specular = vec3(1.2) * specularFactor * 0.2;
 
+	// color = vec4(specular, 1.0);
 	color += vec4(specular, 1.0);
 }

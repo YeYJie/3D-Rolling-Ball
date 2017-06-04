@@ -30,6 +30,8 @@ public:
 		_text2 = getUniformLocation("text2");
 		_shadowMap = getUniformLocation("shadowMap");
 
+		_useShadow = getUniformLocation("useShadow");
+
 		unbindGL();
 	}
 
@@ -73,6 +75,10 @@ public:
 		setUniform1i(_shadowMap, value);
 	}
 
+	void setUseShadow(int value) {
+		setUniform1i(_useShadow, value);
+	}
+
 private:
 
 	GLint _clipPlane;
@@ -85,6 +91,8 @@ private:
 	GLint _text1;
 	GLint _text2;
 	GLint _shadowMap;
+
+	GLint _useShadow;
 
 };
 

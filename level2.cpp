@@ -159,10 +159,12 @@ void level2(GLFWwindow * window,
 
 	terrainShader->bindGL();
 	terrainShader->setDirLight(lightDirection);
+	terrainShader->setUseShadow(0);
 	terrainShader->unbindGL();
 
 	entityShader->bindGL();
 	entityShader->setDirLight(lightDirection);
+	entityShader->setUseShadow(0);
 	entityShader->unbindGL();
 
 	do {
