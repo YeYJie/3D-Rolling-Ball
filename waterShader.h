@@ -63,14 +63,14 @@ public:
 
 private:
 
-	GLuint _distortionOffset;
-	GLuint _dirLight;
-	GLuint _viewPosition;
+	GLint _distortionOffset;
+	GLint _dirLight;
+	GLint _viewPosition;
 
-	GLuint _reflectionTexture;
-	GLuint _refractionTexture;
-	GLuint _dudvTexture;
-	GLuint _normalMap;
+	GLint _reflectionTexture;
+	GLint _refractionTexture;
+	GLint _dudvTexture;
+	GLint _normalMap;
 
 };
 

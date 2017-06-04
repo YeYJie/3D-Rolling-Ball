@@ -46,15 +46,15 @@ public:
 
 private:
 
-	GLuint _renderSun;
+	GLint _renderSun;
 
-	GLuint _modelViewMatrix;
+	GLint _modelViewMatrix;
 
-	GLuint _flareMatrix;
+	GLint _flareMatrix;
 
-	GLuint _sunTexture;
+	GLint _sunTexture;
 
-	GLuint _bright;
+	GLint _bright;
 
 };
 

@@ -259,15 +259,15 @@ public:
 
 private:
 
-	GLuint _textTranslateMatrix;
+	GLint _textTranslateMatrix;
 
-	GLuint _guiTexture;
+	GLint _guiTexture;
 
-	GLuint  _textMode;
-	GLuint _textColor;
-	GLuint _outlineColor;
-	GLuint _glowColor;
-	GLuint _dropShadowColor;
+	GLint  _textMode;
+	GLint _textColor;
+	GLint _outlineColor;
+	GLint _glowColor;
+	GLint _dropShadowColor;
 
 };
 

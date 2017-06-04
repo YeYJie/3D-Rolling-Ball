@@ -25,6 +25,8 @@ public:
 		_viewMatrixLocation = getUniformLocation("view");
 		_projectionMatrixLocation = getUniformLocation("projection");
 
+		_lightSpaceMatrixLocation = getUniformLocation("lightSpaceMatrix");
+
 		unbindGL();
 	}
 
@@ -36,7 +38,7 @@ public:
 		glUseProgram(0);
 	}
 
-	GLuint getUniformLocation(const char * name) const {
+	GLint getUniformLocation(const char * name) const {
 		return glGetUniformLocation(_programID, name);
 	}
 
@@ -53,6 +55,16 @@ public:
 	void setProjectionMatrix(const glm::mat4 & projectionMatrix) const {
 		glUniformMatrix4fv(_projectionMatrixLocation, 1, GL_FALSE,
 								glm::value_ptr(projectionMatrix));
+	}
+
+	void setLightSpaceMatrix(const glm::mat4 & lightSpaceMatrix) const {
+		glUniformMatrix4fv(_lightSpaceMatrixLocation, 1, GL_FALSE,
+								glm::value_ptr(lightSpaceMatrix));
+	}
+
+	void setUniform1i(const char * name, int value) {
+		GLint location = glGetUniformLocation(_programID, name);
+		glUniform1i(location, value);
 	}
 
 	void setUniform1i(GLuint location, int value) {
@@ -95,6 +107,14 @@ public:
 		glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(mat));
 	}
 
+	void bindTexture(GLuint textureUnit = 0, GLuint texture = 0) const {
+		// cout << "Shader::bindTexture : " << textureUnit << " " << texture << endl;
+		glActiveTexture(GL_TEXTURE0 + textureUnit);
+		glBindTexture(GL_TEXTURE_2D, texture);
+	}
+
+	GLuint getProgramID() const { return _programID; }
+
 private:
 
 	GLuint _programID = 0;
@@ -102,6 +122,8 @@ private:
 	GLint _modelMatrixLocation = 0;
 	GLint _viewMatrixLocation = 0;
 	GLint _projectionMatrixLocation = 0;
+
+	GLint _lightSpaceMatrixLocation;
 
 };
 

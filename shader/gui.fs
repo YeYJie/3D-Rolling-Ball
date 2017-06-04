@@ -10,4 +10,6 @@ void main(void) {
 
 	color = texture(guiTexture, vec2(textCoords.x, textCoords.y));
 
+    // float depthValue = texture(guiTexture, textCoords).r;
+    // color = vec4(vec3(depthValue), 1.0);
 }

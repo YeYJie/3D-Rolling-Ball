@@ -8,8 +8,12 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform mat4 lightSpaceMatrix;
+
 out vec3 Normal;
 out vec3 FragPos;
+
+out vec4 FragPosLightSpace;
 
 out vec2 fs_textCoords;
 
@@ -17,11 +21,16 @@ uniform vec4 clipPlane;
 
 void main()
 {
-	gl_Position =  projection * view * model * vec4(position, 1);
+	vec4 worldPosition = model * vec4(position, 1);
+
+	gl_Position =  projection * view * worldPosition;
 
 	gl_ClipDistance[0] = dot(model * vec4(position, 1), clipPlane);
 
-    FragPos = vec3(model * vec4(position, 1.0f));
+    FragPos = worldPosition.xyz;
+
+    FragPosLightSpace = lightSpaceMatrix * worldPosition;
+
     Normal = mat3(transpose(inverse(model))) * normal;
 
     fs_textCoords = textCoords;

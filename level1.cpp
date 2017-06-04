@@ -18,6 +18,7 @@
 #include "menu.h"
 #include "sun.h"
 #include "sunShader.h"
+#include "shadow.h"
 
 extern const int WIDTH;
 extern const int HEIGHT;
@@ -107,8 +108,22 @@ void level1(GLFWwindow * window,
 
 	ball->setPosition(0.0f, 0.0f, 0.0f);
 
+	// shadow
+	ShadowFrameBuffer * shadowFrameBuffer = new ShadowFrameBuffer();
+	// GUIPtr shadowDepth(new GUI(shadowFrameBuffer->getDepthTexture()));
+	// shadowDepth->setPositionAndSize(0, 0, WIDTH / 3.0f , HEIGHT / 3.0f);
+	float sunPositionXY = 500.0f;
+	glm::mat4 lightSpaceProjection = glm::ortho(-500.0f, 500.0f, -500.0f, 500.0f, 0.1f, 1000.0f);
+	glm::mat4 lightSpaceMatrix = glm::lookAt(
+											glm::vec3(sunPositionXY, sunPositionXY, 0.0f),
+											glm::vec3(0.0f),
+											glm::vec3(0.0f, 1.0f, 0.0f)
+										);
+	// lightSpaceMatrix = lightSpaceProjection * lightSpaceMatrix;
+
 	// gui
 	vector<GUIPtr> guis;
+	// guis.push_back(shadowDepth);
 
 	// text
 	vector<TextPtr> texts;
@@ -141,11 +156,25 @@ void level1(GLFWwindow * window,
 
 		glm::vec3 cameraPostion = camera->getPosition();
 		glm::mat4 viewMatrix = camera->getViewMatrix();
-
 		glm::vec3 ballPosition = ball->getPosition();
-		// cout << "bal : " << ballPosition.x
-		// 		<< " " << ballPosition.y
-		// 		<< " " << ballPosition.z << endl;
+
+
+		// shodow
+		shadowFrameBuffer->bindGL();
+			terrainShader->bindGL();
+			terrainShader->setProjectionMatrix(lightSpaceProjection);
+			terrainShader->setViewMatrix(lightSpaceMatrix);
+			terrainRenderer->render(terrain);
+			terrainShader->unbindGL();
+
+			entityShader->bindGL();
+			entityShader->setProjectionMatrix(lightSpaceProjection);
+			entityShader->setViewMatrix(lightSpaceMatrix);
+			entityRenderer->render(entities);
+			entityShader->unbindGL();
+		shadowFrameBuffer->unbindGL();
+
+
 
 		if(displayMenu) {
 			menuFrameBuffer->bindMenuFrameBuffer();
@@ -161,7 +190,13 @@ void level1(GLFWwindow * window,
 
 		// terrain
 		terrainShader->bindGL();
+		terrainShader->setProjectionMatrix(projectionMatrix);
 		terrainShader->setViewMatrix(viewMatrix);
+		terrainShader->setLightSpaceMatrix(lightSpaceProjection * lightSpaceMatrix);
+
+		terrainShader->bindTexture(2, shadowFrameBuffer->getDepthTextureRaw());
+		terrainShader->setShadowMap(2);
+
 		terrainShader->setDirLight(lightDirection);
 		terrainShader->setNumLights(numStar - collectedStar);
 		for(int i = 0; i < numStar - collectedStar; ++i)
@@ -202,7 +237,13 @@ void level1(GLFWwindow * window,
 
 		// entity
 		entityShader->bindGL();
+		entityShader->setProjectionMatrix(projectionMatrix);
 		entityShader->setViewMatrix(viewMatrix);
+		entityShader->setLightSpaceMatrix(lightSpaceProjection * lightSpaceMatrix);
+
+		entityShader->bindTexture(1, shadowFrameBuffer->getDepthTextureRaw());
+		entityShader->setShadowMap(1);
+
 		entityShader->setDirLight(lightDirection);
 		entityShader->setViewPosition(cameraPostion);
 		entityShader->setNumLights(numStar - collectedStar);

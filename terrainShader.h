@@ -28,6 +28,7 @@ public:
 
 		_text1 = getUniformLocation("text1");
 		_text2 = getUniformLocation("text2");
+		_shadowMap = getUniformLocation("shadowMap");
 
 		unbindGL();
 	}
@@ -68,17 +69,22 @@ public:
 		}
 	}
 
+	void setShadowMap(int value) {
+		setUniform1i(_shadowMap, value);
+	}
+
 private:
 
-	GLuint _clipPlane;
+	GLint _clipPlane;
 
-	GLuint _dirLight;
+	GLint _dirLight;
 
-	GLuint _pointLight[MAX_POINT_LIGHTS];
-	GLuint _numLights;
+	GLint _pointLight[MAX_POINT_LIGHTS];
+	GLint _numLights;
 
-	GLuint _text1;
-	GLuint _text2;
+	GLint _text1;
+	GLint _text2;
+	GLint _shadowMap;
 
 };
 

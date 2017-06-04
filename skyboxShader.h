@@ -36,10 +36,10 @@ public:
 
 private:
 
-	GLuint _cubeMapDay;
-	GLuint _cubeMapNight;
+	GLint _cubeMapDay;
+	GLint _cubeMapNight;
 
-	GLuint _blendFactor;
+	GLint _blendFactor;
 
 };
 

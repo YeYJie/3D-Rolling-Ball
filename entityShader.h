@@ -27,6 +27,8 @@ public:
 			_pointLight[i] = getUniformLocation(pointLight.c_str());
 		}
 
+		_shadowMap = getUniformLocation("shadowMap");
+
 		unbindGL();
 	}
 
@@ -62,17 +64,23 @@ public:
 		setUniform3f(_pointLight[i], x, y, z);
 	}
 
+	void setShadowMap(int value) {
+		setUniform1i(_shadowMap, value);
+	}
+
 private:
 
-	GLuint _clipPlane;
+	GLint _clipPlane;
 
-	GLuint _viewPosition;
+	GLint _viewPosition;
 
-	GLuint _dirLight;
+	GLint _dirLight;
 
 
-	GLuint _pointLight[MAX_POINT_LIGHTS];
-	GLuint _numLights;
+	GLint _pointLight[MAX_POINT_LIGHTS];
+	GLint _numLights;
+
+	GLint _shadowMap;
 
 };
 

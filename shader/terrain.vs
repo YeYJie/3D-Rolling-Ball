@@ -16,13 +16,16 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform mat4 lightSpaceMatrix;
+out vec4 FragPosLightSpace;
+
 uniform vec4 clipPlane;
 
 void main()
 {
-	vec4 temp = model * vec4(position, 1.0f);
+	vec4 worldPosition = model * vec4(position, 1.0f);
 
-	gl_Position = projection * view * temp;
+	gl_Position = projection * view * worldPosition;
 
 	gl_ClipDistance[0] = dot(model * vec4(position, 1), clipPlane);
 
@@ -33,5 +36,7 @@ void main()
 
 	frag = (position.y + 50) / 100.0;
 	// frag2 = 1 - frag1;
-	worldxz = temp.xz;
+	worldxz = worldPosition.xz;
+
+    FragPosLightSpace = lightSpaceMatrix * worldPosition;
 }
