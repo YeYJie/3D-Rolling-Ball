@@ -6,8 +6,8 @@
 #include "texture.h"
 #include "gui.h"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
+// #include <ft2build.h>
+// #include FT_FREETYPE_H
 
 #define TEXT_MODE_NORMAL 	1
 #define TEXT_MODE_OUTLINE 	2

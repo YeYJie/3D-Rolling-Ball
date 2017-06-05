@@ -110,7 +110,7 @@ void SkyboxRenderer::render() const
 	static glm::vec3 __yaxis = glm::vec3(0.0, 1.0, 0.0);
 	glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.0f), rotate, __yaxis);
 	_shader->setModelMatrix(modelMatrix);
-	rotate += 0.00005f;
+	rotate += 0.0005f;
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
