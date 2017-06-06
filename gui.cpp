@@ -33,7 +33,7 @@ void GUI::setPositionAndSize(int x, int y, int width, int height)
 }
 
 
-glm::mat4 GUI::getModelMatrix() const 
+glm::mat4 GUI::getModelMatrix() const
 {
 	glm::mat4 res = glm::translate(glm::mat4(1.0f),
 								glm::vec3(_x, _y, 0.0f));
@@ -41,12 +41,12 @@ glm::mat4 GUI::getModelMatrix() const
 	return res;
 }
 
-void GUI::bindGL() const 
+void GUI::bindGL() const
 {
 	_texture->bindGL();
 }
 
-void GUI::unbindGL() const 
+void GUI::unbindGL() const
 {
 	_texture->unbindGL();
 }
@@ -66,7 +66,7 @@ void GUIRenderer::initGL()
 
 	glGenBuffers(1, &_VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), 
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float),
 									vertices.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
@@ -75,7 +75,7 @@ void GUIRenderer::initGL()
 	glBindVertexArray(0);
 }
 
-void GUIRenderer::render(const vector<GUIPtr> & guis) 
+void GUIRenderer::render(const vector<GUIPtr> & guis)
 {
 	_shader->bindGL();
 
@@ -114,6 +114,7 @@ void GUIRenderer::render(const GUIPtr & gui)
 	glDisable(GL_DEPTH_TEST);
 
 	gui->bindGL();
+
 	_shader->setModelMatrix(gui->getModelMatrix());
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	gui->unbindGL();
@@ -124,5 +125,5 @@ void GUIRenderer::render(const GUIPtr & gui)
 	glDisableVertexAttribArray(0);
 	glBindVertexArray(0);
 
-	_shader->unbindGL();	
+	_shader->unbindGL();
 }

@@ -19,6 +19,7 @@
 #include "sun.h"
 #include "sunShader.h"
 #include "shadow.h"
+#include "blur.h"
 
 extern const int WIDTH;
 extern const int HEIGHT;
@@ -150,6 +151,9 @@ void level1(GLFWwindow * window,
 
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	// blur
+	GaussBlurPtr blur(new GaussBlur(WIDTH, HEIGHT));
+
 	double frameBegin = 0.0;
 	double frameEnd = 0.0;
 	double lastFrameTime = 0.0;
@@ -270,8 +274,12 @@ void level1(GLFWwindow * window,
 
 		if(displayMenu) {
 			menuFrameBuffer->unbindMenuFrameBuffer();
-			menuFrameBuffer->render();
+			// menuFrameBuffer->render();
+			GUIPtr blurredMenu = blur->blur(menuFrameBuffer->getBgTexture());
+			blurredMenu->setPositionAndSize(0, 0, WIDTH, HEIGHT);
+			guiRenderer->render(blurredMenu);
 		}
+
 
 
 		// some shit

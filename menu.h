@@ -29,8 +29,8 @@ private:
 
 private:
 
-	static const int MENUFRAMEBUFFERWIDTH = 1024;
-	static const int MENUFRAMEBUFFERHEIGHT = 1024;
+	static const int MENUFRAMEBUFFERWIDTH = 1422;
+	static const int MENUFRAMEBUFFERHEIGHT = 800;
 
 	GLuint _menuFBO;
 

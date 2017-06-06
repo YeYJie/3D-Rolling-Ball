@@ -17,10 +17,10 @@ public:
 	}
 
 	~Texture() {
-		glDeleteTextures(1, &_textureID);
+		// glDeleteTextures(1, &_textureID);
 	}
 
-	void bindGL(int textureIndex = 0) const 
+	void bindGL(int textureIndex = 0) const
 	{
 		glActiveTexture(GL_TEXTURE0 + textureIndex);
 		glBindTexture(GL_TEXTURE_2D, _textureID);
@@ -28,6 +28,10 @@ public:
 
 	void unbindGL() const {
 		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	GLuint getTextureRaw() const {
+		return _textureID;
 	}
 
 private:
