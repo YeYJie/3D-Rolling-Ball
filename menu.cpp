@@ -5,7 +5,8 @@ extern const int HEIGHT;
 
 Menu::Menu()
 	: _menuTextRenderer("yahei.fnt", "yahei.png", TEXT_SDF()),
-	  _bgRenderer("menu.vs", "menu.fs")
+	  _bgRenderer("menu.vs", "menu.fs"),
+	  _blurrer(WIDTH, HEIGHT)
 {
 	// init FBO
 	glGenFramebuffers(1, &_menuFBO);
@@ -17,7 +18,7 @@ Menu::Menu()
 	glBindTexture(GL_TEXTURE_2D, _bgColor);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
-					MENUFRAMEBUFFERWIDTH, MENUFRAMEBUFFERHEIGHT,
+					WIDTH, HEIGHT,
 					0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -31,7 +32,7 @@ Menu::Menu()
 	glGenRenderbuffers(1, &_bgDepth);
 	glBindRenderbuffer(GL_RENDERBUFFER, _bgDepth);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT,
-							MENUFRAMEBUFFERWIDTH, MENUFRAMEBUFFERHEIGHT);
+							WIDTH, HEIGHT);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
 	                          GL_RENDERBUFFER, _bgDepth);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -48,11 +49,6 @@ Menu::Menu()
 
 void Menu::initMenuList()
 {
-	// _menuTexts.push_back(TextPtr(new Text(L"Rolling Ball",
-	// 							WIDTH, 200, 1.0, 1.0)));
-	// _menuTexts.push_back(TextPtr(new Text(L"Level 1", WIDTH + 50, 300, 1.0, 1.0)));
-	// _menuTexts.push_back(TextPtr(new Text(L"Level 2", WIDTH + 50, 400, 1.0, 1.0)));
-
 	TextPtr head(new Text(L"Rolling Ball", WIDTH, 200, 1.5f, TEXT_MODE_OUTLINE));
 	TextPtr line1(new Text(L"Level 1", WIDTH + 120, 400, 1.0f, TEXT_MODE_GLOW));
 	TextPtr line2(new Text(L"Level 2", WIDTH + 120, 500, 1.0f, TEXT_MODE_DROPSHADOW));
@@ -69,7 +65,7 @@ void Menu::bindMenuFrameBuffer() const
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, _menuFBO);
-	glViewport(0, 0, MENUFRAMEBUFFERWIDTH, MENUFRAMEBUFFERHEIGHT);
+	glViewport(0, 0, WIDTH, HEIGHT);
 }
 
 void Menu::unbindMenuFrameBuffer() const
@@ -78,7 +74,7 @@ void Menu::unbindMenuFrameBuffer() const
 	glViewport(0, 0, WIDTH, HEIGHT);
 }
 
-GLuint Menu::getBgTexture() const
+GLuint Menu::getBgTextureRaw() const
 {
 	return _bgColor;
 }
@@ -135,10 +131,6 @@ void Menu::render()
 		if(_menuTexts[0]->getPositionX() > 450) {
 			for(auto i : _menuTexts)
 				i->movePositionX(-10);
-			// _menuTexts[0]->movePositionX(-10);
-			// _menuTexts[1]->movePositionX(-10);
-			// _menuTexts[2]->movePositionX(-10);
-			// _menuTexts[3]->movePositionX(-10);
 		}
 		if(_menuTexts[0]->getPositionX() <= 450) {
 			fadingDone = true;
@@ -149,6 +141,7 @@ void Menu::render()
 		resetMenuPosition();
 	}
 
+	_bg->setTexture(_blurrer.blur(_bgColor));
 	_bgRenderer.render(_bg);
 	_menuTextRenderer.render(_menuTexts);
 }

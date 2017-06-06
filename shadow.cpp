@@ -10,13 +10,6 @@ ShadowFrameBuffer::ShadowFrameBuffer()
 	glGenFramebuffers(1, &_FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, _FBO);
 
-	// glGenRenderbuffers(1, &_depthRenderBuffer);
-	// glBindRenderbuffer(GL_RENDERBUFFER, _depthRenderBuffer);
-	// glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT,
-	// 						SHADOWFRAMEBUFFERWIDTH, SHADOWFRAMEBUFFERHEIGHT);
-	// glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-	// 						GL_RENDERBUFFER, _depthRenderBuffer);
-
 	glGenTextures(1, &_depthTexture);
 	glBindTexture(GL_TEXTURE_2D, _depthTexture);
 

@@ -19,9 +19,12 @@ public:
 	GUI(TexturePtr texture, float x, float y, float scaleX, float scaleY)
 		: _texture(texture), _x(x), _y(y), _scaleX(scaleX), _scaleY(scaleY) {}
 
-
 	void setTexture(TexturePtr texture) {
 		_texture = texture;
+	}
+
+	void setTexture(GLuint texture) {
+		_texture = TexturePtr(new Texture(texture));
 	}
 
 	void setPositionAndSize(int x, int y, int width, int height);
@@ -30,7 +33,7 @@ public:
 	GUI & setTopLeftConnerPos(int x, int y);
 
 	GUI & setCenterPos(int x, int y);
-	
+
 	GUI & setSize(int width, int height);
 
 	glm::mat4 getModelMatrix() const;

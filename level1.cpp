@@ -273,7 +273,6 @@ void level1(GLFWwindow * window,
 			menuFrameBuffer->render();
 		}
 
-
 		// some shit
 
 		keyPressed = 0;

@@ -4,6 +4,7 @@
 #include "include.h"
 #include "gui.h"
 #include "text.h"
+#include "blur.h"
 
 class Menu
 {
@@ -16,7 +17,7 @@ public:
 
 	void unbindMenuFrameBuffer() const;
 
-	GLuint getBgTexture() const;
+	GLuint getBgTextureRaw() const;
 
 	void render();
 
@@ -29,9 +30,6 @@ private:
 
 private:
 
-	static const int MENUFRAMEBUFFERWIDTH = 1024;
-	static const int MENUFRAMEBUFFERHEIGHT = 1024;
-
 	GLuint _menuFBO;
 
 	GLuint _bgColor;
@@ -39,6 +37,8 @@ private:
 
 	GUIPtr _bg;
 	GUIRenderer _bgRenderer;
+
+	GaussBlur _blurrer;
 
 	vector<TextPtr> _menuTexts;
 	TextRenderer _menuTextRenderer;

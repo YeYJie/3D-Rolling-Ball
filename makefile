@@ -10,7 +10,7 @@ LDFLAGS += -lGLEW -lGLU -lGL
 
 OBJS = main.o terrain.o loader.o camera.o ball.o skybox.o \
 			gui.o water.o text.o menu.o sun.o level1.o level2.o \
-			shadow.o
+			shadow.o blur.o
 
 EXE = fyyj
 
