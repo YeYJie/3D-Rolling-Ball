@@ -5,7 +5,7 @@ out vec4 color;
 
 uniform sampler2D text;
 
-uniform int horizontal;
+uniform bool horizontal;
 
 #define GAUSS_KERNEL_SIZE 7
 
@@ -16,7 +16,7 @@ void main()
 	vec2 text_offset = 1.0 / textureSize(text, 0);
 	vec3 result = texture(text, textCoords).rgb * weight[0];
 
-	if(horizontal == 1)
+	if(horizontal)
 	{
 		for(int i = 1; i < GAUSS_KERNEL_SIZE; ++i)
 		{

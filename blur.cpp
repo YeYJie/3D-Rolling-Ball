@@ -53,12 +53,12 @@ GaussBlur::~GaussBlur()
 	glDeleteFramebuffers(2, _FBO);
 }
 
-GUIPtr GaussBlur::blur(TexturePtr texture)
+GLuint GaussBlur::blur(TexturePtr texture)
 {
 	return blur(texture->getTextureRaw());
 }
 
-GUIPtr GaussBlur::blur(GLuint texture)
+GLuint GaussBlur::blur(GLuint texture)
 {
 	int horizontal = 1;
 	bool first_iteration = true;
@@ -91,5 +91,6 @@ GUIPtr GaussBlur::blur(GLuint texture)
 	glBindVertexArray(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	return GUIPtr(new GUI(TexturePtr(new Texture(_colorBuffer[(horizontal + 1) % 2]))));
+	return _colorBuffer[(horizontal + 1) % 2];
+	// return GUIPtr(new GUI(TexturePtr(new Texture(_colorBuffer[(horizontal + 1) % 2]))));
 }
