@@ -17,9 +17,9 @@ public:
 
 	~GaussBlur();
 
-	GLuint blur(TexturePtr texture);
+	GLuint blur(TexturePtr texture, int n);
 
-	GLuint blur(GLuint texture);
+	GLuint blur(GLuint texture, int n);
 
 private:
 

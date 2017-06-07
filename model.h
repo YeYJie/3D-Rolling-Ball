@@ -95,6 +95,9 @@ public:
 
 	TexturedModel() = delete;
 
+	TexturedModel(RawModelPtr rawModel)
+		: _rawModel(rawModel) {}
+
 	TexturedModel(RawModelPtr rawModel, TexturePtr texture)
 		: _rawModel(rawModel), _texture(texture) {}
 
@@ -102,7 +105,7 @@ public:
 	void setrawModel(RawModelPtr rawModel) { _rawModel = rawModel; }
 
 	TexturePtr getTexture() const { return _texture; }
-	void setTexture(TexturePtr texture) { _texture = texture; } 
+	void setTexture(TexturePtr texture) { _texture = texture; }
 
 	void bindGL()
 	{

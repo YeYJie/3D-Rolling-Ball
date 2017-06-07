@@ -347,19 +347,19 @@ float Terrain::getHeight(float x, float z) const
 	float y3 = getHeightRaw(x1, z2);
 	float y4 = getHeightRaw(x2, z2);
 
-	// float y13 = (y1 + y2 + y3 +y4) / 4.0f;
+	float y13 = (y1 + y2 + y3 +y4) / 4.0f;
 
-	float y5 = min(y1, y2);
-	float y6 = max(y1, y2);
-	float y7 = y5 + (y6 - y5) * ((x - float(x1)) / 1.0f);
+	// float y5 = min(y1, y2);
+	// float y6 = max(y1, y2);
+	// float y7 = y5 + (y6 - y5) * ((x - float(x1)) / 1.0f);
 
-	float y8 = min(y3, y4);
-	float y9 = max(y3, y4);
-	float y10 = y8 + (y9 - y8) * ((x - float(x1)) / 1.0f);
+	// float y8 = min(y3, y4);
+	// float y9 = max(y3, y4);
+	// float y10 = y8 + (y9 - y8) * ((x - float(x1)) / 1.0f);
 
-	float y11 = min(y7, y10);
-	float y12 = max(y7, y10);
-	float y13 = y11 + (y12 - y11) * ((z - float(z1)) / 1.0f);
+	// float y11 = min(y7, y10);
+	// float y12 = max(y7, y10);
+	// float y13 = y11 + (y12 - y11) * ((z - float(z1)) / 1.0f);
 
 	return y13;
 }

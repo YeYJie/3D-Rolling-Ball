@@ -19,6 +19,7 @@
 #include "sun.h"
 #include "sunShader.h"
 #include "shadow.h"
+#include "light.h"
 
 extern const int WIDTH;
 extern const int HEIGHT;
@@ -63,7 +64,7 @@ void level1(GLFWwindow * window,
 			SunRenderer * sunRenderer
 			)
 {
-	int numStar = 10;
+	int numStar = 8;
 	int collectedStar = 0;
 	int frameEpoch = 0; // detect collision every 10 frames
 
@@ -77,19 +78,26 @@ void level1(GLFWwindow * window,
 	// entity
 	vector<EntityPtr> entities;
 	entities.push_back(static_pointer_cast<Entity>(ball));
+	ball->setPosition(-46.0f, 0.0f, 112.0f);
 
 	RawModelPtr starRawModel(new RawModel(LoadObjModel("star.obj")));
-	TexturePtr starTexture(new Texture(LoadTexture("star.png")));
+	TexturePtr starTexture(new Texture(LoadTexture("yellow.png")));
 	TexturedModelPtr starTexturedModel(new TexturedModel(starRawModel, starTexture));
 
 	for(int i = 0; i < numStar; ++i) {
 		float x = rand() % 800 - 400;
 		float z = rand() % 800 - 400;
-		entities.push_back(EntityPtr(
-				new Entity(starTexturedModel,
-				glm::vec3(x, terrain->getHeight(x, z) + 5, z),
-				glm::vec3(0.0f), 8.0f)
-			));
+
+		LightPtr yellowLight(new Light());
+		yellowLight->setModel(starTexturedModel);
+		yellowLight->setPosition(glm::vec3(x, terrain->getHeight(x, z) + 5, z));
+		yellowLight->setScale(8.0f);
+		yellowLight->setType(POINT_LIGHT);
+		yellowLight->setAmbient(0.1, 0.1, 0.0);
+		yellowLight->setDiffuse(0.5, 0.5, 0.0);
+		yellowLight->setSpecular(0.3, 0.3, 0.0);
+
+		entities.push_back(static_pointer_cast<Entity>(yellowLight));
 	}
 
 	RawModelPtr treeRawModel(new RawModel(LoadObjModel("tree.obj")));
@@ -106,12 +114,19 @@ void level1(GLFWwindow * window,
 			));
 	}
 
-	ball->setPosition(-46.0f, 0.0f, 112.0f);
+	// direction light
+	glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, 0.0f);
+	LightPtr directionLight(new Light());
+	directionLight->setType(DIRECTION_LIGHT);
+	directionLight->setDirection(lightDirection);
+	directionLight->setAmbient(0.1);
+	directionLight->setDiffuse(0.5);
+	directionLight->setSpecular(0.3);
+
 
 	// shadow
 	ShadowFrameBuffer * shadowFrameBuffer = new ShadowFrameBuffer();
-	// GUIPtr shadowDepth(new GUI(shadowFrameBuffer->getDepthTexture()));
-	// shadowDepth->setPositionAndSize(0, 0, WIDTH / 3.0f , HEIGHT / 3.0f);
+
 	float sunPositionXY = 500.0f;
 	glm::mat4 lightSpaceProjection = glm::ortho(-500.0f, 500.0f, -500.0f, 500.0f, 0.1f, 1000.0f);
 	glm::mat4 lightSpaceMatrix = glm::lookAt(
@@ -120,10 +135,20 @@ void level1(GLFWwindow * window,
 											glm::vec3(0.0f, 1.0f, 0.0f)
 										);
 	// lightSpaceMatrix = lightSpaceProjection * lightSpaceMatrix;
+
 	entityShader->bindGL();
+	entityShader->resetLight();
+	entityShader->addLight(directionLight);
+	for(int i = 0; i < numStar; ++i)
+		entityShader->addLight(static_pointer_cast<Light>(entities[i+1]));
 	entityShader->setUseShadow(1);
 	entityShader->unbindGL();
+
 	terrainShader->bindGL();
+	terrainShader->resetLight();
+	terrainShader->addLight(directionLight);
+	for(int i = 0; i < numStar; ++i)
+		terrainShader->addLight(static_pointer_cast<Light>(entities[i+1]));
 	terrainShader->setUseShadow(1);
 	terrainShader->unbindGL();
 
@@ -134,12 +159,11 @@ void level1(GLFWwindow * window,
 	// text
 	vector<TextPtr> texts;
 	float scaleFactor = 1.0f;
-	TextPtr score(new Text(L"0/10", 10, 10, 1.0f, TEXT_MODE_NORMAL));
+	TextPtr score(new Text(L"0/" + to_wstring(numStar),
+						10, 10, 1.0f, TEXT_MODE_NORMAL));
 	score->setTextColor(0.0f, 128.0f/255.0f, 1.0f);
 	texts.push_back(score);
 
-	// direction light
-	glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, 0.0f);
 
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -204,14 +228,10 @@ void level1(GLFWwindow * window,
 		terrainShader->setProjectionMatrix(projectionMatrix);
 		terrainShader->setViewMatrix(viewMatrix);
 		terrainShader->setLightSpaceMatrix(lightSpaceProjection * lightSpaceMatrix);
-
 		terrainShader->bindTexture(2, shadowFrameBuffer->getDepthTextureRaw());
 		terrainShader->setShadowMap(2);
 
-		terrainShader->setDirLight(lightDirection);
-		terrainShader->setNumLights(numStar - collectedStar);
-		for(int i = 0; i < numStar - collectedStar; ++i)
-			terrainShader->setPointLight(i, entities[i+1]->getPosition());
+		terrainShader->updateLight();
 		terrainRenderer->render(terrain);
 		terrainShader->unbindGL();
 
@@ -237,6 +257,8 @@ void level1(GLFWwindow * window,
 				&& minDistance < 400)
 			{
 				++collectedStar;
+				LightPtr currentStar = static_pointer_cast<Light>(entities[minIndex]);
+				currentStar->turnOff();
 				entities.erase(entities.begin() + minIndex);
 				score->setContentW(
 							to_wstring(collectedStar)
@@ -251,15 +273,11 @@ void level1(GLFWwindow * window,
 		entityShader->setProjectionMatrix(projectionMatrix);
 		entityShader->setViewMatrix(viewMatrix);
 		entityShader->setLightSpaceMatrix(lightSpaceProjection * lightSpaceMatrix);
-
 		entityShader->bindTexture(1, shadowFrameBuffer->getDepthTextureRaw());
 		entityShader->setShadowMap(1);
 
-		entityShader->setDirLight(lightDirection);
 		entityShader->setViewPosition(cameraPostion);
-		entityShader->setNumLights(numStar - collectedStar);
-		for(int i = 0; i < numStar - collectedStar; ++i)
-			entityShader->setPointLight(i, entities[i+1]->getPosition());
+		entityShader->updateLight();
 		entityRenderer->render(entities);
 		entityShader->unbindGL();
 

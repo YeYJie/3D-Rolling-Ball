@@ -9,8 +9,9 @@ LDFLAGS += ./SOIL/libSOIL.a
 LDFLAGS += -lGLEW -lGLU -lGL
 
 OBJS = main.o terrain.o loader.o camera.o ball.o skybox.o \
-			gui.o water.o text.o menu.o sun.o level1.o level2.o \
-			shadow.o blur.o
+			gui.o water.o text.o menu.o sun.o \
+			shadow.o blur.o hdr.o\
+			level1.o level2.o level3.o
 
 EXE = fyyj
 

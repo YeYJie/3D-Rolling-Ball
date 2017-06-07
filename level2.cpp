@@ -76,15 +76,19 @@ void level2(GLFWwindow * window,
 	entities.push_back(static_pointer_cast<Entity>(ball));
 
 	RawModelPtr starRawModel(new RawModel(LoadObjModel("star.obj")));
-	TexturePtr starTexture(new Texture(LoadTexture("star.png")));
+	TexturePtr starTexture(new Texture(LoadTexture("yellow.png")));
 	TexturedModelPtr starTexturedModel(new TexturedModel(starRawModel, starTexture));
 	int x = 30;
 	int z = 90;
-	entities.push_back(EntityPtr(
-			new Entity(starTexturedModel,
-			glm::vec3(x, terrain->getHeight(x, z) + 5, z),
-			glm::vec3(0.0f), 8.0f)
-		));
+	LightPtr yellowLight(new Light());
+	yellowLight->setModel(starTexturedModel);
+	yellowLight->setPosition(glm::vec3(x, terrain->getHeight(x, z) + 5, z));
+	yellowLight->setScale(8.0f);
+	yellowLight->setType(POINT_LIGHT);
+	yellowLight->setAmbient(0.1, 0.1, 0.0);
+	yellowLight->setDiffuse(0.5, 0.5, 0.0);
+	yellowLight->setSpecular(0.3, 0.3, 0.0);
+	entities.push_back(static_pointer_cast<Entity>(yellowLight));
 
 	RawModelPtr treeRawModel(new RawModel(LoadObjModel("tree.obj")));
 	TexturePtr treeTexture(new Texture(LoadTexture("tree.png")));
@@ -93,38 +97,32 @@ void level2(GLFWwindow * window,
 	entities.push_back(EntityPtr(
 			new Entity(treeTextureModel,
 			glm::vec3(x, terrain->getHeight(x, z), z) - 0.5f,
-			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)
-		));
+			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)));
 	x = -265, z = 90;
 	entities.push_back(EntityPtr(
 			new Entity(treeTextureModel,
 			glm::vec3(x, terrain->getHeight(x, z), z) - 0.5f,
-			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)
-		));
+			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)));
 	x = -265, z = 50;
 	entities.push_back(EntityPtr(
 			new Entity(treeTextureModel,
 			glm::vec3(x, terrain->getHeight(x, z), z) - 0.5f,
-			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)
-		));
+			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)));
 	x = -113, z = -84;
 	entities.push_back(EntityPtr(
 			new Entity(treeTextureModel,
 			glm::vec3(x, terrain->getHeight(x, z), z) - 0.5f,
-			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)
-		));
+			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)));
 	x = -40, z = -315;
 		entities.push_back(EntityPtr(
 			new Entity(treeTextureModel,
 			glm::vec3(x, terrain->getHeight(x, z), z) - 0.5f,
-			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)
-		));
+			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)));
 	x = 55, z = -210;
 	entities.push_back(EntityPtr(
 			new Entity(treeTextureModel,
 			glm::vec3(x, terrain->getHeight(x, z), z) - 0.5f,
-			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)
-		));
+			glm::vec3(0.0f), 1.0f + float(rand() % 10000) / 10000.0f)));
 
 	// water
 	// cout << "loading water..." << endl;
@@ -154,18 +152,30 @@ void level2(GLFWwindow * window,
 
 	ball->setPosition(32, 0, -210);
 
-	// some light
+	// direction light
 	glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, 0.0f);
+	LightPtr directionLight(new Light());
+	directionLight->setType(DIRECTION_LIGHT);
+	directionLight->setDirection(lightDirection);
+	directionLight->setAmbient(0.1);
+	directionLight->setDiffuse(0.5);
+	directionLight->setSpecular(0.3);
+
+
+	entityShader->bindGL();
+	entityShader->resetLight();
+	entityShader->addLight(directionLight);
+	entityShader->addLight(static_pointer_cast<Light>(entities[1]));
+	entityShader->setUseShadow(0);
+	entityShader->unbindGL();
 
 	terrainShader->bindGL();
-	terrainShader->setDirLight(lightDirection);
+	terrainShader->resetLight();
+	terrainShader->addLight(directionLight);
+	terrainShader->addLight(static_pointer_cast<Light>(entities[1]));
 	terrainShader->setUseShadow(0);
 	terrainShader->unbindGL();
 
-	entityShader->bindGL();
-	entityShader->setDirLight(lightDirection);
-	entityShader->setUseShadow(0);
-	entityShader->unbindGL();
 
 	do {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -247,6 +257,7 @@ void level2(GLFWwindow * window,
 				// terrain
 				terrainShader->bindGL();
 				terrainShader->setViewMatrix(viewMatrix);
+				terrainShader->updateLight();
 				terrainRenderer->render(terrain);
 				terrainShader->unbindGL();
 
@@ -254,6 +265,7 @@ void level2(GLFWwindow * window,
 				entityShader->bindGL();
 				entityShader->setViewMatrix(viewMatrix);
 				entityShader->setViewPosition(cameraPostion);
+				entityShader->updateLight();
 				entityRenderer->render(entities);
 				entityShader->unbindGL();
 

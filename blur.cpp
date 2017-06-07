@@ -53,16 +53,17 @@ GaussBlur::~GaussBlur()
 	glDeleteFramebuffers(2, _FBO);
 }
 
-GLuint GaussBlur::blur(TexturePtr texture)
+GLuint GaussBlur::blur(TexturePtr texture, int n)
 {
-	return blur(texture->getTextureRaw());
+	return blur(texture->getTextureRaw(), n);
 }
 
-GLuint GaussBlur::blur(GLuint texture)
+GLuint GaussBlur::blur(GLuint texture, int n)
 {
 	int horizontal = 1;
 	bool first_iteration = true;
-	int n = 15;
+	// int n = 15;
+	n *= 2;
 
 	_shader->bindGL();
 

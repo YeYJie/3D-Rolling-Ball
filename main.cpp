@@ -38,7 +38,7 @@ bool mouseRightPressed = false;
 int mouseScrollOffset = 0;
 
 int displayMenu = 0;
-int level = 1;
+int level = 3;
 
 void onKeyBoard(GLFWwindow * window, int key,
 				int scancode, int action, int mods)
@@ -115,6 +115,17 @@ void level2(GLFWwindow * window,
 			Menu * menuFrameBuffer,
 			SunShader * sunShader,SunRenderer * sunRenderer );
 
+void level3(GLFWwindow * window,
+			const glm::mat4 & projectionMatrix,
+			EntityShader * entityShader, EntityRenderer * entityRenderer, BallPtr ball,
+			TerrainShader * terrainShader, TerrainRenderer * terrainRenderer,
+			SkyboxShader * skyboxShader, SkyboxRenderer * skyboxRenderer,
+			Camera * camera,
+			WaterShader * waterShader, WaterFrameBuffer * waterFrameBuffer, WaterRenderer * waterRenderer,
+			GUIRenderer * guiRenderer,
+			TextRenderer * textRenderer,
+			Menu * menuFrameBuffer,
+			SunShader * sunShader,SunRenderer * sunRenderer );
 
 int main()
 {
@@ -221,6 +232,21 @@ int main()
 			// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			level2(window, projectionMatrix,
+					entityShader, entityRenderer, ball,
+					terrainShader, terrainRenderer,
+					skyboxShader, skyboxRenderer,
+					camera,
+					waterShader, waterFrameBuffer, waterRenderer,
+					guiRenderer,
+					textRenderer,
+					menuFrameBuffer,
+					sunShader, sunRenderer);
+		}
+		if(level == 3) {
+			cout << "\nswitching to level3\n\n";
+			// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			level3(window, projectionMatrix,
 					entityShader, entityRenderer, ball,
 					terrainShader, terrainRenderer,
 					skyboxShader, skyboxRenderer,

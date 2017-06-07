@@ -36,7 +36,7 @@ public:
 	void setModel(TexturedModelPtr model) { _model = model; }
 
 	glm::vec3 getPosition() const { return _position; }
-	void setPosition(glm::vec3 position) { _position = position; }
+	void setPosition(const glm::vec3 & position) { _position = position; }
 	void setPosition(float x, float y, float z) {
 		_position.x = x;
 		_position.y = y;
@@ -56,7 +56,7 @@ public:
 	void setPositionZ(float z) { _position.z = z; }
 
 	glm::vec3 getRotation() const { return _rotation; }
-	void setRotation(glm::vec3 rotation) { _rotation = rotation; }
+	void setRotation(const glm::vec3 & rotation) { _rotation = rotation; }
 	void setRotation(float x, float y, float z) {
 		_rotation.x = x;
 		_rotation.y = y;
@@ -66,7 +66,7 @@ public:
 	float getScale() const { return _scale; }
 	void setScale(float scale) { _scale = scale; }
 
-	void move(glm::vec3 delta) {
+	void move(const glm::vec3 & delta) {
 		_position += delta;
 	}
 	void move(float dx, float dy, float dz) {
@@ -75,7 +75,7 @@ public:
 		_position.z += dz;
 	}
 
-	void rotate(glm::vec3 delta) {
+	void rotate(const glm::vec3 & delta) {
 		_rotation += delta;
 	}
 	void rotate(float dx, float dy, float dz) {
@@ -88,11 +88,11 @@ public:
 		glm::mat4 res = glm::mat4(1.0f);
 		res = glm::translate(res, _position);
 		res = glm::scale(res, glm::vec3(_scale));
-		
+
 		static glm::vec3 __xaxis = glm::vec3(1.0, 0.0, 0.0);
 		static glm::vec3 __yaxis = glm::vec3(0.0, 1.0, 0.0);
 		static glm::vec3 __zaxis = glm::vec3(0.0, 0.0, 1.0);
-		
+
 		res = glm::rotate(res, _rotation.x, __xaxis);
 		res = glm::rotate(res, _rotation.y, __yaxis);
 		res = glm::rotate(res, _rotation.z, __zaxis);

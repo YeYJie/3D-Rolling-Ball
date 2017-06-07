@@ -79,6 +79,10 @@ public:
 
 	void render(const GUIPtr & gui);
 
+	Shader * getShader() const { return _shader; }
+
+	void setShader(Shader * shader) { _shader = shader; }
+
 private:
 
 	Shader * _shader;

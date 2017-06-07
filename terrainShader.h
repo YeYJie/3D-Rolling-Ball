@@ -3,6 +3,7 @@
 
 #include "include.h"
 #include "shader.h"
+#include "light.h"
 
 #define MAX_POINT_LIGHTS 10
 
@@ -18,12 +19,29 @@ public:
 		bindGL();
 
 		_clipPlane = getUniformLocation("clipPlane");
-		_dirLight = getUniformLocation("dirLight");
-		_numLights = getUniformLocation("numLights");
+		_numLightsLocation = getUniformLocation("numLights");
+
 
 		for(int i = 0; i < MAX_POINT_LIGHTS; ++i) {
-			string pointLight = "pointLight[" + to_string(i) + "]";
-			_pointLight[i] = getUniformLocation(pointLight.c_str());
+			string base = "lights[" + to_string(i) + "]";
+
+			string type = base + ".type";
+			string lightOn = base + ".lightOn";
+			string position = base + ".position";
+			string ambient = base + ".ambient";
+			string diffuse = base + ".diffuse";
+			string specular = base + ".specular";
+			string shininess = base + ".shininess";
+			string direction = base	+ ".direction";
+
+			_lightsLocation[i * 8 + 0] = getUniformLocation(type.c_str());
+			_lightsLocation[i * 8 + 1] = getUniformLocation(lightOn.c_str());
+			_lightsLocation[i * 8 + 2] = getUniformLocation(position.c_str());
+			_lightsLocation[i * 8 + 3] = getUniformLocation(ambient.c_str());
+			_lightsLocation[i * 8 + 4] = getUniformLocation(diffuse.c_str());
+			_lightsLocation[i * 8 + 5] = getUniformLocation(specular.c_str());
+			_lightsLocation[i * 8 + 6] = getUniformLocation(shininess.c_str());
+			_lightsLocation[i * 8 + 7] = getUniformLocation(direction.c_str());
 		}
 
 		_text1 = getUniformLocation("text1");
@@ -35,6 +53,13 @@ public:
 		unbindGL();
 	}
 
+
+	void resetLight() {
+		setNumLights(0);
+		setUseShadow(0);
+		_lights.clear();
+	}
+
 	void setClipPlane(const glm::vec4 & clipPlane) {
 		setUniform4f(_clipPlane, clipPlane);
 	}
@@ -42,23 +67,28 @@ public:
 		setUniform4f(_clipPlane, x, y, z, w);
 	}
 
-	void setDirLight(const glm::vec3 & dirLight) {
-		setUniform3f(_dirLight, dirLight);
-	}
-	void setDirLight(float x, float y, float z) {
-		setUniform3f(_dirLight, x, y, z);
-	}
 
 	void setNumLights(int num) {
-		setUniform1i(_numLights, num);
+		setUniform1i(_numLightsLocation, num);
 	}
 
-	void setPointLight(int i, const glm::vec3 & pointLight) {
-		setUniform3f(_pointLight[i], pointLight);
+
+	void setLight(int i, const LightPtr & light) {
+		setUniform1i(_lightsLocation[i * 8 + 0], light->getType());
+		setUniform1i(_lightsLocation[i * 8 + 1], light->getLightOn());
+		setUniform3f(_lightsLocation[i * 8 + 2], light->getPosition());
+		setUniform3f(_lightsLocation[i * 8 + 3], light->getAmbient());
+		setUniform3f(_lightsLocation[i * 8 + 4], light->getDiffuse());
+		setUniform3f(_lightsLocation[i * 8 + 5], light->getSpecular());
+		setUniform1f(_lightsLocation[i * 8 + 6], light->getShininess());
+		setUniform3f(_lightsLocation[i * 8 + 7], light->getDirection());
 	}
-	void setPointLight(int i, float x, float y, float z) {
-		setUniform3f(_pointLight[i], x, y, z);
+
+	void addLight(LightPtr light) {
+		light->increaseShaderRenfence();
+		_lights.push_back(light);
 	}
+
 
 	void setText(int i, int value) {
 		switch(i) {
@@ -79,14 +109,29 @@ public:
 		setUniform1i(_useShadow, value);
 	}
 
+	void updateLight() {
+		int dirty = 0;
+		for(int i = 0; i < _lights.size(); ++i)
+		{
+			if(_lights[i]->dirty()) {
+				++dirty;
+				setLight(i, _lights[i]);
+				_lights[i]->decreaseDirty();
+			}
+		}
+		if(dirty)
+			setNumLights(_lights.size());
+	}
+
 private:
 
 	GLint _clipPlane;
 
-	GLint _dirLight;
+	GLint _lightsLocation[MAX_POINT_LIGHTS * 8]; // struct light has 7 fields
 
-	GLint _pointLight[MAX_POINT_LIGHTS];
-	GLint _numLights;
+	GLint _numLightsLocation; 	// fragment shader location
+
+	vector<LightPtr> _lights;
 
 	GLint _text1;
 	GLint _text2;
