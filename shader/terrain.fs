@@ -7,7 +7,9 @@ in vec4 FragPosLightSpace;
 
 in float frag;
 
-out vec4 color;
+// out vec4 color;
+layout(location = 0) out vec4 color;
+layout(location = 1) out vec4 brightColor;
 
 in vec2 worldxz;
 
@@ -71,6 +73,8 @@ void main()
 		color = vec4(0.3) * textureColor;
 	else
 		color = vec4(res, 1.0f);
+
+	brightColor = vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 
@@ -86,6 +90,9 @@ vec3 calculateDirLight(Light light, vec3 normal, vec3 textureColor)
 	return ambient + diffuse;
 }
 
+float constant = 1.0;
+float linear = 0.007;
+float quadratic = 0.0002;
 
 vec3 calculatePointLight(Light light, vec3 fragmentPosition, vec3 normal, vec3 textureColor)
 {
@@ -93,7 +100,7 @@ vec3 calculatePointLight(Light light, vec3 fragmentPosition, vec3 normal, vec3 t
 	vec3 toLight = normalize(-fromLight);
 
 	float distanceToViewer = length(light.position - fragmentPosition);
-	float attenuation = 1.0 / (1.0 + 0.007 * distanceToViewer + 0.0002 * (distanceToViewer * distanceToViewer));
+	float attenuation = 1.0f / (constant + linear*distanceToViewer + quadratic*(distanceToViewer*distanceToViewer));
 
 	vec3 ambient = light.ambient * textureColor * attenuation;
 

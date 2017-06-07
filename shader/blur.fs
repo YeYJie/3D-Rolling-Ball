@@ -8,8 +8,10 @@ uniform sampler2D text;
 uniform bool horizontal;
 
 #define GAUSS_KERNEL_SIZE 7
-
 uniform float weight[GAUSS_KERNEL_SIZE] = float[] (0.0783, 0.0782, 0.0779, 0.0774, 0.0767, 0.0759, 0.0748);
+
+// #define GAUSS_KERNEL_SIZE 5
+// uniform float weight[GAUSS_KERNEL_SIZE] = float[] (0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216);
 
 void main()
 {

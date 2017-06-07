@@ -34,6 +34,10 @@ public:
 		return _textureID;
 	}
 
+	void setTexture(GLuint textureID) {
+		_textureID = textureID;
+	}
+
 private:
 
 	GLuint _textureID;

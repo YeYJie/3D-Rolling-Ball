@@ -5,7 +5,9 @@ in vec3 Normal;
 in vec2 fs_textCoords;
 in vec4 FragPosLightSpace;
 
-out vec4 color;
+// out vec4 color;
+layout(location = 0) out vec4 color;
+layout(location = 1) out vec4 brightColor;
 
 uniform sampler2D text;
 uniform sampler2D shadowMap;
@@ -56,7 +58,7 @@ void main()
 		{
 			if(lights[i].type == DIRECTION_LIGHT)
 				res += calculateDirLight(lights[i], normal, toViewer, vec3(textureColor));
-			else
+			if(lights[i].type == POINT_LIGHT)
 				res += calculatePointLight(lights[i], FragPos, normal, toViewer, vec3(textureColor));
 		}
 	}
@@ -66,6 +68,10 @@ void main()
 	    color = vec4(0.3) * textureColor;
 	else
 		color = vec4(res, 1.0f);
+
+	float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+	if(brightness > 1.2)
+		brightColor = vec4(color.rgb, 1.0);
 }
 
 
@@ -84,14 +90,18 @@ vec3 calculateDirLight(Light light, vec3 normal, vec3 toViewer, vec3 textureColo
 	return ambient + diffuse + specular;
 }
 
+float constant = 1.0;
+float linear = 0.007;
+float quadratic = 0.0002;
 
 vec3 calculatePointLight(Light light, vec3 fragmentPosition, vec3 normal, vec3 toViewer, vec3 textureColor)
 {
+	textureColor += vec3(0.1);
 	vec3 fromLight = normalize(fragmentPosition - light.position);
 	vec3 toLight = normalize(-fromLight);
 
 	float distanceToViewer = length(light.position - fragmentPosition);
-	float attenuation = 1.0 / (1.0 + 0.007 * distanceToViewer + 0.0002 * (distanceToViewer * distanceToViewer));
+	float attenuation = 1.0f / (constant + linear*distanceToViewer + quadratic*(distanceToViewer*distanceToViewer));
 	// float attenuation = 1.0;
 
 	vec3 ambient = light.ambient * textureColor * attenuation;

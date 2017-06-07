@@ -87,6 +87,8 @@ void level3(GLFWwindow * window,
 	TexturedModelPtr greenBox(new TexturedModel(boxRawModel, greenTexture));
 	TexturedModelPtr blueBox(new TexturedModel(boxRawModel, blueTexture));
 
+	// ball->setModel(yellowBox);
+
 	LightPtr yellowLight(new Light());
 	yellowLight->setModel(yellowBox);
 	yellowLight->setPosition(glm::vec3(50 - 200, terrain->getHeight(50 - 200, 50 - 200) + 20, 50 - 200));
@@ -126,10 +128,10 @@ void level3(GLFWwindow * window,
 	blueLight->setPosition(glm::vec3(-50 - 200, terrain->getHeight(-50 - 200, 50 - 200) + 20, 70 - 200));
 	blueLight->setScale(8.0f);
 	blueLight->setType(POINT_LIGHT);
-	blueLight->setAmbient(0.0, 0.0, 0.1);
-	blueLight->setDiffuse(0.0, 0.0, 0.5);
-	blueLight->setSpecular(0.0, 0.0, 0.3);
-	// blueLight->setShininess(1.0);
+	blueLight->setAmbient(0.0, 0.0, 20.0);
+	blueLight->setDiffuse(0.0, 0.0, 20.0);
+	blueLight->setSpecular(0.0, 0.0, 3.0);
+	blueLight->setShininess(32.0);
 	entities.push_back(static_pointer_cast<Entity>(blueLight));
 
 
