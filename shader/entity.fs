@@ -84,7 +84,9 @@ vec3 calculateDirLight(Light light, vec3 normal, vec3 toViewer, vec3 textureColo
 	float diffuseFactor = max(dot(toLight, normal), 0.0);
 	vec3 diffuse = light.diffuse * diffuseFactor * textureColor;
 
-	float specularFactor = pow(max(dot(reflect(light.direction, normal), toViewer), 0.0), light.shininess);
+	vec3 halfway = normalize(toLight + toViewer);
+	float specularFactor = pow(max(dot(normal, halfway), 0.0), light.shininess);
+	// float specularFactor = pow(max(dot(reflect(light.direction, normal), toViewer), 0.0), light.shininess);
 	vec3 specular = light.specular * specularFactor * textureColor;
 
 	return ambient + diffuse + specular;
@@ -109,7 +111,9 @@ vec3 calculatePointLight(Light light, vec3 fragmentPosition, vec3 normal, vec3 t
 	float diffuseFactor = max(dot(toLight, normal), 0.0);
 	vec3 diffuse = light.diffuse * diffuseFactor * textureColor * attenuation;
 
-	float specularFactor = pow(max(dot(reflect(fromLight, normal), toViewer), 0.0), light.shininess);
+	vec3 halfway = normalize(toLight + toViewer);
+	float specularFactor = pow(max(dot(normal, halfway), 0.0), light.shininess);
+	// float specularFactor = pow(max(dot(reflect(fromLight, normal), toViewer), 0.0), light.shininess);
 	vec3 specular = light.specular * specularFactor * textureColor * attenuation;
 
 	return ambient + diffuse + specular;

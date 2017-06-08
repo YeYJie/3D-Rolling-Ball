@@ -7,7 +7,7 @@ out vec4 color;
 uniform sampler2D origin;
 uniform sampler2D bloom;
 
-uniform float exposure = 0.8;
+uniform float exposure = 0.5;
 
 void main()
 {
