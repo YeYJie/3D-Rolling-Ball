@@ -46,6 +46,12 @@ vector<string> &split(const string &s, char delim,
 
 vector<string> split(const string &s, char delim);
 
+void calculateOrtho(const glm::vec3 & cameraPosition,
+						const glm::vec3 & cameraLookAt,
+						const glm::vec3 & lightDirection,
+						glm::mat4 & view,
+						glm::mat4 & projection);
+
 // some print function
 
 inline void printVec3(const glm::vec3 & v, const char * s = "vec3") {

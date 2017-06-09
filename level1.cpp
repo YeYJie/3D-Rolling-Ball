@@ -135,6 +135,8 @@ void level1(GLFWwindow * window,
 											glm::vec3(0.0f, 1.0f, 0.0f)
 										);
 	// lightSpaceMatrix = lightSpaceProjection * lightSpaceMatrix;
+	// glm::mat4 lightSpaceProjection;
+	// glm::mat4 lightSpaceMatrix;
 
 	entityShader->bindGL();
 	entityShader->resetLight();
@@ -193,6 +195,8 @@ void level1(GLFWwindow * window,
 		glm::vec3 ballPosition = ball->getPosition();
 
 		// printVec3(ballPosition, "ballPosition");
+		// calculateOrtho(cameraPostion, ballPosition, lightDirection,
+		// 			lightSpaceMatrix, lightSpaceProjection);
 
 		// shodow
 		shadowFrameBuffer->bindGL();

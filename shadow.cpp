@@ -2,8 +2,8 @@
 
 extern const int WIDTH;
 extern const int HEIGHT;
-const int SHADOWFRAMEBUFFERWIDTH = WIDTH * 2;
-const int SHADOWFRAMEBUFFERHEIGHT = HEIGHT * 2;
+const int SHADOWFRAMEBUFFERWIDTH = HEIGHT * 5;
+const int SHADOWFRAMEBUFFERHEIGHT = HEIGHT * 5;
 
 ShadowFrameBuffer::ShadowFrameBuffer()
 {

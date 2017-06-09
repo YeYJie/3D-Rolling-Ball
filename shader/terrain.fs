@@ -44,9 +44,10 @@ uniform int numLights = 0;
 uniform Light lights[MAX_POINT_LIGHTS];
 
 
-vec3 calculateDirLight(Light light, vec3 normal, vec3 textureColor);
-vec3 calculatePointLight(Light light, vec3 fragmentPosition, vec3 normal, vec3 textureColor);
+vec3 calculateDirLight(Light light, vec3 normal, vec3 textureColor, float shadowFactor);
+vec3 calculatePointLight(Light light, vec3 fragmentPosition, vec3 normal, vec3 textureColor, float shadowFactor);
 float calculationShadow(vec4 fragPosLightSpace);
+
 
 void main()
 {
@@ -57,28 +58,28 @@ void main()
 
 	vec3 res = vec3(0.0);
 
+	float shadowFactor = 0.0;
+	if(useShadow == 1)
+		shadowFactor = calculationShadow(FragPosLightSpace);
+
 	for(int i = 0; i < numLights; ++i)
 	{
 		if(lights[i].lightOn)
 		{
 			if(lights[i].type == DIRECTION_LIGHT)
-				res += calculateDirLight(lights[i], normal, vec3(textureColor));
+				res += calculateDirLight(lights[i], normal, vec3(textureColor), shadowFactor);
 			else
-				res += calculatePointLight(lights[i], FragPos, normal, vec3(textureColor));
+				res += calculatePointLight(lights[i], FragPos, normal, vec3(textureColor), shadowFactor);
 		}
 	}
 
-	float shadowFactor = calculationShadow(FragPosLightSpace);
-	if(useShadow == 1 && shadowFactor > 0.0)
-		color = vec4(0.3) * textureColor;
-	else
-		color = vec4(res, 1.0f);
+	color = vec4(res, 1.0f);
 
 	brightColor = vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 
-vec3 calculateDirLight(Light light, vec3 normal, vec3 textureColor)
+vec3 calculateDirLight(Light light, vec3 normal, vec3 textureColor, float shadowFactor)
 {
 	vec3 ambient = light.ambient * textureColor;
 
@@ -87,14 +88,14 @@ vec3 calculateDirLight(Light light, vec3 normal, vec3 textureColor)
 	float diffuseFactor = max(dot(toLight, normal), 0.0);
 	vec3 diffuse = light.diffuse * diffuseFactor * textureColor;
 
-	return ambient + diffuse;
+	return ambient + (1.0 - shadowFactor) * diffuse;
 }
 
 float constant = 1.0;
 float linear = 0.007;
 float quadratic = 0.0002;
 
-vec3 calculatePointLight(Light light, vec3 fragmentPosition, vec3 normal, vec3 textureColor)
+vec3 calculatePointLight(Light light, vec3 fragmentPosition, vec3 normal, vec3 textureColor, float shadowFactor)
 {
 	vec3 fromLight = normalize(fragmentPosition - light.position);
 	vec3 toLight = normalize(-fromLight);
@@ -107,7 +108,7 @@ vec3 calculatePointLight(Light light, vec3 fragmentPosition, vec3 normal, vec3 t
 	float diffuseFactor = max(dot(toLight, normal), 0.0);
 	vec3 diffuse = light.diffuse * diffuseFactor * textureColor * attenuation;
 
-	return ambient + diffuse;
+	return ambient + (1.0 - shadowFactor) * diffuse;
 }
 
 
@@ -115,8 +116,22 @@ float calculationShadow(vec4 fragPosLightSpace)
 {
 	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
 	projCoords = projCoords * 0.5 + 0.5;
+
+	if(projCoords.z > 1.0)
+		return 0.0;
+
 	float closestDepth = texture(shadowMap, projCoords.xy).r;
 	float currentDepth = projCoords.z;
-	float shadow = currentDepth - 0.005 > closestDepth  ? 1.0 : 0.0;
-	return shadow;
+
+	float shadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+    for(int x = -1; x <= 1; ++x)
+    {
+    	for(int y = -1; y <= 1; ++y)
+    	{
+    		float pcf = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+    		shadow += currentDepth - 0.005 > pcf ? 1.0 : 0.0;
+    	}
+    }
+    return shadow / 9.0;
 }

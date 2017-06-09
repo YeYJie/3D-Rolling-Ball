@@ -106,6 +106,7 @@ void Menu::render()
 	{
 		_menuTexts[1]->setScale(1, 1);
 		_menuTexts[2]->setScale(1, 1);
+		_menuTexts[3]->setScale(1, 1);
 		if(mouseX >= 200 && mouseX <= 800) {
 			if(mouseY >= 400 && mouseY < 500) {
 				_menuTexts[1]->setScale(1.05, 1.05);

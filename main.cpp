@@ -38,7 +38,7 @@ bool mouseRightPressed = false;
 int mouseScrollOffset = 0;
 
 int displayMenu = 0;
-int level = 3;
+int level = 1;
 
 void onKeyBoard(GLFWwindow * window, int key,
 				int scancode, int action, int mods)
@@ -158,7 +158,7 @@ int main()
 										45.0f,
 										float(WIDTH) / float(HEIGHT),
 										0.1f,
-										10000.0f);
+										2000.0f);
 
 	// entity
 	EntityShader * entityShader = new EntityShader("entity.vs", "entity.fs");
