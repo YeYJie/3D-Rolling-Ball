@@ -75,14 +75,14 @@ void Ball::update(const TerrainPtr & terrain)
 
 glm::mat4 Ball::getModelMatrix() const
 {
-	static glm::vec3 __xaxis = glm::vec3(1.0, 0.0, 0.0);
-	static glm::vec3 __yaxis = glm::vec3(0.0, 1.0, 0.0);
-	static glm::vec3 __zaxis = glm::vec3(0.0, 0.0, 1.0);
+	// static glm::vec3 __xaxis = glm::vec3(1.0, 0.0, 0.0);
+	// static glm::vec3 __yaxis = glm::vec3(0.0, 1.0, 0.0);
+	// static glm::vec3 __zaxis = glm::vec3(0.0, 0.0, 1.0);
 
 	static glm::mat4 res = glm::mat4(1.0f);
 
-	static float xDegree = 0.0f;
-	static float zDegree = 0.0f;
+	// static float xDegree = 0.0f;
+	// static float zDegree = 0.0f;
 
 	if(_speed != glm::vec3(0.0f))
 	{
