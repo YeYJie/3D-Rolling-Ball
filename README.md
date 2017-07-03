@@ -16,7 +16,8 @@ A Simple 3D Rolling Ball Game
 #### Build :
 
 	./src/make
-	./bin/rollingBall
+	cd ./bin
+	./rollingBall  # must run in bin directory
 
 
 #### Features :
