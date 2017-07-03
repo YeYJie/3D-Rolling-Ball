@@ -52,8 +52,8 @@ void Menu::initMenuList()
 	TextPtr head(new Text(L"Rolling Ball", WIDTH, 200, 1.5f, TEXT_MODE_OUTLINE));
 	TextPtr line1(new Text(L"Level 1", WIDTH + 120, 400, 1.0f, TEXT_MODE_GLOW));
 	TextPtr line2(new Text(L"Level 2", WIDTH + 120, 500, 1.0f, TEXT_MODE_DROPSHADOW));
-	TextPtr line3(new Text(L"Level 3", WIDTH + 120, 600, 1.0f, TEXT_MODE_NORMAL));
-	// TextPtr line3(new Text(L"曹磊 永杰 浩楠", WIDTH + 60, 600, 1.0f, TEXT_MODE_NORMAL));
+	// TextPtr line3(new Text(L"Level 3", WIDTH + 120, 600, 1.0f, TEXT_MODE_NORMAL));
+	TextPtr line3(new Text(L"曹磊 永杰 浩楠", WIDTH + 60, 600, 1.0f, TEXT_MODE_NORMAL));
 	// line3->setTextColor(255.0/255.0, 204.0/255.0, 255.0/255.0);
 
 	_menuTexts.push_back(head);

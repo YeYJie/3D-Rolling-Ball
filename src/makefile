@@ -13,7 +13,7 @@ OBJS = main.o terrain.o loader.o camera.o ball.o skybox.o \
 			shadow.o blur.o hdr.o utils.o\
 			level1.o level2.o level3.o
 
-EXE = rollingBall
+EXE = ../bin/rollingBall
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -c -o $@ $<

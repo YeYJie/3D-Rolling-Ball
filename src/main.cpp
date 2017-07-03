@@ -191,7 +191,7 @@ int main()
 	WaterRenderer * waterRenderer = new WaterRenderer(waterShader,
 										projectionMatrix,
 										waterFrameBuffer,
-										new Texture("dudv2.png"),
+										new Texture("dudv.png"),
 										new Texture("normal.png"));
 
 	// gui
